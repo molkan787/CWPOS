@@ -1,0 +1,5 @@
+$navbar-h: 40px;
+
+.page{
+    height: calc(100vh - #{$navbar-h});
+}

@@ -2,13 +2,28 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
+      <router-link to="/pos">POS</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 
+<script lang="ts">
+import Vue from 'vue';
+export default Vue.extend({
+});
+</script>
+
+
 <style lang="scss">
+@import '@/scss/vars.scss';
+body{
+  padding: 0;
+  margin: 0;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -17,7 +32,11 @@
   color: #2c3e50;
 }
 #nav {
-  padding: 30px;
+  height: $navbar-h;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #fafafa;
+  box-shadow: 0 0 6px #999;
   a {
     font-weight: bold;
     color: #2c3e50;

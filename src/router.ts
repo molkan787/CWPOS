@@ -14,6 +14,11 @@ export default new Router({
       component: Home,
     },
     {
+      path: '/pos',
+      name: 'pos',
+      component: () => import(/* webpackChunkName: "about" */ './components/pos/POS.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
