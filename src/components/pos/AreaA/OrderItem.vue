@@ -1,0 +1,40 @@
+<template>
+    <div>
+        {{ text }}
+        <span>{{ amount | price }}</span>
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
+
+@Component({
+    filters:{
+        price: function (value: any){
+            return '$' + parseFloat(value).toFixed(2);
+        }
+    }
+})
+export default class OrderItem extends Vue{
+
+    @Prop({default: ''}) text!: string;
+    @Prop({default: 0}) amount!: number;
+
+}
+</script>
+
+<style lang="scss" scoped>
+div{
+    width: 100%;
+    height: 2rem;
+    padding: 0.5rem 0.5rem 1.8rem 0.5rem;
+    font-size: 1.3rem;
+    border-bottom: 1px solid #ccc;
+    background-color: #f5f5f5;
+}
+span{
+    float: right;
+}
+</style>

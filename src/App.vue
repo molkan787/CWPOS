@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/pos">POS</router-link> |
       <router-link to="/about">About</router-link>
-    </div>
+    </div> -->
     <keep-alive>
       <router-view/>
     </keep-alive>
@@ -20,9 +20,11 @@ export default Vue.extend({
 
 <style lang="scss">
 @import '@/scss/vars.scss';
+@import '@/scss/global.scss';
 body{
   padding: 0;
   margin: 0;
+  padding-top: $navbar-h;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -32,6 +34,10 @@ body{
   color: #2c3e50;
 }
 #nav {
+  position: fixed;
+  z-index: 1000;
+  top: 0; left: 0;
+  width: 100%;
   height: $navbar-h;
   padding: 10px;
   box-sizing: border-box;

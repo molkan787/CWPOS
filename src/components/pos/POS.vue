@@ -1,21 +1,23 @@
 <template>
     <div class="page">
         <Header />
-        {{title}}
+        <CBody />
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Header from './Header.vue';
+import CBody from './CBody.vue';
 
 @Component({
     components: {
-        Header
+        Header,
+        CBody,
     },
 })
 export default class Home extends Vue {
-    public title = 'Hello Title !!!';
+    
 }
 </script>
 

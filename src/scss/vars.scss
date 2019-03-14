@@ -1,5 +1,8 @@
-$navbar-h: 40px;
+$navbar-h: 0;
 
-.page{
-    height: calc(100vh - #{$navbar-h});
-}
+$block1-height: 30rem;
+
+// Colors
+$green: #21ba45;
+$red: #db2828;
+$grey: #e0e1e2;
