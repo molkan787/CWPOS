@@ -1,8 +1,8 @@
 <template>
     <div class="m-el">
         <sui-segment attached class="items">
-            <OrderItem v-for="item in items" :key="item.tid" :text="item.name" :amount="item.price"/>
-            <div v-if="items.length == 0" class="empty-text">No item added</div>
+            <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name" :amount="item.price"/>
+            <div v-if="pos.items.length == 0" class="empty-text">No item added</div>
         </sui-segment>
         <Totals class="totals" />
         <!-- <button @click="addItem()">Add</button>       -->
@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import {mapState} from 'vuex';
 import Component from 'vue-class-component';
 import OrderItem from './OrderItem.vue';
 import Totals from './Totals.vue';
@@ -19,30 +20,13 @@ import Totals from './Totals.vue';
     components:{
         OrderItem,
         Totals,
+    },
+    computed: {
+        ...mapState(['pos'])
     }
 })
 export default class OrderSummary extends Vue{
-    private tidPtr = 2;
-    items: any[] = [
-        // {
-        //     tid: 1,
-        //     name: 'Car In Out',
-        //     price: 18.5
-        // },
-        // {
-        //     tid: this.tidPtr++,
-        //     name: 'Foam Wax',
-        //     price: 23
-        // }
-    ];
 
-    addItem(){
-        this.items.push({
-            tid: this.tidPtr++,
-            name: 'Clash of clan',
-            price: 5
-        });
-    }
 }
 </script>
 

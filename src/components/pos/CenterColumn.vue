@@ -7,7 +7,7 @@
         </sui-segment>
 
         <sui-segment attached class="row1-block">
-            Test Foo Bar
+            <Products />
         </sui-segment>
         <sui-segment attached>
             Test Foo Bar
@@ -20,10 +20,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
+import Products from './Products/Products.vue';
 
 @Component({
     components: {
-        TripleButton
+        TripleButton,
+        Products
     }
 })
 export default class CenterColumn extends Vue{

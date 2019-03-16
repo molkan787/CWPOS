@@ -2,8 +2,8 @@
     <div class="m-el">
         <img src="@/assets/logo.png">
         <span class="bis">
-            Current time: <strong>{{currentTime}}</strong> <br>
-            Logged in User: <strong class="">{{currentUser}}</strong>
+            <sui-icon name="clock"/> <strong>{{currentTime}}</strong> <br>
+            <sui-icon name="user circle"/> <strong class="">{{currentUser}}</strong>
             <sui-label class="logout-btn" icon="power off">Logout</sui-label>
         </span>
         <div class="right-side">

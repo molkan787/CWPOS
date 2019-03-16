@@ -16,17 +16,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
 
-@Component({
-    filters:{
-        price: function (value: any){
-            let val = parseFloat(value);
-            if(val < 0)
-                return '- $' + (-val).toFixed(2);
-            else
-                return '$' + val.toFixed(2);
-        }
-    }
-})
+@Component
 export default class TotalsItem extends Vue{
 
     @Prop({default: ''}) text!: string;

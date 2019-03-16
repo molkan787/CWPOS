@@ -10,13 +10,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-@Component({
-    filters:{
-        price: function (value: any){
-            return '$' + parseFloat(value).toFixed(2);
-        }
-    }
-})
+@Component
 export default class OrderItem extends Vue{
 
     @Prop({default: ''}) text!: string;

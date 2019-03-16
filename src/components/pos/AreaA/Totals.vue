@@ -15,11 +15,6 @@ import Component from 'vue-class-component';
 import TotalsItem from './TotalsItem.vue';
 
 @Component({
-    filters:{
-        price: function (value: any){
-            return '$' + parseFloat(value).toFixed(2);
-        }
-    },
     components: {
         TotalsItem,
     }

@@ -5,12 +5,48 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    categories: [
+      {
+        id: '1',
+        name: 'IN OUT WASHES'
+      },{
+        id: '2',
+        name: 'OUT ONLY OR IN ONLY'
+      },{
+        id: '3',
+        name: 'TOP UPS'
+      }
+    ],
+    products: {
+      '1': [
+        { name: 'CAR', id: '1', price: 18 },
+        { name: 'SM SUV', id: '2', price: 20 },
+        { name: 'LG SUV', id: '3', price: 22 },
+        { name: 'TRUCK', id: '4', price: 25 },
+      ]
+    },
 
+    // ======================
+    pos: {
+      items: [
+
+      ]
+    }
+  },
+  getters: {
+    getCategory(state){
+      return (catID: string) => state.categories.filter(category => category.id == catID)[0];
+    }
   },
   mutations: {
-
+    POS_ADD_ITEM: (state, item) => {
+      // @ts-ignore
+      state.pos.items.unshift(item);
+    }
   },
   actions: {
-
+    AddPOSItem(context, item){
+      context.commit('POS_ADD_ITEM', item);
+    }
   },
 });
