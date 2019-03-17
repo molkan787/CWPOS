@@ -28,9 +28,17 @@ export default new Vuex.Store({
 
     // ======================
     pos: {
+      total: 34.6,
       items: [
 
       ]
+    },
+
+    stats: {
+      cw: 45,
+      pp: 17,
+      rpp: 32,
+      dt: 24
     }
   },
   getters: {

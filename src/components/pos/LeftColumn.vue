@@ -9,8 +9,8 @@
         <sui-segment attached class="row1-block">
             <AreaA />
         </sui-segment>
-        <sui-segment attached>
-            Test Foo Bar
+        <sui-segment attached class="row2-block">
+            <Stats />
         </sui-segment>
         
     </div>
@@ -21,11 +21,13 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
 import AreaA from './AreaA/AreaA.vue';
+import Stats from './Stats/Stats.vue';
 
 @Component({
     components: {
         TripleButton,
         AreaA,
+        Stats,
     }
 })
 export default class LeftColumn extends Vue{
