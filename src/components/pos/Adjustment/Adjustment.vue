@@ -1,16 +1,18 @@
 <template>
     <div>
-        <sui-button :class="currentDiscount == '3' ? 'blue' : ''"
-        icon="tag" @click="setDiscount('3')"><br>Promo $3 OFF</sui-button>
+        <sui-button :class="currentDiscount == '3' ? 'grey' : ''"
+        icon="tag" @click="putDiscount('3')"><br>Promo $3 OFF</sui-button>
 
-        <sui-button :class="currentDiscount == '5' ? 'blue' : ''"
-        icon="tag" @click="setDiscount('5')"><br>Promo $5 OFF</sui-button>
+        <sui-button :class="currentDiscount == '5' ? 'grey' : ''"
+        icon="tag" @click="putDiscount('5')"><br>Promo $5 OFF</sui-button>
 
-        <sui-button :class="currentDiscount == 'full' ? 'blue' : ''"
-        icon="tag" @click="setDiscount('full')"><br>FULL Discount</sui-button>
+        <sui-button :class="currentDiscount == 'full' ? 'grey' : ''"
+        icon="tag" @click="putDiscount('full')"><br>FULL Discount</sui-button>
 
-        <sui-button icon="tags" :class="currentDiscount == 'custom' ? 'blue' : ''"
-        ><br>Other Discount</sui-button>
+        <sui-button icon="tags" :class="currentDiscount == 'custom' ? 'grey' : ''">
+            <br>Other Discount<br>
+            <span v-if="customerDiscount > 0" class="positive-color">({{ customerDiscount | price }})</span>
+        </sui-button>
 
         <sui-button icon="plus square">
             <br>Extra Charge<br>
@@ -26,18 +28,38 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import {mapActions} from 'vuex';
 
-@Component
+@Component({
+    methods:{
+        ...mapActions(['setDiscount'])
+    }
+})
 export default class Adjustment extends Vue{
-    private currentDiscount: string = '';
+    private currentDiscount: any = '';
     private extraCharge: number = 0;
     private tipAmount: number = 10;
+    private customerDiscount = 0;
 
-    setDiscount(discount: string){
+    putDiscount(discount: string){
         if(this.currentDiscount == discount)
             this.currentDiscount = '';
         else
             this.currentDiscount = discount;
+        if(this.currentDiscount == ''){
+            // @ts-ignore
+            this.setDiscount(0);
+        }else if(this.currentDiscount == 'full'){
+            // @ts-ignore
+            this.setDiscount(this.currentDiscount);
+        }else if(this.currentDiscount == 'custom'){
+            // @ts-ignore
+            this.setDiscount(this.customerDiscount);
+        }else{
+            // @ts-ignore
+            this.setDiscount(parseInt(this.currentDiscount));
+        }
+            
     }
 }
 </script>

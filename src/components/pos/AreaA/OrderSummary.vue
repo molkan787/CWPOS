@@ -1,20 +1,20 @@
 <template>
     <div class="m-el">
         <sui-segment attached class="items">
-            <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name" :amount="item.price"/>
+            <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name" :label="prefix[item.category_id]" :amount="item.price"/>
             <div v-if="pos.items.length == 0" class="empty-text">No item added</div>
         </sui-segment>
-        <Totals class="totals" />
-        <!-- <button @click="addItem()">Add</button>       -->
+        <Totals class="totals" />  
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {mapState} from 'vuex';
+import {mapState, mapActions} from 'vuex';
 import Component from 'vue-class-component';
 import OrderItem from './OrderItem.vue';
 import Totals from './Totals.vue';
+import Things from '@/prs/things.ts';
 
 @Component({
     components:{
@@ -23,9 +23,19 @@ import Totals from './Totals.vue';
     },
     computed: {
         ...mapState(['pos'])
+    },
+    methods: {
+        ...mapActions(['loadData'])
     }
 })
 export default class OrderSummary extends Vue{
+
+    private prefix!: {};
+
+    constructor(){
+        super();
+        this.prefix = Things.prefix;
+    }
 
 }
 </script>

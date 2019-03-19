@@ -1,6 +1,6 @@
 <template>
     <div>
-        {{ text }}
+        {{ text }} <label v-if="label">{{ label }}</label>
         <span>{{ amount | price }}</span>
     </div>
 </template>
@@ -14,6 +14,7 @@ import { Prop } from 'vue-property-decorator';
 export default class OrderItem extends Vue{
 
     @Prop({default: ''}) text!: string;
+    @Prop({default: ''}) label!: string;
     @Prop({default: 0}) amount!: number;
 
 }
@@ -30,5 +31,9 @@ div{
 }
 span{
     float: right;
+}
+label{
+    opacity: 0.8;
+    font-size: 0.8em;
 }
 </style>

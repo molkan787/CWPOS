@@ -1,14 +1,14 @@
 <template>
     <div>
-        <h2>Total: {{ total | price }}</h2>
+        <h2>Total: {{ pos.values.total | price }}</h2>
         <h3>
             <span class="sub-s">Amount: ${{ paid }}</span>
             <span class="second sub-s">
                 Change:
                 <span :class="{
-                    positive: change > 0,
-                    negative: change < 0
-                }">{{ change | price }} </span>
+                    positive: pos.values.changeDue > 0,
+                    negative: pos.values.changeDue < 0
+                }">{{ pos.values.changeDue | price }} </span>
             </span>
         </h3>
         <ButtonsGrid @buttonClick="buttonClicked" class="buttonsGrid" :buttons="cashButtons" />
@@ -19,6 +19,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import {mapState, mapActions} from 'vuex';
 import KeyPad from '../../Elts/KeyPad.vue';
 import ButtonsGrid from '../../Elts/ButtonsGrid.vue';
 
@@ -26,11 +27,16 @@ import ButtonsGrid from '../../Elts/ButtonsGrid.vue';
     components: {
         KeyPad,
         ButtonsGrid,
+    },
+    computed: {
+        ...mapState(['pos'])
+    },
+    methods: {
+        ...mapActions(['setPaidCash'])
     }
 })
 export default class Payments extends Vue{
-    private total: number = 43.5;
-    private paid: string = '50.5';
+    private paid: string = '';
     private change: number = 7;
 
     private cashButtons = [
@@ -45,12 +51,25 @@ export default class Payments extends Vue{
     ];
 
     buttonClicked(key: string){
-        if(key == '!') this.paid = '';
-        else this.paid = key;
+        if(key == '!'){
+            this.paid = '';
+        }else if(key == '='){
+            // @ts-ignore
+            this.paid = this.pos.values.total + '';
+        }else{
+            this.paid = key;
+        }
+        this.pushPaidAmount();
     }
 
     changePaid(key: string){
         this.paid = this.mutateNumber(this.paid, key, 8, 2);
+        this.pushPaidAmount();
+    }
+
+    pushPaidAmount(){
+        // @ts-ignore
+        this.setPaidCash(parseFloat(this.paid || 0));
     }
 
     mutateNumber(val: string, key: string, limit: number, decimalLimit: number){
@@ -92,7 +111,7 @@ h3{
         width: 50%;
         padding-left: 1rem;
         &.second{
-            padding-left: 3rem;
+            padding-left: 2rem;
         }
         span{
             &.positive{

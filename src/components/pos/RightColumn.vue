@@ -2,7 +2,7 @@
     <div class="ui attached vertical segment no-padding">
         
         <sui-segment attached class="padding-2">
-            <TripleButton :texts="['OTHER','RESTART','QUIT APP']" @click="buttonClicked" />
+            <TripleButton :texts="['OPTIONS','RESTART','QUIT APP']" @click="buttonClicked" />
         </sui-segment>
 
         <sui-segment attached class="row1-block">

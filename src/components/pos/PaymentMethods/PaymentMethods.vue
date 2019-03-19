@@ -1,8 +1,9 @@
 <template>
     <div>
         <sui-button v-for="(method, index) in methods" :key="index"
-        :class="currentMethod == method.name ? 'blue' : ''"
-        @click="currentMethod = method.name">
+        :class="pos.pay_method == method.name ? 'grey' : ''"
+        @click="pos.pay_method = method.name">
+            <i v-if="method.icon" :class="'icon ' + method.icon"></i> <br>
             {{ method.text }}
         </sui-button>
     </div>
@@ -11,19 +12,22 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import {mapState} from 'vuex';
 
-@Component
+@Component({
+    computed: {
+        ...mapState(['pos'])
+    }
+})
 export default class PaymentMethods extends Vue{
     private methods: {}[] = [
-        {name: 'cash', text: 'Cash'},
-        {name: 'prepaid', text: 'Prepaid Card'},
-        {name: 'invoice_ari', text: 'Invoice or Ari'},
-        {name: 'card', text: 'Credit/Debit Card'},
-        {name: 'loyalty', text: 'Loyalty Card'},
-        {name: 'other', text: 'Other or Free'},
+        {name: 'cash', text: 'Cash', icon: 'money bill alternate'},
+        {name: 'prepaid', text: 'Prepaid Card', icon: 'ticket alternate'},
+        {name: 'invoice_ari', text: 'Invoice or Ari', icon: 'file alternate'},
+        {name: 'card', text: 'Credit/Debit Card', icon: 'credit card'},
+        {name: 'loyalty', text: 'Loyalty Card', icon: 'ticket alternate'},
+        {name: 'other', text: 'Other or Free', icon: 'certificate'},
     ];
-
-    private currentMethod = '';
 }
 </script>
 
@@ -36,13 +40,8 @@ button{
     margin-bottom: 0.22rem !important;
     font-size: 1.1rem !important;
     line-height: 1.3 !important;
-    // padding-left: 0 !important;
-    // padding-right: 0 !important;
     i{
         margin: 0 !important;
     }
-}
-.positive-color{
-    color: $black;
 }
 </style>

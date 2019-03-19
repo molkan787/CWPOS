@@ -1,9 +1,8 @@
 <template>
     <div>
-        <sui-button class="item" v-for="(item, index) in items" :key="index"
-        @click="AddPOSItem(item)" >
-            {{ item.name }}
-        </sui-button>
+        <ProductItem v-for="(item, index) in items" :key="index"
+        :text="item.name" :itemId="item.id"/>
+
         <div v-if="items.length == 0" class="empty-text">This Category is empty</div>
     </div>
 </template>
@@ -13,14 +12,15 @@ import Vue from 'vue';
 import {mapState, mapActions} from 'vuex';
 import Component from 'vue-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
+import ProductItem from './Item.vue';
 
 @Component({
+    components: {
+        ProductItem,
+    },
     computed: {
         ...mapState(['products'])
     },
-    methods: {
-        ...mapActions(['AddPOSItem'])
-    }
 })
 export default class Category extends Vue{
     @Prop({default: ''}) catID!: string;
@@ -32,23 +32,10 @@ export default class Category extends Vue{
         const prts = this.products[this.catID];
         this.items = prts || [];
     }
-
-    itemClick(pid: string){
-
-    }
-
 }
 </script>
 
 <style lang="scss" scoped>
-.item{
-    width: 44%;
-    height: 0;
-    padding: 9% 0 13% 0;
-    position: relative;
-    margin: 1%;
-    font-size: 1.2rem;
-}
 div.empty-text{
     padding-top: 3.7rem;
     font-style: italic;
