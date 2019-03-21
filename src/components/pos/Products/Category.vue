@@ -1,7 +1,7 @@
 <template>
     <div>
         <ProductItem v-for="(item, index) in items" :key="index"
-        :text="item.name" :itemId="item.id"/>
+        :item="item"/>
 
         <div v-if="items.length == 0" class="empty-text">This Category is empty</div>
     </div>

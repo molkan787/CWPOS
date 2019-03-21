@@ -31,13 +31,13 @@ export default class Totals extends Vue{
     }
 
     private items = [
+        {name: 'extraCharge', text: 'Extra Charge'},
         {name: 'discount', text: 'Discount'},
         {name: 'subTotal', text: 'Sub-Total', lowImportance: true},
         {name: 'taxGST', text: 'Tax GST', lowImportance: true},
         {name: 'taxQST', text: 'Tax QST', lowImportance: true},
+        {name: 'tips', text: 'Tips'},
         {name: 'total', text: 'Total', special: true},
-        {name: 'paidCash', text: 'Paid Cash', halfSize: true},
-        {name: 'changeDue', text: 'Change Due', halfSize: true, colors: true}
     ];
 
 }

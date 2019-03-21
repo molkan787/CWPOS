@@ -8,14 +8,19 @@
     <keep-alive>
       <router-view/>
     </keep-alive>
+    <CustomValueModal />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {mapActions} from 'vuex';
+import CustomValueModal from './components/Helpers/CustomValueModal.vue';
 
 export default Vue.extend({
+  components: {
+    CustomValueModal
+  },
   methods: {
     ...mapActions(['setup'])
   },

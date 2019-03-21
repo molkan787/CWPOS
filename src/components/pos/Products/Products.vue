@@ -12,14 +12,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import {mapGetters} from 'vuex';
+import Comu from '@/prs/comu';
 import Component from 'vue-class-component';
 import Categories from './Categories.vue';
 import Category from './Category.vue';
+import Modal from '../../Elts/Modal.vue';
 
 @Component({
     components: {
         Categories,
-        Category
+        Category,
+        Modal
     },
     computed: {
         ...mapGetters(['getCategory'])
@@ -40,6 +43,14 @@ export default class Products extends Vue{
     goBack(){
         this.headerText = 'Categories';
         this.catID = 'all';
+    }
+
+    reset(){
+        this.goBack();
+    }
+
+    created(){
+        Comu.registerToReset(this);
     }
     
 }

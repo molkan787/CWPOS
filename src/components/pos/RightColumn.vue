@@ -35,3 +35,10 @@ export default class RightColumn extends Vue{
     }
 }
 </script>
+
+<style scoped>
+.row1-block{
+    z-index: 1;
+}
+</style>
+

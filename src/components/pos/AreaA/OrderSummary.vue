@@ -1,8 +1,10 @@
 <template>
     <div class="m-el">
         <sui-segment attached class="items">
-            <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name" :label="prefix[item.category_id]" :amount="item.price"/>
-            <div v-if="pos.items.length == 0" class="empty-text">No item added</div>
+            <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name"
+             :label="prefix[item.category_id]" :amount="item.price"
+             :count="pos.itemsCount[item.id]"/>
+            <div v-if="pos.items.length == 0" class="empty-text">No items added</div>
         </sui-segment>
         <Totals class="totals" />  
     </div>
@@ -42,6 +44,7 @@ export default class OrderSummary extends Vue{
 
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
+$totals-height: 16.95rem;
 div.m-el{
     div.segment{
         padding: 0 !important;
@@ -49,19 +52,19 @@ div.m-el{
         overflow-y: scroll;
         
         &.items{
-            height: $block1-height * 0.3;
+            height: $block1-height - $totals-height - 6.5rem;
             border-top-left-radius: 3px;
             border-top-right-radius: 3px;
         }
         &.totals{
-            height: $block1-height * 0.488;
+            height: $totals-height;
             border-bottom-left-radius: 3px;
             border-bottom-right-radius: 3px;
         }
     }
 }
 div.empty-text{
-    padding-top: 3.7rem;
+    padding-top: 3rem;
     font-style: italic;
     text-align: center;
     font-size: 1.5rem;

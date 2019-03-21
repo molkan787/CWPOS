@@ -9,18 +9,18 @@
         <sui-button :class="currentDiscount == 'full' ? 'grey' : ''"
         icon="tag" @click="putDiscount('full')"><br>FULL Discount</sui-button>
 
-        <sui-button icon="tags" :class="currentDiscount == 'custom' ? 'grey' : ''">
+        <sui-button icon="tags" :class="currentDiscount == 'custom' ? 'grey' : ''" @click="discountClick" >
             <br>Other Discount<br>
-            <span v-if="customerDiscount > 0" class="positive-color">({{ customerDiscount | price }})</span>
+            <span v-if="customDiscount > 0" class="positive-color">({{ customDiscount | price }})</span>
         </sui-button>
 
-        <sui-button icon="plus square">
+        <sui-button icon="plus square" @click="extraChargeClick">
             <br>Extra Charge<br>
-            <span v-if="extraCharge > 0" class="positive-color">({{ extraCharge | price }})</span>
+            <span v-if="pos.values.extraCharge > 0" class="positive-color">({{ pos.values.extraCharge | price }})</span>
         </sui-button>
-        <sui-button icon="money bill alternate">
+        <sui-button icon="money bill alternate" @click="tipsClick">
             <br>Add Tip<br>
-            <span v-if="tipAmount > 0" class="positive-color">({{ tipAmount | price }})</span>
+            <span v-if="pos.values.tips > 0" class="positive-color">({{ pos.values.tips | price }})</span>
         </sui-button>
     </div>
 </template>
@@ -28,21 +28,56 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import {mapActions} from 'vuex';
+import { mapActions, mapState } from 'vuex';
+import Comu from '@/prs/comu';
+import MxHelper from '@/prs/MxHelper';
 
 @Component({
-    methods:{
-        ...mapActions(['setDiscount'])
-    }
+    computed: mapState(['pos']),
+    methods: mapActions(['setDiscount', 'setExtraCharge', 'setTips'])
 })
 export default class Adjustment extends Vue{
     private currentDiscount: any = '';
-    private extraCharge: number = 0;
-    private tipAmount: number = 10;
-    private customerDiscount = 0;
+    private tipAmount: number = 0;
+    private customDiscount = 0;
+
+    extraChargeClick(){
+        MxHelper.getCustomValue({
+            title: 'Extra Charge',
+            // @ts-ignore
+            value: this.pos.values.extraCharge
+        }).then(value => {
+            // @ts-ignore
+            this.setExtraCharge(value);
+        }).catch(() => {});
+    }
+
+    tipsClick(){
+        MxHelper.getCustomValue({
+            title: 'Add Tips',
+            // @ts-ignore
+            value: this.pos.values.tips
+        }).then(value => {
+            // @ts-ignore
+            this.setTips(value);
+        }).catch(() => {});
+    }
+
+    discountClick(){
+        MxHelper.getCustomValue({
+            title: 'Custom Discount',
+            // @ts-ignore
+            value: this.customDiscount
+        }).then(value => {
+            // @ts-ignore
+            this.customDiscount = value;
+            this.putDiscount('custom');
+        }).catch(() => {});
+    }
 
     putDiscount(discount: string){
-        if(this.currentDiscount == discount)
+
+        if(this.currentDiscount == discount && discount != 'custom')
             this.currentDiscount = '';
         else
             this.currentDiscount = discount;
@@ -54,12 +89,28 @@ export default class Adjustment extends Vue{
             this.setDiscount(this.currentDiscount);
         }else if(this.currentDiscount == 'custom'){
             // @ts-ignore
-            this.setDiscount(this.customerDiscount);
+            this.setDiscount(this.customDiscount);
         }else{
             // @ts-ignore
             this.setDiscount(parseInt(this.currentDiscount));
         }
+
+        if(discount == 'custom'){
+            if(this.customDiscount <= 0)
+                this.currentDiscount = '';
+        }else{
+            this.customDiscount = 0;
+        }
             
+    }
+
+    reset(){
+        this.currentDiscount = '';
+        this.customDiscount = 0;
+    }
+
+    created(){
+        Comu.registerToReset(this);
     }
 }
 </script>

@@ -8,10 +8,11 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
+Vue.use(SuiVue);
+Vue.use(filters);
+
 new Vue({
   router,
   store,
   render: (h) => h(App),
 }).$mount('#app');
-Vue.use(SuiVue);
-Vue.use(filters);

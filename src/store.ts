@@ -10,13 +10,16 @@ export default new Vuex.Store({
     categories: [],
     products: {},
     productsByIds: {},
+    productsArray: [],
 
-    // ======================
+    //=======================
     pos: {
       values: {
         fullDiscount: false,
         itemsTotal: 0,
         discount: 0,
+        extraCharge: 0,
+        tips: 0,
         subTotal: 0,
         taxGST: 0,
         taxQST: 0,
@@ -27,10 +30,18 @@ export default new Vuex.Store({
       items: [],
       itemsCount: {},
       pay_method: '',
+      paid: false,
+      finished: false,
     },
 
+    postingOrder: false,
+    //=======================
     client: {
       id: 42
+    },
+
+    user: {
+      id: 3
     },
 
     stats: {cw: 0, pp: 0,  rpp: 0, dt: 0}
@@ -45,15 +56,73 @@ export default new Vuex.Store({
     setup(context){
       Comu.setup(context);
     },
+    cancelOrderPosting(context, reset){
+      context.state.postingOrder = false;
+      if (reset) Comu.reset();
+    },
+    markAsPaid({state}){
+      state.pos.paid = true;
+      state.pos.finished = true;
+    },
+    resetPOS(context){
+      const pos = context.state.pos;
+      const values = pos.values;
+      pos.items = [];
+      pos.itemsCount = {};
+      pos.pay_method = '';
+      pos.paid = false;
+      pos.finished = false;
+      values.fullDiscount = false;
+      values.itemsTotal = 0;
+      values.discount = 0;
+      values.extraCharge = 0;
+      values.tips = 0;
+      values.subTotal = 0;
+      values.taxGST = 0;
+      values.taxQST = 0;
+      values.total = 0;
+      values.paidCash = 0;
+      values.changeDue = 0;
+
+      // Reseting Products dynamic properties
+      const items = context.state.productsArray;
+      for(let i = 0; i < items.length; i++){
+        const item: any = items[i];
+        if(item.product_type == 2){
+          item.price = 0;
+          item.addTaxes = false;
+        }
+      }
+    },
 
     incItemCount(context, itemId){
-      setItemCount(context, itemId, 1);
+      setItemCount(context, itemId, 1, false);
     },
     decItemCount(context, itemId){
-      setItemCount(context, itemId, -1);
+      setItemCount(context, itemId, -1, false);
+    },
+    setCustomPriceItem(context, {itemId, price, taxesIncluded}){
+      // @ts-ignore
+      const item = context.state.productsByIds[itemId];
+      Vue.set(item, 'addTaxes', !taxesIncluded);
+      if(price > 0){
+        Vue.set(item, 'price', price);
+        setItemCount(context, itemId, 1, true);
+      }else{
+        Vue.set(item, 'price', 0);
+        setItemCount(context, itemId, 0, true);
+      }
     },
 
     // POS Values
+    setTips(context, value){
+      context.state.pos.values.tips = value;
+      context.dispatch('updateValues');
+    },
+    setExtraCharge(context, value){
+      context.state.pos.values.extraCharge = value;
+      context.dispatch('updateValues');
+    },
     setDiscount(context, value){
       const values = context.state.pos.values;
       if(value == 'full'){
@@ -76,11 +145,24 @@ export default new Vuex.Store({
     updateValues({state}){
       const {values, items, itemsCount} = state.pos;
       let total = 0;
+      let totalExludingTaxes = 0;
+      let extraGst = 0;
+      let extraQst = 0;
       for(let i = 0; i < items.length; i++){
-        const item = items[i];
+        const item: any = items[i];
         // @ts-ignore
-        total += item.price * itemsCount[item.id];
+        const ltotal = item.price * itemsCount[item.id];
+        if(item.addTaxes){
+          console.log('Adding taxes')
+          extraGst += ltotal * things.taxes.gst;
+          extraQst += ltotal * things.taxes.qst;
+          totalExludingTaxes += ltotal;
+        }else{
+          console.log('Not adding taxes')
+          total += ltotal;
+        }
       }
+      total += values.extraCharge;
       if(values.fullDiscount){
         values.discount = -total;
       }
@@ -89,26 +171,31 @@ export default new Vuex.Store({
 
       const gst = total * things.taxes.gst;
       const qst = total * things.taxes.qst;
-      const subTotal = total - gst - qst;
+      const subTotal = total - gst - qst + totalExludingTaxes;
 
       values.subTotal = subTotal;
-      values.taxGST = gst;
-      values.taxQST = qst;
-      values.total = total;
+      values.taxGST = gst + extraGst;
+      values.taxQST = qst + extraQst;
+      values.total = total + values.tips + extraGst + extraQst + totalExludingTaxes;
       values.changeDue = values.paidCash - values.total;
     }
   },
 });
 
-function setItemCount(context: any, itemId: number, amount: number){
+function setItemCount(context: any, itemId: number, amount: number, forceAmount: boolean){
   const itemsCount = context.state.pos.itemsCount;
   const product = context.state.productsByIds[itemId];
   const items = context.state.pos.items;
   
-  if(itemsCount[itemId]) itemsCount[itemId] += amount;
-  else itemsCount[itemId] = amount;
-  if(itemsCount[itemId] < 0) itemsCount[itemId] = 0;
-  else if(itemsCount[itemId] > 10) itemsCount[itemId] = 10;
+  let count = itemsCount[itemId];
+  if(forceAmount) count = 0;
+
+  if(count) count += amount;
+  else count = amount;
+  if(count < 0) count = 0;
+  else if(count > 10) count = 10;
+
+  Vue.set(itemsCount, itemId, count);
 
   const itemIndex = items.indexOf(product);
 
