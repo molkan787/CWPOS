@@ -39,6 +39,7 @@ export default class BarcodeInput extends Vue{
         MxHelper.addBarcodeHandler((barcode: string) => {
             this.pvalue = barcode;
             this.change();
+            this.$emit('scanned', barcode);
         });
     }
 }

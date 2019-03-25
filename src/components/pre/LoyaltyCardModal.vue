@@ -54,7 +54,6 @@ export default class LoyaltyCardModal extends Vue{
             if(error == 'CARD_EXIST'){
                 this.dialog('This Loyalty Card is already activated, Please use other card.');
             }else{
-                console.log(error);
                 this.dialog('Sorry, We could not complete the current action.');
             }
         });

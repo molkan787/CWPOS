@@ -1,14 +1,16 @@
 <template>
-    <Modal v-model="postingOrder" title="Payment">
+    <Modal v-model="open" :loading="loading" :title="title" :dialog="dialogData">
 
         <template v-slot:default>
-            <CashPayment v-if="pos.pay_method == 'cash'"/>
+            <h2>Total: {{ pos.values.total | price }}</h2>
+            <CashPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'cash'"/>
+            <POLCardPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'prepaid' || pos.pay_method == 'loyalty'"/>
         </template>
 
         <template v-slot:buttons>
             <sui-button v-if="pos.finished" @click="printReceipt" icon="file alternate">Print Receipt</sui-button>
-            <sui-button v-if="pos.finished" @click="cancelOrderPosting(true)">Close</sui-button>
-            <sui-button v-else @click="cancelOrderPosting(false)">Cancel</sui-button>
+            <sui-button v-if="pos.finished" @click="close">Close</sui-button>
+            <sui-button v-else @click="close">Cancel</sui-button>
         </template>
 
     </Modal>
@@ -19,27 +21,106 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Modal from '../../Elts/Modal.vue';
 import Comu from '@/prs/comu';
+import MxHelper from '@/prs/MxHelper';
+import texts from '@/prs/texts';
 import { mapActions, mapState } from 'vuex';
 import { Prop } from 'vue-property-decorator';
 
 import CashPayment from './CashPayment.vue';
+import POLCardPayment from './POLCardPayment.vue';
 
 @Component({
     components: {
         Modal,
-        CashPayment
+        CashPayment,
+        POLCardPayment
     },
-    computed: {
-        ...mapState(['postingOrder', 'pos'])
-    },
-    methods: {
-        ...mapActions(['cancelOrderPosting'])
-    }
+    computed: mapState(['pos']),
+    methods: mapActions(['endOrderPosting'])
 })
 export default class PaymentModal extends Vue{
+
+    private title: string = '';
+
+    private open: boolean = false;
+    private loading: boolean = false;
+    private bus: any = new Vue();
+    private dialogData: any = {};
+
     printReceipt(){
         // @ts-ignore
         Comu.printReceipt();
     }
+
+    close(){
+        this.open = false;
+        // @ts-ignore
+        this.endOrderPosting();
+    }
+
+    handle(payload: any){
+        if(payload){
+            if(payload.state == 'posting'){
+                this.loading = true;
+            }else if(payload.state == 'success'){
+                this.loading = false;
+            }else if(payload.state == 'fail'){
+                if(payload.error == 'BALANCE_TOO_LOW'){
+                    this.dialog(`The balance on this ${this.getCardName()} is insufficient for this order.`);
+                }else if(payload.error == 'CARD_DOES_NOT_EXIST'){
+                    this.dialog(`This ${this.getCardName()} is not activated.`);
+                }else{
+                    this.dialog('An unknow error occured, We could not complete the current action.');
+                }
+            }
+        }else{
+            // @ts-ignore
+            this.title = 'Payment: ' + texts.payments[this.pos.pay_method];
+            this.resetDialog();
+            this.open = true;
+            // @ts-ignore
+            this.bus.$emit('start', this.pos.pay_method);
+        }
+    }
+
+    getCardName(){
+        // @ts-ignore
+        return this.pos.pay_method == 'prepaid' ? 'Prepaid Card' : 'Loyalty Card';
+    }
+
+    childMessage(msg: string){
+        this.dialog(msg);
+    }
+    // =====================================
+
+    dialog(text: string, ref?: string){
+        this.loading = false;
+        this.dialogData.text = text;
+        this.dialogData.ref = ref;
+        this.dialogData.open = true;
+    }
+
+    resetDialog(){
+        this.dialogData = {
+            open: false,
+            text: '',
+            ref: '',
+        };
+    }
+
+    created(){
+        MxHelper.registerFunction('payment', this);
+        this.bus.$on('posting', () => {
+            this.loading = true;
+        });
+    }
 }
 </script>
+
+<style lang="scss" scoped>
+h2{
+    margin-bottom: 0;
+    text-align: center;
+    font-size: 2.3rem;
+}
+</style>

@@ -1,13 +1,11 @@
 import axios from 'axios';
-import consts from './consts';
+import _url from './api';
 import Products from './dcr/products';
 import ProductsFactory from './productsFactory';
 import PredefinedOrder from './predefinedOrder';
-
-const ApiBaseURI = 'http://localhost:8081/';
-function _url(path:string){
-  return ApiBaseURI + path;
-}
+import MxHelper from './MxHelper';
+import consts from './consts';
+import Utils from './utils';
 
 export default class Comu{
 
@@ -27,9 +25,27 @@ export default class Comu{
             const data = {
                 barcode,
                 clientData,
-                balance,
+                balance: Utils.preparePrice(balance),
             };
             axios.post(_url('prepaid/add'), data).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
+    }
+
+    static reloadPrepaidCard(barcode: string, amount: number){
+        return new Promise((resolve, reject) => {
+            const data = {
+                barcode,
+                amount: Utils.preparePrice(amount),
+            };
+            axios.post(_url('prepaid/reload'), data).then(({data}) => {
                 if(data.status == 'OK'){
                     resolve(true);
                 }else{
@@ -75,23 +91,30 @@ export default class Comu{
         this.resetObjects();
     }
 
-    static startSubmission(){
-        this.context.state.postingOrder = true;
+    static canRequestPayment(){
+        return (!this.context.state.pos.paid && !this.context.state.pos.finished && this.context.state.postingOrder);
     }
 
-    static printReceipt(){
-        console.log('Printing receipt');
+    static getOrderTotal(){
+        return Utils.preparePrice(this.context.state.pos.values.total);
+    }
+
+    // ==================================
+
+    static startSubmission(){
+        this.context.state.postingOrder = true;
+        // @ts-ignore
+        MxHelper.payment();
     }
 
     static postOrder(){
         return new Promise((resolve, reject) => {
             const state = this.context.state;
-            const items = state.pos.items;
-            const itemsCount = state.pos.itemsCount;
+            const {items, itemsCount} = state.pos;
             const orderData = {
                 user_id: state.user.id,
                 client_id: state.client.id,
-                total: state.pos.values.total,
+                total: Utils.preparePrice(state.pos.values.total),
                 totals: state.pos.values,
                 items: {
                     products: state.pos.items,
@@ -100,33 +123,48 @@ export default class Comu{
                 pay_method: state.pos.pay_method,
                 receipt: 0
             };
-            const stats = {
-                cw: 0,
-                pp: 0,
-                rpp: 0,
-                dt: 0,
-            };
-            for(let i = 0; i < items.length; i++){
-                const item = items[i];
-                if(item.product_type == 1){
-                    stats.cw += itemsCount[item.id];
-                }
-            }
+            const stats = this.getStats(items, itemsCount);
             const data = {
                 orderData,
                 stats,
             }
-            axios.post(_url('order'), data).then(() => {
-
-                state.stats.cw += stats.cw;
-                state.stats.pp += stats.pp;
-                state.stats.rpp += stats.rpp;
-                state.stats.dt += stats.dt;
-                resolve(true);
+            axios.post(_url('order'), data).then(({data}) => {
+                if(data.status == 'OK'){
+                    state.stats.cw += stats.cw;
+                    state.stats.pp += stats.pp;
+                    state.stats.rpp += stats.rpp;
+                    state.stats.dt += stats.dt;
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
             }).catch(error => {
                 reject(error);
             });
         });
+    }
+
+    static markAsPaid(){
+        this.context.dispatch('markAsPaid');
+        // @ts-ignore
+        MxHelper.payment({state: 'posting'});
+        this.postOrder().then(() => {
+            this.markAsFinished();
+            // @ts-ignore
+            MxHelper.payment({state: 'success'});
+        }).catch(error => {
+            // @ts-ignore
+            MxHelper.payment({state: 'fail', error});
+        });
+    }
+    static markAsFinished(){
+        this.context.dispatch('markAsFinished');
+    }
+
+    // ==================================
+
+    static printReceipt(){
+        console.log('Printing receipt');
     }
 
     static registerToReset(obj: any){
@@ -140,5 +178,30 @@ export default class Comu{
                 obj.reset();
             }
         }
+    }
+
+
+    // ---------------------------------
+
+    private static getStats(items: any[], itemsCount: any){
+        const stats = {
+            cw: 0,
+            pp: 0,
+            rpp: 0,
+            dt: 0,
+        };
+        for(let i = 0; i < items.length; i++){
+            const item = items[i];
+            if(item.id == consts.newPrepaidCardItemId){
+                stats.pp += itemsCount[item.id];
+            }else if(item.id == consts.reloadPrepaidCardItemId){
+                stats.rpp += itemsCount[item.id];
+            }else if(item.category_id == 3){
+                stats.dt += itemsCount[item.id];
+            }else if(item.product_type == 1){
+                stats.cw += itemsCount[item.id];
+            }
+        }
+        return stats;
     }
 }

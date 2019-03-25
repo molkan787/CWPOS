@@ -1,16 +1,15 @@
 <template>
     <div>
-        <h3>
-            <span class="sub-s">Paid Cash: {{ pos.values.paidCash | price }}</span>
-            <span class="second sub-s">
-                Change:
-                <span :class="{
-                    positive: pos.values.changeDue > 0,
-                    negative: pos.values.changeDue < 0
-                }">{{ pos.values.changeDue | price }} </span>
-            </span>
-        </h3>
         <hr>
+        <h2 v-if="pos.pay_method == 'prepaid'">
+            <i class="ticket icon"></i>
+            Prepaid Card
+        </h2>
+        <h2 v-if="pos.pay_method == 'loyalty'">
+            <i class="ticket icon"></i>
+            Loyalty Card
+        </h2>
+        <BarcodeInput @scanned="finish" v-model="barcode" class="barcodeInput" />
         <div>
             <sui-button :icon="pos.finished ? 'circle check' : ''" size="large"
             :class="pos.finished ? 'green' : ''" @click="finish">
@@ -25,19 +24,31 @@
 import Vue from 'vue';
 import { Prop } from 'vue-property-decorator';
 import Component from 'vue-class-component';
+import BarcodeInput from '../../pre/BarcodeInput.vue';
 import { mapState, mapActions } from 'vuex';
 import Payments from '@/prs/payments';
 
 @Component({
+    components: {
+        BarcodeInput,
+    },
     computed: mapState(['pos']),
     methods: mapActions(['markAsPaid']),
 })
-export default class CashPayment extends Vue{
+export default class POLCardPayment extends Vue{
 
     @Prop({default: {}}) bus!: any;
+    private barcode: string = '';
 
     finish(){
-        Payments.requestPayment('cash', null);
+        if(this.barcode.length < 10){
+            this.$emit('message', 'Please scan or type Card Barcode.');
+            return;
+        }
+        // @ts-ignore
+        Payments.requestPayment(this.pos.pay_method, {
+            barcode: this.barcode
+        });
     }
     start(talkingTo: string){
         // if(talkingTo !== 'cash') return;
@@ -52,37 +63,17 @@ export default class CashPayment extends Vue{
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
 
-h3{
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 1.7rem;
-    span.sub-s{
-        text-align: left;
-        display: inline-block;
-        width: 50%;
-        padding-left: 1rem;
-        &.second{
-            text-align: right;
-            padding-right: 2rem;
-        }
-        span{
-            &.positive{
-            color: $green;
-            }
-            &.negative{
-                color: $red;
-            }
-        }
-    }
-}
 hr{
     margin: 2rem 0 1.5rem 0;
 }
 div{
     text-align: center;
     button{
-        width: 60%;
+        width: 24rem;
         padding: 1.2rem !important;
     }
+}
+.barcodeInput{
+    margin-bottom: 1rem;
 }
 </style>

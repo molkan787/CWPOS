@@ -58,13 +58,15 @@ export default new Vuex.Store({
     setup(context){
       Comu.setup(context);
     },
-    cancelOrderPosting(context, reset){
+    endOrderPosting(context){
       context.state.postingOrder = false;
-      if (reset) Comu.reset();
+      if (context.state.pos.finished) Comu.reset();
     },
-    markAsPaid({state}){
-      state.pos.paid = true;
-      state.pos.finished = true;
+    markAsPaid(context){
+      context.state.pos.paid = true;
+    },
+    markAsFinished(context){
+      context.state.pos.finished = true;
     },
     resetPOS(context){
       const pos = context.state.pos;
@@ -96,7 +98,7 @@ export default new Vuex.Store({
         }
       }
 
-      Vue.set(context.state, 'client', null);
+      Vue.set(context.state, 'client', {id: 0});
     },
 
     setItemCountOne(context, itemId){

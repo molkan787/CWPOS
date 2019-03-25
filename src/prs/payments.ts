@@ -1,44 +1,111 @@
+import axios from 'axios';
+import comu from './comu';
+import _url from './api';
+import MxHelper from './MxHelper';
+import Utils from './utils';
+
 export default class{
     
-    static requestPayment(method: string, amount: number){
+    static requestPayment(method: string, payload: any){
+        if(!comu.canRequestPayment()) return;
+
+        if(method == 'prepaid' || method == 'prepaid'){
+            // @ts-ignore
+            MxHelper.payment({state: 'posting'});
+        }
+        if(typeof payload == 'object'){
+            payload.amount = comu.getOrderTotal();
+        }
+        let paymentHandler;
         switch (method) {
             case 'cash':
-                return this._Cash(amount);
+                paymentHandler = this._Cash(payload);
+                break;
             case 'card':
-                return this._DebitCard(amount);
+                paymentHandler = this._DebitCard(payload);
+                break;
             case 'prepaid':
-                return this._PrepaidCard(amount);
+                paymentHandler = this._PrepaidCard(payload);
+                break;
             case 'loyalty':
-                return this._LoyaltyCard(amount);
+                paymentHandler = this._LoyaltyCard(payload);
+                break;
             case 'invoice_ari':
-                return this._Invoice(amount);
+                paymentHandler = this._Invoice(payload);
+                break;
             default:
-                return this._Other(amount);
+                paymentHandler = this._Other(payload);
+                break;
         }
+        paymentHandler.then(() => {
+            comu.markAsPaid();
+        }).catch(error => {
+            // @ts-ignore
+            MxHelper.payment({state: 'fail', error});
+        });
     }
 
-    private static _Cash(amount: number){
-        // Open cash drawer...
+    private static _Cash(payload: any){
+        return new Promise((resolve, reject) => {
+            // Open cash drawer...
+            resolve(true);
+        });
     }
 
-    private static _DebitCard(amount: number){
-        // Send amount to Credit/Debit Card Machine
+    private static _DebitCard(payload: any){
+        return new Promise((resolve, reject) => {
+            // Send amount to Credit/Debit Card Machine
+            // And wait for success reponse then resolve(true);
+            setTimeout(() => {
+                resolve(true);
+            }, 1000);
+        });
     }
 
-    private static _PrepaidCard(amount: number){
-        // Send request to server
+    private static _PrepaidCard(payload: any){
+        return new Promise((resolve, reject) => {
+            // Send request to server
+            axios.post(_url('capture/prepaid'), payload).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 
-    private static _LoyaltyCard(amount: number){
-        // Send request to server
+    private static _LoyaltyCard(payload: any){
+        return new Promise((resolve, reject) => {
+            // Send request to server
+            axios.post(_url('capture/loyalty'), payload).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 
-    private static _Invoice(amount: number){
-        // idk what to do
+    private static _Invoice(payload: any){
+        return new Promise((resolve, reject) => {
+            // Add amount to invoicing system for specific company/client
+            setTimeout(() => {
+                resolve(true);
+            }, 1000);
+        });
     }
 
-    private static _Other(amount: number){
-        // Imidiatly approve the payment 
+    private static _Other(payload: any){
+        return new Promise((resolve, reject) => {
+            // Imidiatly approve the payment
+            resolve(true);
+        });
     }
 
 }

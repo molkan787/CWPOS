@@ -1,15 +1,18 @@
 <template>
-    <Modal v-model="open" :title="title" :dialog="dialogData" :loading="loading">
+    <Modal v-model="open" :title="title" :dialog="dialogData" :loading="loading" @dialogAnswer="dialogAnswer">
 
-        <h2>Client information</h2>
-        <ClientInfoForm :data="clientData" />
-        <hr>
+        <h2 v-if="!isReload">Client information</h2>
+        <ClientInfoForm v-if="!isReload" :data="clientData" />
+        <hr v-if="!isReload">
         <BarcodeInput v-model="barcode" />
         <hr>
         <AmountPriceForm :value="amounts" />
         <template v-slot:buttons>
             <sui-button @click="open = false">Cancel</sui-button>
-            <sui-button @click="addClick" color="green">ADD</sui-button>
+            <sui-button @click="addClick" color="green">
+                <span v-if="isReload">Reload</span>
+                <span v-else>Activate</span>
+            </sui-button>
         </template>
 
     </Modal>
@@ -24,6 +27,7 @@ import Modal from '../Elts/Modal.vue';
 import BarcodeInput from './BarcodeInput.vue';
 import ClientInfoForm from './ClientInfoForm.vue';
 import AmountPriceForm from './AmountPriceForm.vue';
+import Comu from '@/prs/comu';
 
 @Component({
     components: {
@@ -48,13 +52,45 @@ export default class PrepaidCardModal extends Vue{
 
     addClick(){
         if(this.validateForm()){
-            this.add();
-            this.open = false;
+            this.loading = true;
+            this.activate();
         }
     }
 
     add(){
         ProductsFactory.addPrepaidItem(this.barcode, this.clientData, this.amounts, this.isReload);
+    }
+
+    activate(){
+        if(this.isReload){
+            Comu.reloadPrepaidCard(this.barcode, this.amounts.amount).then(response => {
+                this.add();
+                this.dialog('Prepaid Card was successfully reloaded!', 'success');
+            }).catch(error => {
+                if(error == 'CARD_DOES_NOT_EXIST'){
+                    this.dialog('This Prepaid Card are not activated yet.');
+                }else{
+                    this.dialog('Sorry, We could not complete the current action.');
+                }
+            });
+        }else{
+            Comu.activatePrepaidCard(this.barcode, this.clientData, this.amounts.amount).then(response => {
+                this.add();
+                this.dialog('Prepaid Card was successfully activated!', 'success');
+            }).catch(error => {
+                if(error == 'CARD_EXIST'){
+                    this.dialog('This Prepaid Card is already activated, Please use other card.');
+                }else{
+                    this.dialog('Sorry, We could not complete the current action.');
+                }
+            });
+        }
+    }
+
+    dialogAnswer(answer: string){
+        if(answer == 'OK' && this.dialogData.ref == 'success'){
+            this.open = false;
+        }
     }
 
     handle(isReload: boolean = false){
@@ -68,15 +104,12 @@ export default class PrepaidCardModal extends Vue{
         this.amounts.price = this.amounts.price.replace(' ', '');
         this.amounts.amount = this.amounts.amount.replace(' ', '');
         const {price, amount} = this.amounts;
-        if(this.clientData.phone.length < 8 || this.clientData.first_name.length < 2){
-            this.dialogData.text = 'Please enter valid Phone Number and First Name';
-            this.dialogData.open = true;
+        if(!this.isReload && (this.clientData.phone.length < 8 || this.clientData.first_name.length < 2)){
+            this.dialog('Please enter valid Phone Number and First Name');
         }else if(this.barcode.length < 6){
-            this.dialogData.text = 'Please enter a valid Barcode.';
-            this.dialogData.open = true;
+            this.dialog('Please enter a valid Barcode.');
         }else if(!price || !amount || isNaN(price) || isNaN(amount)){
-            this.dialogData.text = 'Please enter a valid Price and Amount to load.';
-            this.dialogData.open = true;
+            this.dialog('Please enter a valid Price and Amount to load.');
         }else{
             return true;
         }
@@ -84,6 +117,7 @@ export default class PrepaidCardModal extends Vue{
     }
 
     resetForm(){
+        this.dialogData.open = false;
         this.loading = false;
         this.barcode = '';
         this.clientData = {
@@ -101,6 +135,13 @@ export default class PrepaidCardModal extends Vue{
             type: 1,
             text: ''
         };
+    }
+
+    dialog(text: string, ref?: string){
+        this.loading = false;
+        this.dialogData.text = text;
+        this.dialogData.ref = ref;
+        this.dialogData.open = true;
     }
 
     created(){
