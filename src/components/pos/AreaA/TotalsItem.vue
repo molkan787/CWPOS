@@ -61,8 +61,5 @@ div.item{
     &:nth-child(6), &:nth-child(7){
         border-bottom: none;
     }
-    &:nth-child(6){
-        border-right: 1px solid #bbb;
-    }
 }
 </style>

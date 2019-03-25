@@ -30,7 +30,7 @@ export default class Categories extends Vue{
 .item{
     width: 100%;
     margin-bottom: 0.3rem;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 </style>
 

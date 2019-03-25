@@ -28,6 +28,7 @@ import KeyPad from '../../Elts/KeyPad.vue';
 import ButtonsGrid from '../../Elts/ButtonsGrid.vue';
 import Comu from '@/prs/comu';
 import PrsUtils from '@/prs/utils';
+import MxHelper from '@/prs/MxHelper';
 
 @Component({
     components: {
@@ -90,6 +91,9 @@ export default class Payments extends Vue{
 
     created(){
         Comu.registerToReset(this);
+        MxHelper.registerFunction('setPaidAmount', (amount: string) => {
+            this.buttonClicked(amount);
+        });
     }
 }
 </script>

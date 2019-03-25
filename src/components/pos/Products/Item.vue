@@ -12,7 +12,10 @@
                 </button>
             </template>
             <template v-else-if="item.product_type == 2">
-                <button class="ctrl price" disabled>{{ item.price | price }}</button>
+                <button class="ctrl price" disabled>
+                    <i v-if="item.addTaxes" class="balance scale icon"></i>
+                    {{ item.price | price }}
+                </button>
                 <button @click="getPrice" class="ctrl edit">
                     <i class="edit icon"></i>
                 </button>
@@ -66,7 +69,6 @@ export default class Item extends Vue{
                 itemId: this.item.id,
                 price: value,
             });
-            console.log(response.taxesIncluded)
             this.updateCount();
         }).catch(() => {});
     }

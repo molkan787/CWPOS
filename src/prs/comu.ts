@@ -1,5 +1,8 @@
 import axios from 'axios';
+import consts from './consts';
 import Products from './dcr/products';
+import ProductsFactory from './productsFactory';
+import PredefinedOrder from './predefinedOrder';
 
 const ApiBaseURI = 'http://localhost:8081/';
 function _url(path:string){
@@ -14,7 +17,46 @@ export default class Comu{
     static setup(context: any){
         this.context = context;
         this.objectsToReset = [];
+        ProductsFactory.setup(context);
+        PredefinedOrder.setup(context);
         this.loadData();
+    }
+
+    static activatePrepaidCard(barcode: string, clientData: any, balance: number){
+        return new Promise((resolve, reject) => {
+            const data = {
+                barcode,
+                clientData,
+                balance,
+            };
+            axios.post(_url('prepaid/add'), data).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
+    }
+
+    static activateLoyaltyCard(barcode: string, clientData: any){
+        return new Promise((resolve, reject) => {
+            const data = {
+                barcode,
+                clientData,
+            };
+            axios.post(_url('loyalty/add'), data).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 
     static loadData(){

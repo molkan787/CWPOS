@@ -30,4 +30,20 @@ export default class Utils{
         return value * (1 + taxes);
     }
 
+    static preparePrice(value: any){
+        return Math.round(parseFloat(value) * 100);
+    }
+
+    static roundPrice(value: any){
+        return Math.round(parseFloat(value) * 100) / 100;
+    }
+
+    static price(value: any){
+        let val = parseFloat(value);
+        if(val < 0)
+            return '- $' + (-val).toFixed(2);
+        else
+            return '$' + val.toFixed(2);
+    }
+
 }

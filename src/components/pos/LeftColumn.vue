@@ -2,7 +2,7 @@
     <div class="ui attached vertical segment no-padding">
 
         <sui-segment attached class="padding-2">
-            <TripleButton :texts="['REGULAR WASH','PREPAID WASH','DETAILING']"
+            <TripleButton :texts="['REGULAR WASH','PREPAID WASH','NEW LOYALTY CARD']"
                 :colors="['blue', 'red', 'green']" @click="buttonClicked" />
         </sui-segment>
 
@@ -19,6 +19,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import PredefinedOrder from '@/prs/predefinedOrder';
+import MxHelper from '@/prs/MxHelper';
 import TripleButton from '../Elts/TripleButton.vue';
 import AreaA from './AreaA/AreaA.vue';
 import Stats from './Stats/Stats.vue';
@@ -32,7 +34,14 @@ import Stats from './Stats/Stats.vue';
 })
 export default class LeftColumn extends Vue{
     buttonClicked(comp: any, btnIdx: number){
-        console.log('Clicked: ' + btnIdx)
+        if(btnIdx == 0){
+            PredefinedOrder.regularWash();
+        }else if(btnIdx == 1){
+            PredefinedOrder.prepaidWash();
+        }else if(btnIdx == 2){
+            // @ts-ignore
+            MxHelper.openLoyaltyCardModal();
+        }
     }
 }
 </script>

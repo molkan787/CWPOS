@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Comu from './prs/comu';
 import things from './prs/things';
+import Utils from './utils';
+import consts from './prs/consts';
 
 Vue.use(Vuex);
 
@@ -29,7 +31,7 @@ export default new Vuex.Store({
       },
       items: [],
       itemsCount: {},
-      pay_method: '',
+      pay_method: 'cash',
       paid: false,
       finished: false,
     },
@@ -69,7 +71,7 @@ export default new Vuex.Store({
       const values = pos.values;
       pos.items = [];
       pos.itemsCount = {};
-      pos.pay_method = '';
+      pos.pay_method = 'cash';
       pos.paid = false;
       pos.finished = false;
       values.fullDiscount = false;
@@ -93,8 +95,13 @@ export default new Vuex.Store({
           item.addTaxes = false;
         }
       }
+
+      Vue.set(context.state, 'client', null);
     },
 
+    setItemCountOne(context, itemId){
+      setItemCount(context, itemId, 1, true);
+    },
     incItemCount(context, itemId){
       setItemCount(context, itemId, 1, false);
     },
@@ -113,6 +120,11 @@ export default new Vuex.Store({
         setItemCount(context, itemId, 0, true);
       }
     },
+    addCustomItem(context, itemData){
+      // @ts-ignore
+      context.state.productsByIds[itemData.id] = itemData;
+      setItemCount(context, itemData.id, 1, true);
+    },
 
     // POS Values
     setTips(context, value){
@@ -129,13 +141,9 @@ export default new Vuex.Store({
         values.discount = -values.itemsTotal;
         values.fullDiscount = true;
       }else{
-        values.discount = -value;
+        values.discount = parseFloat(value) * -1;
         values.fullDiscount = false;
       }
-      context.dispatch('updateValues');
-    },
-    setTotal(context, value){
-      context.state.pos.values.total = value;
       context.dispatch('updateValues');
     },
     setPaidCash(context, value){
@@ -152,21 +160,23 @@ export default new Vuex.Store({
         const item: any = items[i];
         // @ts-ignore
         const ltotal = item.price * itemsCount[item.id];
-        if(item.addTaxes){
-          console.log('Adding taxes')
+        if(item.product_type == consts.productWithoutTaxesType){
+          totalExludingTaxes += ltotal;
+        }else if(item.addTaxes){
           extraGst += ltotal * things.taxes.gst;
           extraQst += ltotal * things.taxes.qst;
           totalExludingTaxes += ltotal;
         }else{
-          console.log('Not adding taxes')
           total += ltotal;
         }
       }
       total += values.extraCharge;
+
+      values.itemsTotal = total + values.tips + extraGst + extraQst + totalExludingTaxes;
       if(values.fullDiscount){
-        values.discount = -total;
+        values.discount = -values.itemsTotal;
       }
-      values.itemsTotal = total;
+
       total += values.discount;
 
       const gst = total * things.taxes.gst;
@@ -177,7 +187,7 @@ export default new Vuex.Store({
       values.taxGST = gst + extraGst;
       values.taxQST = qst + extraQst;
       values.total = total + values.tips + extraGst + extraQst + totalExludingTaxes;
-      values.changeDue = values.paidCash - values.total;
+      values.changeDue = Utils.round(values.paidCash - values.total);
     }
   },
 });
@@ -205,6 +215,5 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
     items.splice(itemIndex, 1);
   }
 
-  // context.commit('POS_ADD_ITEM', product);
-  context.dispatch('setTotal', product.price);
+  context.dispatch('updateValues');
 }

@@ -15,6 +15,23 @@
       <sui-dimmer :active="loading" inverted>
         <div class="ui loader"></div>
       </sui-dimmer>
+
+      <sui-dimmer class="dialogBoxCon" :active="dialog.open" inverted>
+        <sui-segment class="dialogBox">
+          <div class="text">
+            {{ dialog.text }}
+          </div>
+          <sui-button @click="buttonClick('OK')">
+            <span v-if="dialog.type == 3">YES</span>
+            <span v-else>OK</span>
+          </sui-button>
+          <sui-button @click="buttonClick('CANCEL')" v-if="dialog.type > 1">
+            <span v-if="dialog.type == 3">NO</span>
+            <span v-else>CANCEL</span>
+          </sui-button>
+        </sui-segment>
+      </sui-dimmer>
+
     </sui-modal>
 </template>
 
@@ -30,6 +47,16 @@ export default class Modal extends Vue{
     @Prop({default: false}) defaultButton!: boolean;
     @Prop({default: false}) hideActions!: boolean;
     @Prop({default: false}) loading!: boolean;
+    @Prop({default: () => ({
+      open: false,
+      type: 1,
+      text: '',
+    })}) dialog!: any;
+
+    buttonClick(answer: string){
+      this.dialog.open = false;
+      this.$emit('dialogAnswer', answer);
+    }
 
     hide() {
       this.$emit('input', false);
@@ -37,8 +64,32 @@ export default class Modal extends Vue{
 }
 </script>
 
-<style>
+<style lang="scss">
 .modal-buttons > button{
   font-size: 1.2rem !important;
+}
+.dialogBoxCon > div.content{
+  width: 80%;
+  height: 160px;
+  div.center{
+    height: 100%;
+  }
+}
+div.dialogBox{
+  width: 100%;
+  height: 100%;
+  box-shadow: 1px 1px 50px #ccc !important;
+  color: #222;
+  line-height: 1.4;
+  div.text{
+    height: 94px;
+    box-sizing: border-box;
+    padding-top: 4px;
+    text-align: left;
+    font-size: 1.2rem;
+  }
+  button {
+    float: right;
+  }
 }
 </style>

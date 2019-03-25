@@ -9,6 +9,8 @@
       <router-view/>
     </keep-alive>
     <CustomValueModal />
+    <PrepaidCardModal />
+    <LoyaltyCardModal />
   </div>
 </template>
 
@@ -16,10 +18,14 @@
 import Vue from 'vue';
 import {mapActions} from 'vuex';
 import CustomValueModal from './components/Helpers/CustomValueModal.vue';
+import PrepaidCardModal from './components/pre/PrepaidCardModal.vue';
+import LoyaltyCardModal from './components/pre/LoyaltyCardModal.vue';
 
 export default Vue.extend({
   components: {
-    CustomValueModal
+    CustomValueModal,
+    PrepaidCardModal,
+    LoyaltyCardModal
   },
   methods: {
     ...mapActions(['setup'])

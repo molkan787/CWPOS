@@ -2,7 +2,7 @@
     <div class="m-el">
         <sui-segment attached class="items">
             <OrderItem v-for="(item, index) in pos.items" :key="index" :text="item.name"
-             :label="prefix[item.category_id]" :amount="item.price"
+             :label="prefix[item.category_id] || item.label" :amount="item.price"
              :count="pos.itemsCount[item.id]"/>
             <div v-if="pos.items.length == 0" class="empty-text">No items added</div>
         </sui-segment>

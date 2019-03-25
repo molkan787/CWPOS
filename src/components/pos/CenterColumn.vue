@@ -22,6 +22,7 @@ import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
 import Products from './Products/Products.vue';
 import Adjustment from './Adjustment/Adjustment.vue';
+import MxHelper from '@/prs/MxHelper';
 
 @Component({
     components: {
@@ -32,7 +33,13 @@ import Adjustment from './Adjustment/Adjustment.vue';
 })
 export default class CenterColumn extends Vue{
     buttonClicked(comp: any, btnIdx: number){
-        console.log('Clicked: ' + btnIdx)
+        if(btnIdx == 0){
+            // @ts-ignore
+            MxHelper.openPrepaidCardModal(false);
+        }else if(btnIdx == 1){
+            // @ts-ignore
+            MxHelper.openPrepaidCardModal(true);
+        }
     }
 }
 </script>
