@@ -37,7 +37,7 @@ export default class CashPayment extends Vue{
     @Prop({default: {}}) bus!: any;
 
     finish(){
-        Payments.requestPayment('cash', null);
+        Payments.requestPayment('cash', {});
     }
     start(talkingTo: string){
         // if(talkingTo !== 'cash') return;

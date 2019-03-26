@@ -5,6 +5,9 @@
             <h2>Total: {{ pos.values.total | price }}</h2>
             <CashPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'cash'"/>
             <POLCardPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'prepaid' || pos.pay_method == 'loyalty'"/>
+            <CardPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'card'"/>
+            <OtherPayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'other'"/>
+            <InvoicePayment @message="childMessage" :bus="bus" v-if="pos.pay_method == 'invoice_ari'"/>
         </template>
 
         <template v-slot:buttons>
@@ -28,12 +31,18 @@ import { Prop } from 'vue-property-decorator';
 
 import CashPayment from './CashPayment.vue';
 import POLCardPayment from './POLCardPayment.vue';
+import CardPayment from './CardPayment.vue';
+import OtherPayment from './OtherPayment.vue';
+import InvoicePayment from './InvoicePayment.vue';
 
 @Component({
     components: {
         Modal,
         CashPayment,
-        POLCardPayment
+        POLCardPayment,
+        CardPayment,
+        OtherPayment,
+        InvoicePayment,
     },
     computed: mapState(['pos']),
     methods: mapActions(['endOrderPosting'])

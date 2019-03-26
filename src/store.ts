@@ -39,12 +39,19 @@ export default new Vuex.Store({
     postingOrder: false,
     //=======================
     client: {
-      id: 42
+      id: 0,
+      first_name: '',
+      last_name: '',
+      phone: '',
+      email: '',
     },
 
     user: {
-      id: 3
+      id: 3,
+      username: 'FooBar787',
     },
+
+    companies: [],
 
     stats: {cw: 0, pp: 0,  rpp: 0, dt: 0}
   },
@@ -52,12 +59,30 @@ export default new Vuex.Store({
     getCategory(state){
       // @ts-ignore
       return (catID: string) => state.categories.filter(category => category.id == catID)[0];
-    }
+    },
+    pos: state => state.pos,
   },
   actions: {
     setup(context){
       Comu.setup(context);
     },
+
+    setClientId(context, clientId){
+      // @ts-ignore
+      let clientData: any = context.state.companies.filter(item => item.id == clientId);
+      if(clientData.length) clientData = clientData[0];
+      else clientData = null;
+
+      const client = context.state.client;
+      client.id = clientId;
+      if(clientData){
+        client.first_name = clientData.first_name;
+        client.last_name = clientData.last_name;
+        client.phone = clientData.phone;
+        client.email = clientData.email;
+      }
+    },
+
     endOrderPosting(context){
       context.state.postingOrder = false;
       if (context.state.pos.finished) Comu.reset();
@@ -98,7 +123,12 @@ export default new Vuex.Store({
         }
       }
 
-      Vue.set(context.state, 'client', {id: 0});
+      const client = context.state.client;
+      client.id = 0;
+      client.first_name = '';
+      client.last_name = '';
+      client.phone = '';
+      client.email = '';
     },
 
     setItemCountOne(context, itemId){

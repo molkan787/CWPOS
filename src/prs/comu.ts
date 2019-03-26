@@ -1,6 +1,7 @@
 import axios from 'axios';
 import _url from './api';
 import Products from './dcr/products';
+import Clients from './dcr/clients';
 import ProductsFactory from './productsFactory';
 import PredefinedOrder from './predefinedOrder';
 import MxHelper from './MxHelper';
@@ -82,7 +83,7 @@ export default class Comu{
             this.context.state.productsByIds = Products.mapById(response.data.products, false);
             this.context.state.productsArray = response.data.products;
             this.context.state.stats = response.data.stats;
-  
+            this.context.state.companies = Clients.prepareData(response.data.companies);
         });
     }
 
@@ -119,6 +120,9 @@ export default class Comu{
                 items: {
                     products: state.pos.items,
                     counts: state.pos.itemsCount
+                },
+                other_data: {
+                    ticket: '',
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0

@@ -2,7 +2,7 @@ import axios from 'axios';
 import comu from './comu';
 import _url from './api';
 import MxHelper from './MxHelper';
-import Utils from './utils';
+import CardMachine from '@/drivers/cardMachine';
 
 export default class{
     
@@ -37,8 +37,17 @@ export default class{
                 paymentHandler = this._Other(payload);
                 break;
         }
-        paymentHandler.then(() => {
-            comu.markAsPaid();
+        paymentHandler.then(status => {
+            if(status){
+                comu.markAsPaid();
+                if(payload && payload.callback){
+                    payload.callback('PAID');
+                }
+            }else{
+                if(payload && payload.callback){
+                    payload.callback('DECLINED');
+                }
+            }
         }).catch(error => {
             // @ts-ignore
             MxHelper.payment({state: 'fail', error});
@@ -53,13 +62,9 @@ export default class{
     }
 
     private static _DebitCard(payload: any){
-        return new Promise((resolve, reject) => {
-            // Send amount to Credit/Debit Card Machine
-            // And wait for success reponse then resolve(true);
-            setTimeout(() => {
-                resolve(true);
-            }, 1000);
-        });
+        // Amount is Int format - need to divide by 100
+        // payload.amount = payload.amount / 100;
+        return CardMachine.request(payload);
     }
 
     private static _PrepaidCard(payload: any){

@@ -4,10 +4,10 @@
             <sui-icon name="book" />
             Order #: {{ orderId }}
         </h3>
-            <sui-label color="blue" icon="info circle" v-if="customer.receipt" class="lbl">Preffer receipt</sui-label>
+            <sui-label color="blue" icon="info circle" v-if="true" class="lbl">Preffer receipt</sui-label>
         <h3 class="vm-normal">
             <sui-icon name="user" />
-            Customer: {{ customer.name }}
+            Customer: {{ clientName }}
         </h3>
         <hr>
         <OrderSummary v-if="view == 'order'" />
@@ -20,21 +20,32 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import OrderSummary from './OrderSummary.vue';
 import ClientHistory from './ClientHistory.vue';
+import { mapState } from 'vuex';
 
 @Component({
     components: {
         OrderSummary,
         ClientHistory,
-    }
+    },
+    computed: {
+        ...mapState(['client']),
+        clientName: function () {
+            // @ts-ignore
+            if(this.client.id == 0){
+                return 'WALK IN';
+            }else{
+                // @ts-ignore
+                return this.client.first_name + ' ' + this.client.last_name;
+            }
+        }
+    },
 })
 export default class AreaA extends Vue{
-    orderId: number = 179;
-    customer = {
-        name: 'WALK IN',
-        receipt: true
-    };
 
-    view: string = "order";
+    private view: string = "order";
+
+    private orderId: number = 179;
+
 }
 </script>
 
