@@ -56,7 +56,7 @@ export default class CardPayment extends Vue{
             this.icon = 'ban icon';
             this.colorClass = 'warning';
         }else if(status == 'FINISHED'){
-            this.title = 'Transaction was approved and the order is finished!';
+            this.title = 'Transaction was approved and the order submitted!';
             this.message = 'The order was successfully submitted.';
             this.icon = 'circle check icon';
             this.colorClass = 'success';

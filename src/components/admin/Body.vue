@@ -1,0 +1,83 @@
+<template>
+    <sui-tab class="root">
+        <sui-tab-pane title="Reports" icon="chart bar">
+            <ReportsTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Orders" icon="boxes">
+            <OrdersTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Prepaid Cards" icon="ticket">
+            <PrepaidCardTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Loyalty Cards" icon="ticket">
+            <LoyaltyCardTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Clients" icon="users">
+            <ClientsTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Products/Services" icon="box">
+            <ProductsTab />
+        </sui-tab-pane>
+
+        <sui-tab-pane title="Users" icon="user circle">
+            <UsersTab />
+        </sui-tab-pane>
+    </sui-tab>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import OrdersTab from './OrdersTab.vue';
+import PrepaidCardTab from './PrepaidCardTab.vue';
+import LoyaltyCardTab from './LoyaltyCardTab.vue';
+import ClientsTab from './ClientsTab.vue';
+import ReportsTab from './ReportsTab.vue';
+import ProductsTab from './ProductsTab.vue';
+import UsersTab from './UsersTab.vue';
+
+@Component({
+    components: {
+        OrdersTab,
+        PrepaidCardTab,
+        LoyaltyCardTab,
+        ClientsTab,
+        ReportsTab,
+        ProductsTab,
+        UsersTab,
+    }
+})
+export default class Body extends Vue{}
+</script>
+
+<style lang="scss" scoped>
+div.root{
+    height: calc(100vh - 6rem);
+    div.tab{
+        border-bottom: none;
+    }
+}
+</style>
+
+<style lang="scss">
+div.root > div.menu{
+    font-size: 1.3rem;
+    height: 3.5rem;
+    min-height: 0 !important;
+    padding-left: 0.5rem;
+    padding-top: 2px;
+    background-color: #f9f9f9 !important;
+    a.item{
+        padding: 0 2rem 0.3rem 2rem !important;
+        background-color: #f9f9f9 !important;
+        &.active{
+            background-color: white !important;
+        }
+    }
+}
+</style>

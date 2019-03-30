@@ -6,10 +6,9 @@
             <sui-icon name="user circle"/> <strong class="">{{user.username}}</strong>
             <sui-label class="logout-btn" icon="power off">Logout</sui-label>
         </span>
+        <h1>Admin Panel</h1>
         <div class="right-side">
-            <sui-button compact icon="search" @click="searchClient" />
-            <sui-input v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
-            <sui-input placeholder="Ticket #" icon="ticket" iconPosition="left" />
+            <sui-button icon="reply" @click="goToPOS">Go back to POS</sui-button>
         </div>
         <div v-if="message.visible" class="ui icon message">
             <i :class="message.icon"></i>
@@ -39,20 +38,6 @@ export default class Header extends Vue {
         timeout: 0,
     };
 
-
-    private phone: string = '';
-
-    searchClient(){
-        if(this.phone.length < 8) return;
-        this.setMessageContent('fetching');
-        ClientLoader.loadClient(this.phone).then(() => {
-            this.setMessageContent('found', true);
-            this.phone = '';
-        }).catch(error => {
-            this.setMessageContent(error, true);
-        });
-    }
-
     setMessageContent(status: string, autoHide?: boolean){
         const msg = this.message;
         if(status == 'fetching'){
@@ -79,13 +64,21 @@ export default class Header extends Vue {
         }, 4000);
     }
 
+    goToPOS(){
+        this.$router.push('pos');
+    }
+
     // ========================================
+
+    mounted(){
+        // this.setMessageContent('fetching');
+    }
 
 }
 </script>
 
 <style lang="scss" scoped>
-$root-h: 8rem;
+$root-h: 6rem;
 
 div.m-el{
     height: $root-h;
@@ -95,26 +88,27 @@ div.m-el{
         float: left;
     }
 }
+h1{
+    display: inline-block;
+    float: left;
+    margin-left: 19%;
+}
 .bis{
     float: left;
-    line-height: 1.5;
+    line-height: 1.2;
     text-align: left;
     font-size: 1.3rem;
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 20.5rem;
+    width: 15rem;
+    height: 100%;
     float: right;
     padding: 1rem;
-    margin-right: 1rem;
+    margin-right: 0rem;
+    text-align: right;
     button{
-        float: right;
-        width: 2.7rem;
-        height: 2.7rem;
-    }
-    div{
-        float: left;
-        margin-bottom: 6px;
+        height: 100%;
     }
 }
 .logout-btn{
@@ -123,16 +117,16 @@ div.m-el{
 div.message{
     display: inline-block !important;
     width: 250px !important;
-    height: 3rem !important;
+    height: 3.9rem !important;
     float: right !important;
     padding: 0.8rem !important;
     text-align: left;
     i{
         float: left;
-        zoom: 0.5;
+        zoom: 0.82;
     }
     div.header{
-        line-height: 1.5;
+        line-height: 2.3;
     }
 }
 </style>

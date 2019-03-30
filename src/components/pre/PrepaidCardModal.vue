@@ -21,6 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { mapState } from 'vuex';
 import ProductsFactory from '@/prs/productsFactory';
 import MxHelper from '@/prs/MxHelper';
 import Modal from '../Elts/Modal.vue';
@@ -35,7 +36,8 @@ import Comu from '@/prs/comu';
         BarcodeInput,
         ClientInfoForm,
         AmountPriceForm
-    }
+    },
+    computed: mapState(['client']),
 })
 export default class PrepaidCardModal extends Vue{
 
@@ -121,10 +123,8 @@ export default class PrepaidCardModal extends Vue{
         this.loading = false;
         this.barcode = '';
         this.clientData = {
-            phone: '',
-            email: '',
-            first_name: '',
-            last_name: ''
+            // @ts-ignore
+            ...this.client
         };
         this.amounts = {
             amount: '',

@@ -56,6 +56,9 @@ export default class Modal extends Vue{
     buttonClick(answer: string){
       this.dialog.open = false;
       this.$emit('dialogAnswer', answer);
+      if(this.dialog.answer){
+        this.dialog.answer(answer);
+      }
     }
 
     hide() {

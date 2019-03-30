@@ -16,6 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { mapState } from 'vuex';
 import MxHelper from '@/prs/MxHelper';
 import comu from '@/prs/comu';
 import Modal from '../Elts/Modal.vue';
@@ -27,7 +28,8 @@ import ClientInfoForm from './ClientInfoForm.vue';
         Modal,
         BarcodeInput,
         ClientInfoForm
-    }
+    },
+    computed: mapState(['client']),
 })
 export default class LoyaltyCardModal extends Vue{
 
@@ -48,6 +50,7 @@ export default class LoyaltyCardModal extends Vue{
     }
 
     activate(){
+        // @ts-ignore
         comu.activateLoyaltyCard(this.barcode, this.clientData).then(response => {
             this.dialog('Loyalty Card was successfully activated!', 'success');
         }).catch(error => {
@@ -71,6 +74,7 @@ export default class LoyaltyCardModal extends Vue{
     }
 
     validateForm(){
+        // @ts-ignore
         if(this.clientData.phone.length < 8 || this.clientData.first_name.length < 2){
             this.dialog('Please enter valid Phone Number and First Name');
         }else if(this.barcode.length < 6){
@@ -85,11 +89,9 @@ export default class LoyaltyCardModal extends Vue{
         this.loading = false;
         this.barcode = '';
         this.clientData = {
-            phone: '',
-            email: '',
-            first_name: '',
-            last_name: ''
-        };
+            // @ts-ignore
+            ...this.client
+        }
         this.dialogData = {
             open: false,
             type: 1,

@@ -21,7 +21,7 @@
 
         <br>
         
-        <sui-button icon="setting">Admin Panel</sui-button>
+        <sui-button icon="setting" @click="goToAdmin">Admin Panel</sui-button>
         <sui-button icon="chart bar">Daily Reports</sui-button>
     </div>
 </template>
@@ -37,7 +37,9 @@ import {mapState} from 'vuex';
     }
 })
 export default class Stats extends Vue{
-
+    goToAdmin(){
+        this.$router.push('admin');
+    }
 }
 </script>
 

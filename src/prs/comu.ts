@@ -5,20 +5,33 @@ import Clients from './dcr/clients';
 import ProductsFactory from './productsFactory';
 import PredefinedOrder from './predefinedOrder';
 import MxHelper from './MxHelper';
+import Dl from './dl';
+import Ds from './ds';
+import ClientLoader from './clientLoader';
 import consts from './consts';
 import Utils from './utils';
+import extUtils from '@/utils';
 
 export default class Comu{
 
     private static context: any;
     private static objectsToReset: any[];
+    private static interval: Number;
 
     static setup(context: any){
         this.context = context;
         this.objectsToReset = [];
         ProductsFactory.setup(context);
         PredefinedOrder.setup(context);
+        ClientLoader.setup(context);
+        Dl.setup(context);
+        Ds.setup(context);
         this.loadData();
+
+        this.updateTime();
+        this.interval = setInterval(() => {
+            this.updateTime();
+        }, 15000);
     }
 
     static activatePrepaidCard(barcode: string, clientData: any, balance: number){
@@ -184,6 +197,12 @@ export default class Comu{
         }
     }
 
+
+    // ---------------------------------
+
+    static updateTime(){
+        this.context.state.currentTime = extUtils.getCurrentTime();
+    }
 
     // ---------------------------------
 

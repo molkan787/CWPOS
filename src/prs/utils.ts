@@ -1,4 +1,6 @@
 import things from './things';
+import axios from 'axios';
+import _url from './api';
 
 export default class Utils{
     
@@ -34,6 +36,10 @@ export default class Utils{
         return Math.round(parseFloat(value) * 100);
     }
 
+    static mapPrice(value: any){
+        return parseInt(value) / 100;
+    }
+
     static roundPrice(value: any){
         return Math.round(parseFloat(value) * 100) / 100;
     }
@@ -44,6 +50,35 @@ export default class Utils{
             return '- $' + (-val).toFixed(2);
         else
             return '$' + val.toFixed(2);
+    }
+
+
+    static postData(reqPath: string, data: any){
+        return new Promise((resolve, reject) => {
+            axios.post(_url(reqPath), data).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(data);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
+    }
+
+    static deleteData(reqPath: string){
+        return new Promise((resolve, reject) => {
+            axios.delete(_url(reqPath)).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(data);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(error => {
+                reject(error);
+            });
+        });
     }
 
 }

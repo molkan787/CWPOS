@@ -9,10 +9,27 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    currentTime: '00:00',
+
     categories: [],
     products: {},
     productsByIds: {},
     productsArray: [],
+
+    data: {
+      orders: [],
+      clients: [],
+      prepaid: [],
+      loyalty: [],
+      users: [],
+    },
+    dataState: {},
+    filtersState: {
+      orders: {},
+      clients: {},
+      prepaid: {},
+      loyalty: {},
+    },
 
     //=======================
     pos: {
@@ -44,16 +61,20 @@ export default new Vuex.Store({
       last_name: '',
       phone: '',
       email: '',
+      want_receipt: false,
+      history: []
     },
 
     user: {
       id: 3,
-      username: 'FooBar787',
+      username: 'User01',
     },
 
     companies: [],
 
-    stats: {cw: 0, pp: 0,  rpp: 0, dt: 0}
+    stats: {cw: 0, pp: 0,  rpp: 0, dt: 0},
+
+    areaAView: 'order',
   },
   getters: {
     getCategory(state){
@@ -67,6 +88,26 @@ export default new Vuex.Store({
       Comu.setup(context);
     },
 
+    addProduct({state}, data: any){
+        const id = data.id;
+        const cat = data.category_id;
+
+        Vue.set(state.productsByIds, id, data);
+        // @ts-ignore
+        state.productsArray.push(data);
+        // @ts-ignore
+        if(!state.products[cat]){
+          Vue.set(state.products, cat, []);
+        }
+        // @ts-ignore
+        state.products[cat].push(data);
+    },
+
+    setData({state}, payload: any){
+      Vue.set(state.data, payload.name, payload.data);
+      Vue.set(state.dataState, payload.name, true);
+    },
+
     setClientId(context, clientId){
       // @ts-ignore
       let clientData: any = context.state.companies.filter(item => item.id == clientId);
@@ -76,10 +117,20 @@ export default new Vuex.Store({
       const client = context.state.client;
       client.id = clientId;
       if(clientData){
+        context.dispatch('setClientData', clientData);
+      }
+    },
+
+    setClientData(context, clientData: any){
+      const client = context.state.client;
+      if(clientData){
+        client.id = clientData.id;
         client.first_name = clientData.first_name;
         client.last_name = clientData.last_name;
         client.phone = clientData.phone;
         client.email = clientData.email;
+        client.want_receipt = clientData.want_receipt;
+        client.history = clientData.history;
       }
     },
 
@@ -129,6 +180,10 @@ export default new Vuex.Store({
       client.last_name = '';
       client.phone = '';
       client.email = '';
+      client.want_receipt = false;
+      client.history = [];
+
+      context.state.areaAView = 'order';
     },
 
     setItemCountOne(context, itemId){
@@ -220,6 +275,13 @@ export default new Vuex.Store({
       values.taxQST = qst + extraQst;
       values.total = total + values.tips + extraGst + extraQst + totalExludingTaxes;
       values.changeDue = Utils.round(values.paidCash - values.total);
+    },
+
+    // View state
+    setAreaAView({state}, viewName: string){
+      if(state.areaAView !== viewName){
+        state.areaAView = viewName;
+      }
     }
   },
 });
@@ -248,4 +310,5 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
   }
 
   context.dispatch('updateValues');
+  context.dispatch('setAreaAView', 'order');
 }

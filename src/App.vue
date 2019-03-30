@@ -1,16 +1,12 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/pos">POS</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
     <keep-alive>
       <router-view/>
     </keep-alive>
     <CustomValueModal />
     <PrepaidCardModal />
     <LoyaltyCardModal />
+    <MessageModal />
   </div>
 </template>
 
@@ -20,12 +16,14 @@ import {mapActions} from 'vuex';
 import CustomValueModal from './components/Helpers/CustomValueModal.vue';
 import PrepaidCardModal from './components/pre/PrepaidCardModal.vue';
 import LoyaltyCardModal from './components/pre/LoyaltyCardModal.vue';
+import MessageModal from './components/pre/MessageModal.vue';
 
 export default Vue.extend({
   components: {
     CustomValueModal,
     PrepaidCardModal,
-    LoyaltyCardModal
+    LoyaltyCardModal,
+    MessageModal,
   },
   methods: {
     ...mapActions(['setup'])

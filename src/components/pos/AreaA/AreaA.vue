@@ -4,14 +4,14 @@
             <sui-icon name="book" />
             Order #: {{ orderId }}
         </h3>
-            <sui-label color="blue" icon="info circle" v-if="true" class="lbl">Preffer receipt</sui-label>
+            <sui-label color="blue" icon="info circle" v-if="client.want_receipt" class="lbl">Preffer receipt</sui-label>
         <h3 class="vm-normal">
             <sui-icon name="user" />
             Customer: {{ clientName }}
         </h3>
         <hr>
-        <OrderSummary v-if="view == 'order'" />
-        <ClientHistory v-if="view == 'history'" />
+        <ClientHistory v-if="areaAView == 'history'" />
+        <OrderSummary v-else />
     </div>
 </template>
 
@@ -21,6 +21,7 @@ import Component from 'vue-class-component';
 import OrderSummary from './OrderSummary.vue';
 import ClientHistory from './ClientHistory.vue';
 import { mapState } from 'vuex';
+import Comu from '@/prs/comu';
 
 @Component({
     components: {
@@ -28,7 +29,7 @@ import { mapState } from 'vuex';
         ClientHistory,
     },
     computed: {
-        ...mapState(['client']),
+        ...mapState(['client', 'areaAView']),
         clientName: function () {
             // @ts-ignore
             if(this.client.id == 0){
@@ -42,9 +43,7 @@ import { mapState } from 'vuex';
 })
 export default class AreaA extends Vue{
 
-    private view: string = "order";
-
-    private orderId: number = 179;
+    private orderId: number = 0;
 
 }
 </script>
