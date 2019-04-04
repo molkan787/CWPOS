@@ -3,6 +3,7 @@
         <Header />
         <Body />
         <ProductModal />
+        <UserModal />
     </div>
 </template>
 
@@ -12,12 +13,14 @@ import Component from 'vue-class-component';
 import Header from './Header.vue';
 import Body from './Body.vue';
 import ProductModal from '../pre/ProductModal.vue';
+import UserModal from '../pre/UserModal.vue';
 
 @Component({
     components: {
         Header,
         Body,
         ProductModal,
+        UserModal,
     }
 })
 export default class Admin extends Vue{

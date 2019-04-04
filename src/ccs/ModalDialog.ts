@@ -8,8 +8,8 @@ export default class ModalDialog{
 
     public show(text: string, type?: number, ref?: string){
         this.text = text;
-        if(type) this.type = type;
-        if(ref) this.ref = ref;
+        this.type = type || 1;
+        this.ref = ref || '';
         this.open = true;
 
         return new Promise((resolve, reject) => {

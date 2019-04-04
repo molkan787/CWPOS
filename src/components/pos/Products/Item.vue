@@ -27,14 +27,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
+// import Component from 'vue-class-component';
 import {mapActions, mapState} from 'vuex';
-import { Prop } from 'vue-property-decorator';
+import { Prop, Component } from 'vue-property-decorator';
 import MxHelper from '@/prs/MxHelper';
 
 @Component({
-    computed: { ...mapState(['pos']) },
-    methods: { ...mapActions(['incItemCount', 'decItemCount', 'setCustomPriceItem']) }
+    computed: mapState(['pos']),
+    methods: mapActions(['incItemCount', 'decItemCount', 'setCustomPriceItem'])
 })
 export default class Item extends Vue{
 
@@ -103,22 +103,25 @@ export default class Item extends Vue{
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
 button.root{
-    width: 44%;
-    height: 0;
-    padding: 9% 0 13% 0;
+    width: 48%;
+    height: 6rem;
+    padding-left: 0;
+    padding-right: 0;
     position: relative;
     margin: 1%;
     font-size: 1.2rem;
+    float: left;
 }
 button.blue > span{
     position: relative;
-    top: -1.3rem;
+    top: 0.2rem;
 }
 div{
-    margin-top: -0.45rem;
+    margin-top: 0.9rem;
+    text-align: center;
 }
 div > button.ctrl{
-    width: 33%;
+    width: calc(100% / 3);
     height: 3rem;
     color: white;
     font-weight: bold;
@@ -137,7 +140,7 @@ div > button.ctrl{
         border-bottom-right-radius: 0.3rem;
     }
     &.price{
-        width: 67%;
+        width: calc(100% / 3 * 2);
     }
     &.edit{
         border-bottom-right-radius: 0.3rem;

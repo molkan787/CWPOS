@@ -72,6 +72,7 @@ export default class{
             // Send request to server
             axios.post(_url('capture/prepaid'), payload).then(({data}) => {
                 if(data.status == 'OK'){
+                    comu.setPaymentDetails({type: 'prepaid', ...payload});
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -87,6 +88,7 @@ export default class{
             // Send request to server
             axios.post(_url('capture/loyalty'), payload).then(({data}) => {
                 if(data.status == 'OK'){
+                    comu.setPaymentDetails({type: 'loyalty', ...payload});
                     resolve(true);
                 }else{
                     reject(data.cause);

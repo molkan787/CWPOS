@@ -21,19 +21,20 @@
 
         <br>
         
-        <sui-button icon="setting" @click="goToAdmin">Admin Panel</sui-button>
-        <sui-button icon="chart bar">Daily Reports</sui-button>
+        <sui-button icon="setting" @click="goToAdmin" :disabled="userType >= 5">Admin Panel</sui-button>
+        <sui-button icon="chart bar" :disabled="userType >= 5">Daily Reports</sui-button>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import {mapState} from 'vuex';
+import {mapState, mapGetters} from 'vuex';
 
 @Component({
     computed: {
-        ...mapState(['stats'])
+        ...mapState(['stats']),
+        ...mapGetters(['userType']),
     }
 })
 export default class Stats extends Vue{

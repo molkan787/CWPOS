@@ -52,6 +52,7 @@ export default new Vuex.Store({
       paid: false,
       finished: false,
     },
+    payment: {},
 
     postingOrder: false,
     //=======================
@@ -66,8 +67,9 @@ export default new Vuex.Store({
     },
 
     user: {
-      id: 3,
-      username: 'User01',
+      id: 0,
+      user_type: 100000,
+      username: '',
     },
 
     companies: [],
@@ -82,6 +84,7 @@ export default new Vuex.Store({
       return (catID: string) => state.categories.filter(category => category.id == catID)[0];
     },
     pos: state => state.pos,
+    userType: state => state.user.user_type,
   },
   actions: {
     setup(context){
@@ -173,6 +176,7 @@ export default new Vuex.Store({
           item.addTaxes = false;
         }
       }
+      context.state.payment = {};
 
       const client = context.state.client;
       client.id = 0;

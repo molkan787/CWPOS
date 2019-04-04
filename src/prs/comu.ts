@@ -7,6 +7,7 @@ import PredefinedOrder from './predefinedOrder';
 import MxHelper from './MxHelper';
 import Dl from './dl';
 import Ds from './ds';
+import Login from './login';
 import ClientLoader from './clientLoader';
 import consts from './consts';
 import Utils from './utils';
@@ -17,6 +18,7 @@ export default class Comu{
     private static context: any;
     private static objectsToReset: any[];
     private static interval: Number;
+    private static apiToken: string = '';
 
     static setup(context: any){
         this.context = context;
@@ -26,12 +28,21 @@ export default class Comu{
         ClientLoader.setup(context);
         Dl.setup(context);
         Ds.setup(context);
-        this.loadData();
+        Login.setup(context, this);
 
         this.updateTime();
         this.interval = setInterval(() => {
             this.updateTime();
         }, 15000);
+    }
+
+    static setToken(token: string){
+        this.apiToken = token;
+        axios.defaults.headers.common['Authorization'] = token;
+    }
+
+    static setPaymentDetails(data: any){
+        this.context.state.payment = data;
     }
 
     static activatePrepaidCard(barcode: string, clientData: any, balance: number){
@@ -90,13 +101,18 @@ export default class Comu{
     }
 
     static loadData(){
-        axios.get(_url('asd')).then(response => {
-            this.context.state.categories = response.data.categories;
-            this.context.state.products = Products.mapByCategory(response.data.products, true);
-            this.context.state.productsByIds = Products.mapById(response.data.products, false);
-            this.context.state.productsArray = response.data.products;
-            this.context.state.stats = response.data.stats;
-            this.context.state.companies = Clients.prepareData(response.data.companies);
+        return new Promise((resolve, reject) => {
+            axios.get(_url('asd')).then(response => {
+                this.context.state.categories = response.data.categories;
+                this.context.state.products = Products.mapByCategory(response.data.products, true);
+                this.context.state.productsByIds = Products.mapById(response.data.products, false);
+                this.context.state.productsArray = response.data.products;
+                this.context.state.stats = response.data.stats;
+                this.context.state.companies = Clients.prepareData(response.data.companies);
+                resolve(true);
+            }).catch(error => {
+                reject(error);
+            })
         });
     }
 
@@ -109,8 +125,20 @@ export default class Comu{
         return (!this.context.state.pos.paid && !this.context.state.pos.finished && this.context.state.postingOrder);
     }
 
+    static resetStatus(){
+        const state = this.context.state;
+        state.paid = false;
+        state.pos.finished = false;
+        state.postingOrder = false;
+    }
+
     static getOrderTotal(){
         return Utils.preparePrice(this.context.state.pos.values.total);
+    }
+
+    static getUser(userId: any){
+        const users = this.context.state.data.users.filter((user: any) => user.id == userId);
+        return users.length ? users[0] : null;
     }
 
     // ==================================
@@ -138,12 +166,13 @@ export default class Comu{
                     ticket: '',
                 },
                 pay_method: state.pos.pay_method,
-                receipt: 0
+                receipt: 0,
             };
             const stats = this.getStats(items, itemsCount);
             const data = {
                 orderData,
                 stats,
+                payment: state.payment,
             }
             axios.post(_url('order'), data).then(({data}) => {
                 if(data.status == 'OK'){
@@ -170,6 +199,7 @@ export default class Comu{
             // @ts-ignore
             MxHelper.payment({state: 'success'});
         }).catch(error => {
+            this.resetStatus();
             // @ts-ignore
             MxHelper.payment({state: 'fail', error});
         });

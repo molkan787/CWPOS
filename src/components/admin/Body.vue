@@ -8,23 +8,23 @@
             <OrdersTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Prepaid Cards" icon="ticket">
+        <sui-tab-pane title="Prepaid Cards" icon="ticket" v-if="userType < 4">
             <PrepaidCardTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Loyalty Cards" icon="ticket">
+        <sui-tab-pane title="Loyalty Cards" icon="ticket" v-if="userType < 4">
             <LoyaltyCardTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Clients" icon="users">
+        <sui-tab-pane title="Clients" icon="users" v-if="userType < 4">
             <ClientsTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Products/Services" icon="box">
+        <sui-tab-pane title="Products/Services" icon="box" v-if="userType < 4">
             <ProductsTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Users" icon="user circle">
+        <sui-tab-pane title="Users" icon="user circle" v-if="userType <= 2">
             <UsersTab />
         </sui-tab-pane>
     </sui-tab>
@@ -40,6 +40,7 @@ import ClientsTab from './ClientsTab.vue';
 import ReportsTab from './ReportsTab.vue';
 import ProductsTab from './ProductsTab.vue';
 import UsersTab from './UsersTab.vue';
+import {mapGetters} from 'vuex';
 
 @Component({
     components: {
@@ -50,7 +51,8 @@ import UsersTab from './UsersTab.vue';
         ReportsTab,
         ProductsTab,
         UsersTab,
-    }
+    },
+    computed: mapGetters(['userType']),
 })
 export default class Body extends Vue{}
 </script>
