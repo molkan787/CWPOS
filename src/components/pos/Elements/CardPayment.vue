@@ -46,17 +46,17 @@ export default class CardPayment extends Vue{
             this.icon = 'bullseye icon';
             this.colorClass = 'info';
         }else if(status == 'PAID'){
-            this.title = 'Transaction was approved!';
+            this.title = 'Payment was approved!';
             this.message = 'Please wait until the order get submitted...';
             this.icon = 'circle check icon';
             this.colorClass = 'success';
         }else if(status == 'DECLINED'){
-            this.title = 'Transaction was DECLINED!';
-            this.message = 'Credit/Debit Card provider declined the transation.';
+            this.title = 'Payment was DECLINED!';
+            this.message = 'The bank declined the payment.';
             this.icon = 'ban icon';
             this.colorClass = 'warning';
         }else if(status == 'FINISHED'){
-            this.title = 'Transaction was approved and the order submitted!';
+            this.title = 'Payment was approved and the order submitted!';
             this.message = 'The order was successfully submitted.';
             this.icon = 'circle check icon';
             this.colorClass = 'success';

@@ -2,7 +2,7 @@
     <div>
         <h3 class="vm-normal">
             <sui-icon name="book" />
-            Order #: {{ orderId }}
+            Order #: {{ nextOrderId }}
         </h3>
             <sui-label color="blue" icon="info circle" v-if="client.want_receipt" class="lbl">Preffer receipt</sui-label>
         <h3 class="vm-normal">
@@ -29,7 +29,7 @@ import Comu from '@/prs/comu';
         ClientHistory,
     },
     computed: {
-        ...mapState(['client', 'areaAView']),
+        ...mapState(['client', 'areaAView', 'nextOrderId']),
         clientName: function () {
             // @ts-ignore
             if(this.client.id == 0){

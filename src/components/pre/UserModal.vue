@@ -147,7 +147,7 @@ export default class UserModal extends Vue{
     }
 
     created(){
-        MxHelper.registerFunction('editUser', userId => {
+        MxHelper.registerFunction('editUser', (userId: any) => {
             this.u_id = userId;
             if(userId == 'new'){
                 this.newUser();

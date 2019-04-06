@@ -53,6 +53,8 @@ export default new Vuex.Store({
       finished: false,
     },
     payment: {},
+    ticket: '',
+    nextOrderId: 0,
 
     postingOrder: false,
     //=======================
@@ -89,6 +91,10 @@ export default new Vuex.Store({
   actions: {
     setup(context){
       Comu.setup(context);
+    },
+
+    setTicket({state}, val){
+      state.ticket = val;
     },
 
     addProduct({state}, data: any){
@@ -177,6 +183,7 @@ export default new Vuex.Store({
         }
       }
       context.state.payment = {};
+      context.state.ticket = '';
 
       const client = context.state.client;
       client.id = 0;

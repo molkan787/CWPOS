@@ -22,7 +22,10 @@
         <br>
         
         <sui-button icon="setting" @click="goToAdmin" :disabled="userType >= 5">Admin Panel</sui-button>
-        <sui-button icon="chart bar" :disabled="userType >= 5">Daily Reports</sui-button>
+        <sui-button icon="chart bar" :disabled="userType >= 5" @click="downloadReports">
+            <template v-if="downloading">Downloading...</template>
+            <template v-else>Daily Reports</template>
+        </sui-button>
     </div>
 </template>
 
@@ -30,6 +33,9 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import {mapState, mapGetters} from 'vuex';
+import Message from '@/ccs/Message';
+import Reports from '@/prs/reports';
+import utils from '@/utils';
 
 @Component({
     computed: {
@@ -38,8 +44,29 @@ import {mapState, mapGetters} from 'vuex';
     }
 })
 export default class Stats extends Vue{
+    private downloading = false;
+
     goToAdmin(){
         this.$router.push('admin');
+    }
+
+    downloadReports(){
+        if(this.downloading) return;
+        this.downloading = true;
+        Reports.dailySales(utils.todaysDate())
+        .then(() => this.successMessage())
+        .catch(() => this.failureMessage())
+        .finally(() => this.downloading = false);
+    }
+
+    successMessage(){
+        Message.info('Report file was successfully downloaded and can be found inside folder "APOS-Reports" on your Desktop!')
+        .then((e: any) => e.hide());
+    }
+
+    failureMessage(){
+        Message.info('We could not download reports, Please try again.')
+        .then((e: any) => e.hide());
     }
 }
 </script>

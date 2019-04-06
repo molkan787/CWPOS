@@ -79,6 +79,8 @@ export default class Header extends Vue {
                 console.log('Logging out...')
                 comu.setToken('');
                 this.$router.push('/');
+                // @ts-ignore
+                Inac.stop();
             }
         });
     }

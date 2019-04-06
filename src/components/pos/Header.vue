@@ -9,7 +9,7 @@
         <div class="right-side">
             <sui-button compact icon="search" @click="searchClient" />
             <sui-input v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
-            <sui-input placeholder="Ticket #" icon="ticket" iconPosition="left" />
+            <sui-input :value="ticket" @input="updateTicket" placeholder="Ticket #" icon="ticket" iconPosition="left" />
         </div>
         <div v-if="message.visible" class="ui icon message">
             <i :class="message.icon"></i>
@@ -24,14 +24,15 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Utils from '@/utils';
 import comu from '@/prs/comu';
 import Message from '@/ccs/Message';
 import ClientLoader from '@/prs/clientLoader';
 
 @Component({
-    computed: mapState(['user', 'currentTime']),
+    computed: mapState(['user', 'currentTime', 'ticket']),
+    methods: mapActions(['setTicket']),
 })
 export default class Header extends Vue {
     private message = {
@@ -41,6 +42,10 @@ export default class Header extends Vue {
         timeout: 0,
     };
 
+    updateTicket(val: any){
+        // @ts-ignore
+        this.setTicket(val);
+    }
 
     private phone: string = '';
 
@@ -90,6 +95,8 @@ export default class Header extends Vue {
                 console.log('Logging out...')
                 comu.setToken('');
                 this.$router.push('/');
+                // @ts-ignore
+                Inac.stop();
             }
         });
     }

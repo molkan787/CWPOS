@@ -49,8 +49,12 @@ export default class{
                 }
             }
         }).catch(error => {
+            comu.resetStatus();
             // @ts-ignore
             MxHelper.payment({state: 'fail', error});
+            if(payload && payload.callback){
+                payload.callback(error);
+            }
         });
     }
 
@@ -62,7 +66,7 @@ export default class{
     }
 
     private static _DebitCard(payload: any){
-        // Amount is Int format - need to divide by 100
+        // Amount is Int format - need to be divided by 100
         // payload.amount = payload.amount / 100;
         return CardMachine.request(payload);
     }

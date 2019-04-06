@@ -83,6 +83,7 @@ export default class PaymentModal extends Vue{
                 }
             }
         }else{
+            // Comu.resetStatus();
             // @ts-ignore
             this.title = 'Payment: ' + texts.payments[this.pos.pay_method];
             this.resetDialog();

@@ -17,6 +17,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import App from '@/app_service';
+import Message from '@/ccs/Message';
+import MxHelper from '@/prs/MxHelper';
 import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
 import Payments from './Payments/Payments.vue';
@@ -31,7 +34,24 @@ import PaymentMethods from './PaymentMethods/PaymentMethods.vue';
 })
 export default class RightColumn extends Vue{
     buttonClicked(comp: any, btnIdx: number){
-        console.log('Clicked: ' + btnIdx)
+        if(btnIdx == 0){
+            // @ts-ignore
+            MxHelper.openOptions();
+        }else if(btnIdx == 1){
+            Message.ask('Are you sure you want to restart the app?').then((e: any) => {
+                e.hide();
+                if(e.answer){
+                    App.restart();
+                }
+            });
+        }else if(btnIdx == 2){
+            Message.ask('Are you sure you want to quit the app?').then((e: any) => {
+                e.hide();
+                if(e.answer){
+                    App.quit();
+                }
+            });
+        }
     }
 }
 </script>

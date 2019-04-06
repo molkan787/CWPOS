@@ -12,6 +12,7 @@ import ClientLoader from './clientLoader';
 import consts from './consts';
 import Utils from './utils';
 import extUtils from '@/utils';
+import Receipt from './receipt';
 
 export default class Comu{
 
@@ -28,6 +29,7 @@ export default class Comu{
         ClientLoader.setup(context);
         Dl.setup(context);
         Ds.setup(context);
+        Receipt.setup(context);
         Login.setup(context, this);
 
         this.updateTime();
@@ -127,7 +129,7 @@ export default class Comu{
 
     static resetStatus(){
         const state = this.context.state;
-        state.paid = false;
+        state.pos.paid = false;
         state.pos.finished = false;
         state.postingOrder = false;
     }
@@ -163,7 +165,7 @@ export default class Comu{
                     counts: state.pos.itemsCount
                 },
                 other_data: {
-                    ticket: '',
+                    ticket: state.ticket,
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0,
@@ -180,6 +182,7 @@ export default class Comu{
                     state.stats.pp += stats.pp;
                     state.stats.rpp += stats.rpp;
                     state.stats.dt += stats.dt;
+                    state.nextOrderId = data.nextOrderId;
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -212,6 +215,9 @@ export default class Comu{
 
     static printReceipt(){
         console.log('Printing receipt');
+        axios.post(_url('setReceiptFlag'), {order_id: this.context.state.nextOrderId - 1})
+        .catch(() => {});
+        Receipt.print();
     }
 
     static registerToReset(obj: any){

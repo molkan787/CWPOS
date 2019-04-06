@@ -7,6 +7,8 @@
     <PrepaidCardModal />
     <LoyaltyCardModal />
     <MessageModal />
+    <InActiveModal />
+    <OptionsModal />
   </div>
 </template>
 
@@ -17,6 +19,8 @@ import CustomValueModal from './components/Helpers/CustomValueModal.vue';
 import PrepaidCardModal from './components/pre/PrepaidCardModal.vue';
 import LoyaltyCardModal from './components/pre/LoyaltyCardModal.vue';
 import MessageModal from './components/pre/MessageModal.vue';
+import InActiveModal from './components/pre/InActiveModal.vue';
+import OptionsModal from './components/pre/OptionsModal.vue';
 
 export default Vue.extend({
   components: {
@@ -24,6 +28,8 @@ export default Vue.extend({
     PrepaidCardModal,
     LoyaltyCardModal,
     MessageModal,
+    InActiveModal,
+    OptionsModal,
   },
   methods: {
     ...mapActions(['setup'])

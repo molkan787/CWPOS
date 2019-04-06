@@ -7,6 +7,7 @@
             :options="options"
             :value="value"
             @input="input"
+            :disabled="disabled"
         />
     </div>
 </template>
@@ -23,6 +24,8 @@ export default class LabeledDropdown extends Vue{
 
     @Prop({default: ''}) label!: string;
     @Prop({default: ''}) ph!: string;
+    
+    @Prop({default: false}) disabled!: boolean;
 
     @Prop({default: null}) value!: any;
 

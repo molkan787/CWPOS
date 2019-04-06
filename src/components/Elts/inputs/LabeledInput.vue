@@ -1,7 +1,7 @@
 <template>
     <div class="root ui labeled input">
         <label class="ui label">{{label}}</label>
-        <input :type="type" v-model="pvalue" @change="change" :placeholder="ph || label"/>
+        <input :disabled="disabled" :type="type" v-model="pvalue" @change="change" :placeholder="ph || label"/>
     </div>
 </template>
 
@@ -21,6 +21,8 @@ export default class LabeledInput extends Vue{
     @Prop({default: ''}) ph!: string;
 
     @Prop({default: null}) value!: any;
+
+    @Prop({default: false}) disabled!: boolean;
 
     private pvalue: any = '';
 

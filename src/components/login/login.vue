@@ -52,9 +52,11 @@ export default class Login extends Vue{
 
     login(){
         LoginService.login(this.username, this.password).then(() => {
-            this.username = '';
+            // this.username = '';
             this.password = '';
             this.$router.push('pos');
+            // @ts-ignore
+            Inac.reset();
         }).catch(error => {
             Message.info('Wrong combination of Username & Password.').then((e: any) => e.hide());
         }).finally(() => {

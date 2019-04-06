@@ -59,6 +59,7 @@ export default class UsersTab extends Vue{
     }
 
     editClick(userId: any){
+        // @ts-ignore
         MxHelper.editUser(userId);
     }
 
@@ -83,6 +84,7 @@ export default class UsersTab extends Vue{
     }
 
     newUserClick(){
+        // @ts-ignore
         MxHelper.editUser('new');
     }
 
