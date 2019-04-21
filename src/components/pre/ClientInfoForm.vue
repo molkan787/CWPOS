@@ -12,7 +12,7 @@
         <div class="inline fields">
             <div class="nine wide field">
                 <label>Phone</label>
-                <sui-input v-model="data.phone" placeholder="Phone number" icon="phone"/>
+                <PhoneInput v-model="data.phone" placeholder="Phone number" icon="phone" />
             </div>
             <div class="seven wide field">
                 <sui-input v-model="data.email" placeholder="Email" icon="at"/>
@@ -25,8 +25,13 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
+import PhoneInput from './PhoneInput.vue'
 
-@Component
+@Component({
+    components: {
+        PhoneInput,
+    }
+})
 export default class ClientInfoForm extends Vue{
 
     @Prop({default: () => ({

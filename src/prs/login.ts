@@ -32,7 +32,7 @@ export default class Login{
         });
     }
 
-    private static setUser(data: any){
+    public static setUser(data: any){
         const user = data.user;
         // this.context.state.user.id = user.id;
         this.context.state.user.username = user.username;

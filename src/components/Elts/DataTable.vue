@@ -1,6 +1,17 @@
 <template>
     <div>
-        <Filters v-if="filtersSchema.length" :items="filtersSchema" :values="filtersValues" @changed="filtersChanged" />
+        
+        <div class="ui horizontal segments">
+            <div class="ui segment" v-if="controlls.length">
+                <button class="ui button" v-for="(controll, index) in controlls" :key="index"
+                    @click="controll.handler" >
+                    <i v-if="controll.icon" class="icon" :class="controll.icon"></i>
+                    {{ controll.text }}
+                </button>
+            </div>
+            <Filters v-if="filtersSchema.length" :items="filtersSchema" :values="filtersValues" @changed="filtersChanged" />
+        </div>
+
         <div class="dataTable dimmable">
             <div class="ui active inverted dimmer" v-if="loading">
                 <div class="ui loader"></div>
@@ -25,7 +36,7 @@
                             <template v-if="col.buttons">
                                 <sui-button v-for="(btn, index) in col.buttons" :key="index"
                                 @click="buttonClick(btn.name, item[col.prop])">
-                                    <i v-if="btn.icon" :class="btn.icon + ' icon'"></i>
+                                    <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
                                     {{ btn.text }}
                                 </sui-button>
                             </template>
@@ -42,7 +53,7 @@
 
                 <sui-table-footer>
                     <sui-table-row>
-                        <sui-table-header-cell colspan="6">
+                        <sui-table-header-cell :colspan="cols.length">
                         <sui-menu v-sui-floated:right pagination>
                             <a is="sui-menu-item" @click="prevClick" :disabled="page == 1">
                                 <sui-icon name="left chevron" />
@@ -84,6 +95,8 @@ export default class DataTable extends Vue{
 
     @Prop({default: () => []}) filtersSchema!: any[];
     @Prop({default: () => {}}) filtersValues!: any;
+
+    @Prop({default: () => []}) controlls!: any[];
 
     applyFilter(filterName: string, value: any){
         if(filterName)
@@ -144,5 +157,7 @@ hr{
 .user-cell > i{
     opacity: 0.5;
 }
-
+.no-margin{
+    margin: 0 !important;
+}
 </style>

@@ -32,6 +32,7 @@ export default new Vuex.Store({
     },
 
     //=======================
+    defaultExactPaid: true,
     pos: {
       values: {
         fullDiscount: false,
@@ -195,6 +196,7 @@ export default new Vuex.Store({
       client.history = [];
 
       context.state.areaAView = 'order';
+      context.state.defaultExactPaid = true;
     },
 
     setItemCountOne(context, itemId){
@@ -246,9 +248,10 @@ export default new Vuex.Store({
     },
     setPaidCash(context, value){
       context.state.pos.values.paidCash = value;
-      context.dispatch('updateValues');
+      context.dispatch('updateChangeDue');
     },
-    updateValues({state}){
+    updateValues(context){
+      const state = context.state;
       const {values, items, itemsCount} = state.pos;
       let total = 0;
       let totalExludingTaxes = 0;
@@ -285,6 +288,16 @@ export default new Vuex.Store({
       values.taxGST = gst + extraGst;
       values.taxQST = qst + extraQst;
       values.total = total + values.tips + extraGst + extraQst + totalExludingTaxes;
+
+      if(state.defaultExactPaid){
+        Comu.setExactPaid();
+      }else{
+        context.dispatch('updateChangeDue');
+      }
+    },
+
+    updateChangeDue(context){
+      const values = context.state.pos.values;
       values.changeDue = Utils.round(values.paidCash - values.total);
     },
 

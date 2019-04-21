@@ -1,5 +1,5 @@
 // @ts-ignore
-const edm = imp("electron-download-manager");
+// const edm = imp("electron-download-manager"); // $UNDO
 import axios from 'axios';
 import _url from '@/prs/api';
 import utils from '@/utils';
@@ -51,15 +51,15 @@ export default class ReportsDownloader{
             const {filename, signature, params} = data;
             const returnFilename = this.getReturnFilename(params);
             const downloadUrl = this.getDownloadUrl(filename, signature, returnFilename);
-            edm.download({
-                url: downloadUrl,
-            }, (error: any, info: any) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                resolve(true);
-            });
+            // edm.download({ // $UNDO
+            //     url: downloadUrl,
+            // }, (error: any, info: any) => {
+            //     if (error) {
+            //         reject(error);
+            //         return;
+            //     }
+            //     resolve(true);
+            // });
         });
     }
 

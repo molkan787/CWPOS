@@ -8,7 +8,7 @@
         </span>
         <div class="right-side">
             <sui-button compact icon="search" @click="searchClient" />
-            <sui-input v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
+            <PhoneInput v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
             <sui-input :value="ticket" @input="updateTicket" placeholder="Ticket #" icon="ticket" iconPosition="left" />
         </div>
         <div v-if="message.visible" class="ui icon message">
@@ -29,8 +29,12 @@ import Utils from '@/utils';
 import comu from '@/prs/comu';
 import Message from '@/ccs/Message';
 import ClientLoader from '@/prs/clientLoader';
+import PhoneInput from '../pre/PhoneInput.vue';
 
 @Component({
+    components: {
+        PhoneInput,
+    },
     computed: mapState(['user', 'currentTime', 'ticket']),
     methods: mapActions(['setTicket']),
 })

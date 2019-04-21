@@ -85,6 +85,12 @@ export default class Payments extends Vue{
         this.setPaidCash(parseFloat(this.paid || 0));
     }
 
+    setExact(){
+        // @ts-ignore
+        this.paid = this.pos.values.total.toFixed(2);
+        this.pushPaidAmount();
+    }
+
     reset(){
         this.paid = '';
     }
@@ -94,6 +100,7 @@ export default class Payments extends Vue{
         MxHelper.registerFunction('setPaidAmount', (amount: string) => {
             this.buttonClicked(amount);
         });
+        MxHelper.registerFunction('setExactPaid', () => this.setExact() );
     }
 }
 </script>

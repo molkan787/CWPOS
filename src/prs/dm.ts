@@ -1,0 +1,109 @@
+import Vue from 'vue';
+import axios from 'axios';
+import _url from '@/prs/api';
+
+export default class DM{
+
+    private static context: any;
+    private static data: any;
+    private static cache: any;
+
+    public static setup(context: any){
+        this.context = context;
+        this.cache = context.state.data;
+    }
+
+    public static getClientData(payload: any){
+        const {id, phone} = payload;
+        if(id){
+            return this._getClientData('id', id);
+        }else if(phone){
+            return this._getClientData('phone', phone);
+        }else{
+            return new Promise((resolve, reject) => reject());
+        }
+    }
+
+    public static async editClient(payload: any){
+        const {data} = await axios.post(_url('client'), payload);
+        if(data.status == 'OK'){
+            this.setToCache('clients', payload, data);
+            return data;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
+    public static async deleteClient(payload: any){
+        const {data} = await axios.delete(_url(`client/${payload.id}`));
+        if(data.status == 'OK'){
+            this.removeFromCache('clients', payload.id);
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
+
+    // -----------------------------------
+
+    private static _getClientData(by: string, ref: any){
+        return new Promise(async (resolve, reject) => {
+            try {
+                let client = this.getFromCache('clients', by, ref);
+                if(client){
+                    resolve(client);
+                }else{
+                    const response = await axios.get(_url(`client/${by}/${ref}`));
+                    const data = response.data.data;
+                    resolve(data);
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+
+    private static getFromCache(dataName: string, filterProp: string, ref: any, multiple?: boolean){
+        const data = this.cache[dataName];
+        const result = data.filter((item: any) => item[filterProp] == ref);
+        if(multiple)
+            return result;
+        else
+            return result.length ? result[0] : null;
+    }
+
+    private static setToCache(dataName: string, originData: any, newData: any){
+        const data = this.cache[dataName];
+        const id = originData.id;
+        if(id == 'new'){
+            data.unshift(newData);
+        }else{
+            for(let i = 0; i < data.length; i++){
+                const item = data[i];
+                if(item.id == id){
+                    this.putValues(item, originData);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static removeFromCache(dataName: string, identifier: any){
+        const data = this.cache[dataName];
+        const index = data.findIndex((item: any) => item.id == identifier);
+        if(index != -1){
+            data.splice(index, 1);
+        }
+    }
+
+    private static putValues(obj: any, values: any){
+        for(let k in values){
+            if(!values.hasOwnProperty(k)) continue;
+            Vue.set(obj, k, values[k]);
+        }
+    }
+
+
+}

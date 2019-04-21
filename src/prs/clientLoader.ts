@@ -11,7 +11,7 @@ export default class ClientLoader{
 
     static loadClient(phone: string){
         return new Promise((resolve, reject) => {
-            axios.get(_url('client/' + phone)).then(({data}) => {
+            axios.get(_url('client_history/' + phone)).then(({data}) => {
                 if(data.status == 'OK'){
                     this.context.dispatch('setClientData', data.clientData);
                     this.context.dispatch('setAreaAView', 'history');

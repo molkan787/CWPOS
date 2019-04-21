@@ -1,3 +1,4 @@
+import config from '@/config';
 import axios from 'axios';
 import _url from './api';
 import Products from './dcr/products';
@@ -7,6 +8,7 @@ import PredefinedOrder from './predefinedOrder';
 import MxHelper from './MxHelper';
 import Dl from './dl';
 import Ds from './ds';
+import DM from './dm';
 import Login from './login';
 import ClientLoader from './clientLoader';
 import consts from './consts';
@@ -29,6 +31,7 @@ export default class Comu{
         ClientLoader.setup(context);
         Dl.setup(context);
         Ds.setup(context);
+        DM.setup(context);
         Receipt.setup(context);
         Login.setup(context, this);
 
@@ -36,6 +39,18 @@ export default class Comu{
         this.interval = setInterval(() => {
             this.updateTime();
         }, 15000);
+
+        if(config.debug){
+            this.loadData();
+            Login.setUser({
+                token: '',
+                user: {
+                    username: 'foo',
+                    user_type: 1,
+                    id: 1,
+                }
+            })
+        }
     }
 
     static setToken(token: string){
@@ -262,5 +277,10 @@ export default class Comu{
             }
         }
         return stats;
+    }
+
+    public static setExactPaid(){
+        // @ts-ignore
+        MxHelper.setExactPaid();
     }
 }

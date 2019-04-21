@@ -9,6 +9,7 @@
     <MessageModal />
     <InActiveModal />
     <OptionsModal />
+    <ClientModal />
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import LoyaltyCardModal from './components/pre/LoyaltyCardModal.vue';
 import MessageModal from './components/pre/MessageModal.vue';
 import InActiveModal from './components/pre/InActiveModal.vue';
 import OptionsModal from './components/pre/OptionsModal.vue';
+import ClientModal from './components/pre/ClientModal.vue';
 
 export default Vue.extend({
   components: {
@@ -30,6 +32,7 @@ export default Vue.extend({
     MessageModal,
     InActiveModal,
     OptionsModal,
+    ClientModal,
   },
   methods: {
     ...mapActions(['setup'])
