@@ -1,8 +1,8 @@
 <template>
     <div>
-        <sui-button @click="buttonClick(0)" :color="colors[0]">{{ texts[0] }}</sui-button>
-        <sui-button @click="buttonClick(1)" :color="colors[1]">{{ texts[1] }}</sui-button>
-        <sui-button @click="buttonClick(2)" :color="colors[2]">{{ texts[2] }}</sui-button>
+        <sui-button @click="buttonClick(0)" :color="colors[0]" :icon="icons[0]">{{ texts[0] }}</sui-button>
+        <sui-button @click="buttonClick(1)" :color="colors[1]" :icon="icons[1]">{{ texts[1] }}</sui-button>
+        <sui-button @click="buttonClick(2)" :color="colors[2]" :icon="icons[2]">{{ texts[2] }}</sui-button>
     </div>
 </template>
 
@@ -18,6 +18,9 @@ export default class TripleButton extends Vue{
 
     @Prop({default: () => []})
     colors!: string[];
+
+    @Prop({default: () => []})
+    icons!: string[];
 
     buttonClick(buttonIndex: number){
         this.$emit('click', this, buttonIndex);

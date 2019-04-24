@@ -20,13 +20,18 @@
             <ClientsTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Products/Services" icon="box" v-if="userType < 4">
+        <sui-tab-pane title="Products" icon="box" v-if="userType < 4">
             <ProductsTab />
         </sui-tab-pane>
 
         <sui-tab-pane title="Users" icon="user circle" v-if="userType <= 2">
             <UsersTab />
         </sui-tab-pane>
+
+        <sui-tab-pane title="Setting" icon="setting" v-if="userType <= 2">
+            <SettingTab />
+        </sui-tab-pane>
+
     </sui-tab>
 </template>
 
@@ -40,6 +45,7 @@ import ClientsTab from './ClientsTab.vue';
 import ReportsTab from './ReportsTab.vue';
 import ProductsTab from './ProductsTab.vue';
 import UsersTab from './UsersTab.vue';
+import SettingTab from './SettingTab.vue';
 import {mapGetters} from 'vuex';
 
 @Component({
@@ -51,6 +57,7 @@ import {mapGetters} from 'vuex';
         ReportsTab,
         ProductsTab,
         UsersTab,
+        SettingTab,
     },
     computed: mapGetters(['userType']),
 })

@@ -1,8 +1,8 @@
 <template>
     <div class="root">
-        <div class="header">
+        <div class="header" :class="headerClass">
             <sui-icon v-if="catID != 'all'" name="arrow left" class="backBtn" @click="goBack" />
-            {{ headerText }}
+            {{ headerText }} <span class="label">({{ suffix }})</span>
         </div>
         <Categories v-if="catID == 'all'" @catSelected="categorySelected" />
         <Category v-if="catID != 'all'" :catID="catID"/>
@@ -25,13 +25,22 @@ import Modal from '../../Elts/Modal.vue';
         Modal
     },
     computed: {
-        ...mapGetters(['getCategory'])
+        ...mapGetters(['getCategory', 'pos'])
+    },
+    watch: {
+        "pos.catType": function (val: any){
+            this.updateHeader(val);
+            this.goBack();
+        }
     }
 })
 export default class Products extends Vue{
 
-    private headerText = 'Categories';
+    private headerText: string = 'Categories';
+    private suffix: string = 'Regular';
     private catID: string = 'all';
+
+    private headerClass: string = 'regular';
 
     categorySelected(cat_id: any){
         this.catID = cat_id;
@@ -43,6 +52,11 @@ export default class Products extends Vue{
     goBack(){
         this.headerText = 'Categories';
         this.catID = 'all';
+    }
+
+    updateHeader(ctype: any){
+        this.suffix = ctype == 1 ? 'Regular' : 'Prepaid';
+        this.headerClass = ctype == 1 ? 'regular' : 'prepaid';
     }
 
     reset(){
@@ -69,12 +83,24 @@ div.root{
     width: 100%;
     height: $header-h;
     padding: 0.5rem;
-    background-color: $grey;
+    color: white;
     font-size: 1.2rem;
+    font-weight: bold;
+}
+.label{
+    opacity: 0.7;
+    font-weight: normal;
+    font-style: italic;
 }
 .backBtn{
     float: left;
     margin-left: 0.3rem;
     margin-right: -100px;
+}
+.regular{
+    background-color: $blue;
+}
+.prepaid{
+    background-color: $red;
 }
 </style>

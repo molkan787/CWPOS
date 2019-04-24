@@ -31,7 +31,7 @@ export default class Comu{
         ClientLoader.setup(context);
         Dl.setup(context);
         Ds.setup(context);
-        DM.setup(context);
+        DM.setup(context, this);
         Receipt.setup(context);
         Login.setup(context, this);
 
@@ -120,12 +120,15 @@ export default class Comu{
     static loadData(){
         return new Promise((resolve, reject) => {
             axios.get(_url('asd')).then(response => {
-                this.context.state.categories = response.data.categories;
-                this.context.state.products = Products.mapByCategory(response.data.products, true);
-                this.context.state.productsByIds = Products.mapById(response.data.products, false);
-                this.context.state.productsArray = response.data.products;
-                this.context.state.stats = response.data.stats;
-                this.context.state.companies = Clients.prepareData(response.data.companies);
+                const data = response.data;
+                const state = this.context.state;
+                state.categories = data.categories;
+                state.products = Products.mapByCategory(data.products, true);
+                state.productsByIds = Products.mapById(data.products, false);
+                state.productsArray = data.products;
+                state.stats = data.stats;
+                state.companies = Clients.prepareData(data.companies);
+                this.putSettings(data.settings);
                 resolve(true);
             }).catch(error => {
                 reject(error);
@@ -156,6 +159,12 @@ export default class Comu{
     static getUser(userId: any){
         const users = this.context.state.data.users.filter((user: any) => user.id == userId);
         return users.length ? users[0] : null;
+    }
+
+    public static putSettings(settings: any){
+        const state = this.context.state;
+        state.taxes.gst = settings.gst;
+        state.taxes.qst = settings.qst;
     }
 
     // ==================================

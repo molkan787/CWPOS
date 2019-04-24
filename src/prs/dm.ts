@@ -4,12 +4,14 @@ import _url from '@/prs/api';
 
 export default class DM{
 
+    private static comu: any;
     private static context: any;
     private static data: any;
     private static cache: any;
 
-    public static setup(context: any){
+    public static setup(context: any, comu: any){
         this.context = context;
+        this.comu = comu;
         this.cache = context.state.data;
     }
 
@@ -44,6 +46,15 @@ export default class DM{
         }
     }
 
+    public static async editSettings(payload: any){
+        const {data} = await axios.post(_url('settings'), payload);
+        if(data.status == 'OK'){
+            this.comu.putSettings(payload);
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
 
     // -----------------------------------
 

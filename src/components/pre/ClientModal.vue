@@ -66,7 +66,7 @@ export default class ClientModal extends Vue{
         this.clientId = id;
         if(id == 'new'){
             this.title = 'Add new client';
-            this.setFormData({});
+            this.setFormData(payload);
         }else{
             this.title = 'Client id: ' + id;
             this.loading = true;

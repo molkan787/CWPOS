@@ -6,5 +6,18 @@ export default {
             return card.barcode;
         }
         return '---';
+    },
+    phone: (num: string) => {
+        let result = '';
+        for(let i = 0; i < num.length && i < 10; i++){
+            if(i == 3 || i == 6)
+                result += '-';
+            result += num.charAt(i);
+        }
+        return result;
     }
 }
+
+// extractRawNumber(val: string){
+//     return val.replace(/[^0-9]/g, '');
+// }

@@ -6,5 +6,6 @@ export default {
     newPrepaidCardItemName: 'New Prepaid Card',
     reloadPrepaidCardItemName: 'Prepaid Card Reload',
 
+    productWithTaxesType: 1,
     productWithoutTaxesType: 3,
 };

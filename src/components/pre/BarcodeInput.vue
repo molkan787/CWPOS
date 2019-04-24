@@ -10,19 +10,23 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import MxHelper from '@/prs/MxHelper';
+import barcodeScanner from '@/prs/barcodeScanner';
+
 
 @Component({
     watch: {
-        value: function(newVal) {
+        value: function(newVal: any) {
             // @ts-ignore
             this.pvalue = newVal;
+        },
+        listen: function(newVal: boolean, oldVal: boolean){
+            this.updateBinding(newVal, oldVal);
         }
     }
 })
 export default class BarcodeInput extends Vue{
 
-    @Prop({default: false}) react!: boolean;
+    @Prop({default: false}) listen!: boolean;
     @Prop({default: ''}) value!: string;
     private pvalue: string = '';
 
@@ -34,13 +38,19 @@ export default class BarcodeInput extends Vue{
         this.pvalue = this.value;
     }
 
-    created(){
-        // @ts-ignore
-        MxHelper.addBarcodeHandler((barcode: string) => {
-            this.pvalue = barcode;
-            this.change();
-            this.$emit('scanned', barcode);
-        });
+    handleScan(barcode: string){
+        this.pvalue = barcode;
+        this.change();
+        this.$emit('scanned', barcode);
+    }
+
+    updateBinding(newState: boolean, oldState: boolean){
+        if(newState == oldState) return;
+        if(newState){
+            barcodeScanner.bind((barcode: string) => this.handleScan(barcode));
+        }else{
+            barcodeScanner.unBind();
+        }
     }
 }
 </script>

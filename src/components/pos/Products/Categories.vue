@@ -1,7 +1,7 @@
 <template>
     <div>
         <sui-button class="item" v-for="(category, index) in categories" :key="index"
-        @click="itemClick(category.id)" >
+        @click="itemClick(category.id)" v-if="category.ctype == pos.catType" >
             {{ category.name }}
         </sui-button>
     </div>
@@ -14,7 +14,7 @@ import {mapState} from 'vuex';
 
 @Component({
     computed: {
-        ...mapState(['categories'])
+        ...mapState(['categories', 'pos'])
     }
 })
 export default class Categories extends Vue{

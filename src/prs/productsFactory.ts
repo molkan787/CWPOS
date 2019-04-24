@@ -13,7 +13,7 @@ export default class ProductsFactory{
         const data = {
             id: isReload ? consts.reloadPrepaidCardItemId : consts.newPrepaidCardItemId,
             name: isReload ? consts.reloadPrepaidCardItemName : consts.newPrepaidCardItemName,
-            product_type: consts.productWithoutTaxesType,
+            product_type: consts.productWithTaxesType,
             price: utils.roundPrice(amounts.price),
             label: utils.price(amounts.amount),
             barcode,

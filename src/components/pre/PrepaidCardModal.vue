@@ -4,7 +4,7 @@
         <h2 v-if="!isReload">Client information</h2>
         <ClientInfoForm v-if="!isReload" :data="clientData" />
         <hr v-if="!isReload">
-        <BarcodeInput v-model="barcode" />
+        <BarcodeInput v-model="barcode" :listen="open" />
         <hr>
         <AmountPriceForm :value="amounts" />
         <template v-slot:buttons>
@@ -106,7 +106,7 @@ export default class PrepaidCardModal extends Vue{
         this.amounts.price = this.amounts.price.replace(' ', '');
         this.amounts.amount = this.amounts.amount.replace(' ', '');
         const {price, amount} = this.amounts;
-        if(!this.isReload && (this.clientData.phone.length < 8 || this.clientData.first_name.length < 2)){
+        if(!this.isReload && (this.clientData.phone.length != 10 || this.clientData.first_name.length < 2)){
             this.dialog('Please enter valid Phone Number and First Name');
         }else if(this.barcode.length < 6){
             this.dialog('Please enter a valid Barcode.');

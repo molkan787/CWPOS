@@ -75,7 +75,7 @@ export default class LoyaltyCardModal extends Vue{
 
     validateForm(){
         // @ts-ignore
-        if(this.clientData.phone.length < 8 || this.clientData.first_name.length < 2){
+        if(this.clientData.phone.length != 10 || this.clientData.first_name.length < 2){
             this.dialog('Please enter valid Phone Number and First Name');
         }else if(this.barcode.length < 6){
             this.dialog('Please enter a valid Barcode.');

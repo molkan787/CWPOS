@@ -31,7 +31,7 @@ export default class ClientsTab extends Vue{
     private cols = [
         {name: 'Id', prop: 'id'},
         {name: 'Added date', prop: 'date_added', filter: 'ts2date'},
-        {name: 'Phone', prop: 'phone'},
+        {name: 'Phone', prop: 'phone', filter: 'phone'},
         {name: 'Email', prop: 'email'},
         {name: 'First Name', prop: 'first_name'},
         {name: 'Last Name', prop: 'last_name'},

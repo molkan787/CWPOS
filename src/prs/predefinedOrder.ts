@@ -9,17 +9,17 @@ export default class PredefinedOrder{
     }
 
     static regularWash(){
-        this.context.dispatch('setItemCountOne', '1');
+        // this.context.dispatch('setItemCountOne', '1');
         this.context.state.pos.pay_method = 'cash';
         // @ts-ignore
-        MxHelper.setPaidAmount('=');
+        // MxHelper.setPaidAmount('=');
     }
 
     static prepaidWash(){
-        this.context.dispatch('setItemCountOne', '1');
+        // this.context.dispatch('setItemCountOne', '1');
         this.context.state.pos.pay_method = 'prepaid';
         // @ts-ignore
-        MxHelper.setPaidAmount('=');
+        // MxHelper.setPaidAmount('=');
     }
 
 }

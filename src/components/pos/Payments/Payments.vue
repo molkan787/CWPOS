@@ -46,6 +46,7 @@ export default class Payments extends Vue{
     private paid: string = '';
     private change: number = 7;
     private loading: boolean = false;
+    private isSetBySystem: boolean = false;
 
     private cashButtons = [
         {text: '$ 10', key: '10'},
@@ -76,6 +77,10 @@ export default class Payments extends Vue{
     }
 
     changePaid(key: string){
+        if(this.isSetBySystem && key != '<'){
+            this.paid = '';
+        }
+        this.isSetBySystem = false;
         this.paid = PrsUtils.mutateNumber(this.paid, key, 6, 2);
         this.pushPaidAmount();
     }
@@ -87,8 +92,14 @@ export default class Payments extends Vue{
 
     setExact(){
         // @ts-ignore
-        this.paid = this.pos.values.total.toFixed(2);
+        if(this.pos.values.total == 0){
+            this.paid = '';
+        }else{
+            // @ts-ignore
+            this.paid = this.pos.values.total.toFixed(2);
+        }
         this.pushPaidAmount();
+        this.isSetBySystem = true;
     }
 
     reset(){

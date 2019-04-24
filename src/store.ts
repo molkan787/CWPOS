@@ -45,13 +45,14 @@ export default new Vuex.Store({
         taxQST: 0,
         total: 0,
         paidCash: 0,
-        changeDue: 0
+        changeDue: 0,
       },
       items: [],
       itemsCount: {},
       pay_method: 'cash',
       paid: false,
       finished: false,
+      catType: 1,
     },
     payment: {},
     ticket: '',
@@ -68,6 +69,10 @@ export default new Vuex.Store({
       want_receipt: false,
       history: []
     },
+    loyaltyCard: {
+      id: 0,
+      barcode: '',
+    },
 
     user: {
       id: 0,
@@ -80,6 +85,11 @@ export default new Vuex.Store({
     stats: {cw: 0, pp: 0,  rpp: 0, dt: 0},
 
     areaAView: 'order',
+
+    taxes: {
+      gst: 0,
+      qst: 0,
+    },
   },
   getters: {
     getCategory(state){
@@ -94,7 +104,11 @@ export default new Vuex.Store({
       Comu.setup(context);
     },
 
-    setTicket({state}, val){
+    setCatType({state}, ctype: any){
+      state.pos.catType = ctype;
+    },
+
+    setTicket({state}, val: any){
       state.ticket = val;
     },
 
@@ -134,13 +148,13 @@ export default new Vuex.Store({
     setClientData(context, clientData: any){
       const client = context.state.client;
       if(clientData){
-        client.id = clientData.id;
-        client.first_name = clientData.first_name;
-        client.last_name = clientData.last_name;
-        client.phone = clientData.phone;
-        client.email = clientData.email;
-        client.want_receipt = clientData.want_receipt;
-        client.history = clientData.history;
+        client.id = clientData.id || 0;
+        client.first_name = clientData.first_name || '';
+        client.last_name = clientData.last_name || '';
+        client.phone = clientData.phone || '';
+        client.email = clientData.email || '';
+        client.want_receipt = clientData.want_receipt || false;
+        client.history = clientData.history || [];
       }
     },
 
@@ -162,6 +176,7 @@ export default new Vuex.Store({
       pos.pay_method = 'cash';
       pos.paid = false;
       pos.finished = false;
+      pos.catType = 1;
       values.fullDiscount = false;
       values.itemsTotal = 0;
       values.discount = 0;
@@ -194,6 +209,9 @@ export default new Vuex.Store({
       client.email = '';
       client.want_receipt = false;
       client.history = [];
+
+      context.state.loyaltyCard.id = 0;
+      context.state.loyaltyCard.barcode = '';
 
       context.state.areaAView = 'order';
       context.state.defaultExactPaid = true;
@@ -264,8 +282,8 @@ export default new Vuex.Store({
         if(item.product_type == consts.productWithoutTaxesType){
           totalExludingTaxes += ltotal;
         }else if(item.addTaxes){
-          extraGst += ltotal * things.taxes.gst;
-          extraQst += ltotal * things.taxes.qst;
+          extraGst += ltotal * state.taxes.gst;
+          extraQst += ltotal * state.taxes.qst;
           totalExludingTaxes += ltotal;
         }else{
           total += ltotal;
@@ -280,9 +298,12 @@ export default new Vuex.Store({
 
       total += values.discount;
 
-      const gst = total * things.taxes.gst;
-      const qst = total * things.taxes.qst;
-      const subTotal = total - gst - qst + totalExludingTaxes;
+      const totalTaxRate = state.taxes.gst + state.taxes.qst;
+      let subTotal = total / (totalTaxRate + 1);
+      const taxes = (total - subTotal) / totalTaxRate;
+      const gst = taxes * state.taxes.gst;
+      const qst = taxes * state.taxes.qst;
+      subTotal += totalExludingTaxes;
 
       values.subTotal = subTotal;
       values.taxGST = gst + extraGst;

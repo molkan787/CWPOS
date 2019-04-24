@@ -8,7 +8,8 @@
         <ProductItem v-for="(item, index) in items" :key="index"
         :item="item" @editClick="editClick" @deleteClick="deleteClick"/>
 
-        <div v-if="items.length == 0" class="empty-text">This Category is empty</div>
+        <div v-if="noCat" class="empty-text">No Category Selected.</div>
+        <div v-else-if="items.length == 0" class="empty-text">This Category is empty!</div>
     </div>
 </template>
 
@@ -36,6 +37,7 @@ export default class Products extends Vue{
 
     private items: any[] = [];
     private catID: any = '';
+    private noCat: boolean = true;
 
     editClick(id: any){
         // @ts-ignore
@@ -67,9 +69,15 @@ export default class Products extends Vue{
 
     update(catID: any){
         this.catID = catID;
-        // @ts-ignore
-        const prts = this.products[catID];
-        this.items = prts || [];
+        if(catID == -1 || catID == '+'){
+            this.items = [];
+            this.noCat = true;
+        }else{
+            // @ts-ignore
+            const prts = this.products[catID];
+            this.items = prts || [];
+            this.noCat = false;
+        }
     }
 
     created(){

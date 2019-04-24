@@ -2,7 +2,7 @@
     <div class="ui attached vertical segment no-padding">
         
         <sui-segment attached class="padding-2">
-            <TripleButton :texts="['OPTIONS','RESTART','QUIT APP']" @click="buttonClicked" />
+            <TripleButton :texts="['CLEAR POS','OPTIONS','QUIT APP']" @click="buttonClicked" />
         </sui-segment>
 
         <sui-segment attached class="row1-block">
@@ -17,6 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Comu from '@/prs/comu';
 import App from '@/app_service';
 import Message from '@/ccs/Message';
 import MxHelper from '@/prs/MxHelper';
@@ -35,15 +36,16 @@ import PaymentMethods from './PaymentMethods/PaymentMethods.vue';
 export default class RightColumn extends Vue{
     buttonClicked(comp: any, btnIdx: number){
         if(btnIdx == 0){
+            Comu.reset();
+        }else if(btnIdx == 1){
             // @ts-ignore
             MxHelper.openOptions();
-        }else if(btnIdx == 1){
-            Message.ask('Are you sure you want to restart the app?').then((e: any) => {
-                e.hide();
-                if(e.answer){
-                    App.restart();
-                }
-            });
+            // Message.ask('Are you sure you want to restart the app?').then((e: any) => {
+            //     e.hide();
+            //     if(e.answer){
+            //         App.restart();
+            //     }
+            // });
         }else if(btnIdx == 2){
             Message.ask('Are you sure you want to quit the app?').then((e: any) => {
                 e.hide();
