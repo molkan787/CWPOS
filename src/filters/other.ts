@@ -15,6 +15,9 @@ export default {
             result += num.charAt(i);
         }
         return result;
+    },
+    orderTicket: (obj: any) => {
+        return obj.ticket;
     }
 }
 

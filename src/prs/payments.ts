@@ -4,7 +4,7 @@ import _url from './api';
 import MxHelper from './MxHelper';
 import CardMachine from '@/drivers/cardMachine';
 
-export default class{
+export default class Payments{
     
     static requestPayment(method: string, payload: any){
         if(!comu.canRequestPayment()) return;
@@ -105,15 +105,14 @@ export default class{
 
     private static _Invoice(payload: any){
         return new Promise((resolve, reject) => {
-            // Add amount to invoicing system for specific company/client
-            setTimeout(() => {
-                resolve(true);
-            }, 1000);
+            comu.setInvoiceData({clientName: payload.clientName})
+            resolve(true);
         });
     }
 
     private static _Other(payload: any){
         return new Promise((resolve, reject) => {
+            comu.setFreeOrderReason(payload.reason);
             // Imidiatly approve the payment
             resolve(true);
         });

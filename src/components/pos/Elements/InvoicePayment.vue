@@ -4,18 +4,7 @@
         <h2>
             Invoice / Ari
         </h2>
-        <sui-dropdown
-            button
-            class="icon"
-            floating
-            icon="building"
-            labeled
-            :options="companies"
-            search
-            text="Select Company"
-            noResultsMessage="Company not found"
-            v-model="current"
-        />
+        <LabeledInput class="company-input" label="Company" v-model="current" :disabled="pos.finished" />
         <div>
             <sui-button :icon="pos.finished ? 'circle check' : ''" size="large"
             :class="pos.finished ? 'green' : ''" @click="finish">
@@ -32,24 +21,26 @@ import { Prop } from 'vue-property-decorator';
 import Component from 'vue-class-component';
 import { mapState, mapActions } from 'vuex';
 import Payments from '@/prs/payments';
+import LabeledInput from '../../Elts/inputs/LabeledInput.vue';
 
 @Component({
+    components: {
+        LabeledInput,
+    },
     computed: mapState(['pos', 'companies']),
     methods: mapActions(['setClientId']),
 })
 export default class InvoicePayment extends Vue{
 
-    private current: any = null;
+    private current: any = '';
 
     finish(){
         // @ts-ignore
         if(this.pos.finished) return;
         if(this.current){
-            // @ts-ignore
-            this.setClientId(this.current);
-            Payments.requestPayment('other', {});
+            Payments.requestPayment('invoice_ari', {clientName: this.current});
         }else{
-            this.$emit('message', 'Please select Company');
+            this.$emit('message', 'Please type Company name');
         }
     }
 
@@ -76,7 +67,9 @@ button.dropdown{
 </style>
 
 <style>
-.dropdown > div > div.item{
+.company-input{
     font-size: 1.3rem !important;
+    height: 3.5rem !important;
+    margin-bottom: 1rem !important;
 }
 </style>

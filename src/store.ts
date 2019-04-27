@@ -57,9 +57,15 @@ export default new Vuex.Store({
     payment: {},
     ticket: '',
     nextOrderId: 0,
+    discountReason: '',
+    freeOrderReason: '',
+    extraChargeReason: '',
 
     postingOrder: false,
     //=======================
+    invoiceData: {
+      clientName: '',
+    },
     client: {
       id: 0,
       first_name: '',
@@ -102,6 +108,21 @@ export default new Vuex.Store({
   actions: {
     setup(context){
       Comu.setup(context);
+    },
+
+    setReason({state}, payload: any){
+      const {_of, reason} = payload;
+      switch (_of) {
+        case 'discount':
+          state.discountReason = reason;
+          break;
+        case 'extra':
+          state.extraChargeReason = reason;
+        case 'free':
+          state.freeOrderReason = reason;
+        default:
+          break;
+      }
     },
 
     setCatType({state}, ctype: any){
@@ -200,6 +221,9 @@ export default new Vuex.Store({
       }
       context.state.payment = {};
       context.state.ticket = '';
+      context.state.discountReason =  '';
+      context.state.freeOrderReason =  '';
+      context.state.extraChargeReason = '';
 
       const client = context.state.client;
       client.id = 0;
@@ -212,6 +236,8 @@ export default new Vuex.Store({
 
       context.state.loyaltyCard.id = 0;
       context.state.loyaltyCard.barcode = '';
+
+      context.state.invoiceData.clientName = '';
 
       context.state.areaAView = 'order';
       context.state.defaultExactPaid = true;
@@ -249,11 +275,13 @@ export default new Vuex.Store({
       context.state.pos.values.tips = value;
       context.dispatch('updateValues');
     },
-    setExtraCharge(context, value){
+    setExtraCharge(context, {value, reason}){
       context.state.pos.values.extraCharge = value;
+      context.state.extraChargeReason = reason;
       context.dispatch('updateValues');
     },
-    setDiscount(context, value){
+    setDiscount(context, payload){
+      const value = (typeof payload == 'object') ? payload.value : payload;
       const values = context.state.pos.values;
       if(value == 'full'){
         values.discount = -values.itemsTotal;
@@ -262,6 +290,7 @@ export default new Vuex.Store({
         values.discount = parseFloat(value) * -1;
         values.fullDiscount = false;
       }
+      context.state.discountReason = payload.reason || '';
       context.dispatch('updateValues');
     },
     setPaidCash(context, value){

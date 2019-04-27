@@ -190,9 +190,15 @@ export default class Comu{
                 },
                 other_data: {
                     ticket: state.ticket,
+                    reasons: {
+                        discount: state.discountReason,
+                        extra: state.extraChargeReason,
+                        free: state.freeOrderReason,
+                    }
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0,
+                invoiceData: state.invoiceData,
             };
             const stats = this.getStats(items, itemsCount);
             const data = {
@@ -233,6 +239,14 @@ export default class Comu{
     }
     static markAsFinished(){
         this.context.dispatch('markAsFinished');
+    }
+
+    static setFreeOrderReason(reason: string){
+        this.context.state.freeOrderReason = reason;
+    }
+
+    static setInvoiceData(payload: any){
+        this.context.state.invoiceData.clientName = payload.clientName || '';
     }
 
     // ==================================

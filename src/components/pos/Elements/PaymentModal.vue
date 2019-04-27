@@ -123,6 +123,9 @@ export default class PaymentModal extends Vue{
         this.bus.$on('posting', () => {
             this.loading = true;
         });
+        this.bus.$on('message', (msg: string) => {
+            this.dialog(msg, 'child');
+        });
     }
 }
 </script>

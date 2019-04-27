@@ -28,7 +28,8 @@ export default class OrdersTab extends Vue{
 
     private tableSchema = [
         {name: 'Id', prop: 'id'},
-        {name: 'Client', prop: 'client', filter: 'joinnames', default: 'WALK IN'},
+        {name: 'ticket #', prop: 'other_data', filter: 'orderTicket'},
+        {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
         {name: 'Order Date', prop: 'date_added', filter: 'ts2date'},
         {name: 'Payment method', prop: 'pay_method', filter: 'paym'},
         {name: 'Order value', prop: 'total', filter: 'price_m'},
@@ -44,6 +45,8 @@ export default class OrdersTab extends Vue{
         Dl.getOrders(this.filtersValues).catch(error => {
             console.log('Error: ', error);
         }).finally(() => {
+            // @ts-ignore
+            console.log(this.orders);
             this.loading = false;
         });
     }

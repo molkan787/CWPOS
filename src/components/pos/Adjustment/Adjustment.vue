@@ -33,7 +33,7 @@ import Comu from '@/prs/comu';
 import MxHelper from '@/prs/MxHelper';
 
 @Component({
-    computed: mapState(['pos']),
+    computed: mapState(['pos', 'extraChargeReason', 'discountReason']),
     methods: mapActions(['setDiscount', 'setExtraCharge', 'setTips'])
 })
 export default class Adjustment extends Vue{
@@ -44,11 +44,14 @@ export default class Adjustment extends Vue{
     extraChargeClick(){
         MxHelper.getCustomValue({
             title: 'Extra Charge',
+            reason: true,
+            // @ts-ignore
+            reasonText: this.extraChargeReason,
             // @ts-ignore
             value: this.pos.values.extraCharge
-        }).then(value => {
+        }).then(result => {
             // @ts-ignore
-            this.setExtraCharge(value);
+            this.setExtraCharge(result);
         }).catch(() => {});
     }
 
@@ -66,17 +69,19 @@ export default class Adjustment extends Vue{
     discountClick(){
         MxHelper.getCustomValue({
             title: 'Custom Discount',
+            reason: true,
             // @ts-ignore
             value: this.customDiscount
-        }).then(value => {
+        }).then(result => {
             // @ts-ignore
-            this.customDiscount = value;
-            this.putDiscount('custom');
+            this.customDiscount = result.value;
+            this.putDiscount('custom', result.reason);
         }).catch(() => {});
     }
 
-    putDiscount(discount: string){
-
+    putDiscount(discount: string, reason?: string){
+        const prevDiscount = this.currentDiscount;
+        const prevCustom = this.customDiscount;
         if(this.currentDiscount == discount && discount != 'custom')
             this.currentDiscount = '';
         else
@@ -86,10 +91,16 @@ export default class Adjustment extends Vue{
             this.setDiscount(0);
         }else if(this.currentDiscount == 'full'){
             // @ts-ignore
-            this.setDiscount(this.currentDiscount);
+            MxHelper.getReason({title: 'Reason of full discount'}).then((reason: string) => {
+                // @ts-ignore
+                this.setDiscount({value: this.currentDiscount, reason});
+            }).catch(error => {
+                this.currentDiscount = prevDiscount;
+                this.customDiscount = prevCustom;
+            });
         }else if(this.currentDiscount == 'custom'){
             // @ts-ignore
-            this.setDiscount(this.customDiscount);
+            this.setDiscount({value: this.customDiscount, reason});
         }else{
             // @ts-ignore
             this.setDiscount(parseInt(this.currentDiscount));

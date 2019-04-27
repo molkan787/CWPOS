@@ -10,6 +10,7 @@
     <InActiveModal />
     <OptionsModal />
     <ClientModal />
+    <ReasonModal />
   </div>
 </template>
 
@@ -23,6 +24,7 @@ import MessageModal from './components/pre/MessageModal.vue';
 import InActiveModal from './components/pre/InActiveModal.vue';
 import OptionsModal from './components/pre/OptionsModal.vue';
 import ClientModal from './components/pre/ClientModal.vue';
+import ReasonModal from './components/pre/ReasonModal.vue';
 
 export default Vue.extend({
   components: {
@@ -33,6 +35,7 @@ export default Vue.extend({
     InActiveModal,
     OptionsModal,
     ClientModal,
+    ReasonModal,
   },
   methods: {
     ...mapActions(['setup'])
