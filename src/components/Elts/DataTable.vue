@@ -35,7 +35,7 @@
 
                             <template v-if="col.buttons">
                                 <sui-button v-for="(btn, index) in col.buttons" :key="index"
-                                @click="buttonClick(btn.name, item[col.prop])">
+                                @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])">
                                     <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
                                     {{ btn.text }}
                                 </sui-button>

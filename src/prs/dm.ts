@@ -56,6 +56,15 @@ export default class DM{
         }
     }
 
+    public static async editCardBalance(payload: any){
+        const {data} = await axios.post(_url('editCardBalance'), payload);
+        if(data.status == 'OK'){
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
     // -----------------------------------
 
     private static _getClientData(by: string, ref: any){

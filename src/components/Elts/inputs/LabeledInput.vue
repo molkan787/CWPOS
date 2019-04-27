@@ -1,7 +1,7 @@
 <template>
     <div class="root ui labeled input">
         <label class="ui label">{{label}}</label>
-        <input :disabled="disabled" :type="type" v-model="pvalue" @change="change" :placeholder="ph || label"/>
+        <input :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"/>
     </div>
 </template>
 
@@ -10,7 +10,13 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-@Component
+@Component({
+    watch: {
+        value: function (){
+            this.updateValue();
+        }
+    }
+})
 export default class LabeledInput extends Vue{
 
     @Prop({default: null}) resetBus!: Vue;

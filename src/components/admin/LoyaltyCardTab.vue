@@ -1,7 +1,7 @@
 <template>
     <DataTable :cols="cols" :items="cards" :loading="loading"
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
-    @filtersChanged="loadData" />
+    @filtersChanged="loadData" @editBalance="editBalance" />
 </template>
 
 <script lang="ts">
@@ -11,6 +11,7 @@ import DataTable from '../Elts/DataTable.vue';
 import { mapState } from 'vuex';
 import Dl from '@/prs/dl';
 import pfs from '@/prs/pfs';
+import MxHelper from '@/prs/MxHelper';
 
 @Component({
     components: {
@@ -29,7 +30,10 @@ export default class LoyaltyCardTab extends Vue{
         {name: 'Barcode', prop: 'barcode'},
         {name: 'Activation date', prop: 'date_added', filter: 'ts2date'},
         {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
-        {name: 'Balance', prop: 'balance', filter: 'price_m'}
+        {name: 'Balance', prop: 'balance', filter: 'price_m'},
+        {name: 'Options', prop: '@', buttons: [
+            {name: 'editBalance', text: 'Edit balance', icon: 'edit'}
+        ]}
     ];
 
     private filtersSchema = pfs.POLCards;
@@ -42,6 +46,11 @@ export default class LoyaltyCardTab extends Vue{
         }).finally(() => {
             this.loading = false;
         });
+    }
+
+    private editBalance(card: any){
+        // @ts-ignore
+        MxHelper.editCardBalance({card, type: 'loyalty'});
     }
 
     created(){
