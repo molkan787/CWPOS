@@ -64,12 +64,12 @@ export default class Comu{
 
     static activatePrepaidCard(barcode: string, clientData: any, balance: number){
         return new Promise((resolve, reject) => {
-            const data = {
+            const _data = {
                 barcode,
                 clientData,
                 balance: Utils.preparePrice(balance),
             };
-            axios.post(_url('prepaid/add'), data).then(({data}) => {
+            axios.post(_url('prepaid/add'), _data).then(({data}) => {
                 if(data.status == 'OK'){
                     resolve(true);
                 }else{
@@ -198,13 +198,14 @@ export default class Comu{
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0,
-                invoiceData: state.invoiceData,
             };
             const stats = this.getStats(items, itemsCount);
             const data = {
                 orderData,
                 stats,
                 payment: state.payment,
+                invoiceData: state.invoiceData,
+                loyaltyCardId: state.loyaltyCard.id,
             }
             axios.post(_url('order'), data).then(({data}) => {
                 if(data.status == 'OK'){
@@ -221,6 +222,14 @@ export default class Comu{
                 reject(error);
             });
         });
+    }
+
+    static resetStats(){
+        const stats = this.context.state.stats;
+        stats.cw = 0;
+        stats.pp = 0;
+        stats.rpp = 0;
+        stats.dt = 0;
     }
 
     static markAsPaid(){
@@ -276,6 +285,9 @@ export default class Comu{
 
     static updateTime(){
         this.context.state.currentTime = extUtils.getCurrentTime();
+        if(this.context.state.currentTime == '00:00'){
+            this.resetStats();
+        }
     }
 
     // ---------------------------------

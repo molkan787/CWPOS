@@ -1,7 +1,8 @@
 <template>
     <div class="root ui labeled input">
-        <label class="ui label">{{label}}</label>
-        <input :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"/>
+        <label class="ui label" :style="labelWidth ? 'width: ' + labelWidth : ''">{{label}}</label>
+        <input :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"
+            :style="inputWidth ? 'width: ' + inputWidth : ''" :maxlength="maxlength" :min="min" :max="max" />
     </div>
 </template>
 
@@ -29,6 +30,13 @@ export default class LabeledInput extends Vue{
     @Prop({default: null}) value!: any;
 
     @Prop({default: false}) disabled!: boolean;
+
+    
+    @Prop({default: ''}) labelWidth!: string;
+    @Prop({default: ''}) inputWidth!: string;
+    @Prop({default: ''}) maxlength!: string;
+    @Prop({default: ''}) min!: string;
+    @Prop({default: ''}) max!: string;
 
     private pvalue: any = '';
 

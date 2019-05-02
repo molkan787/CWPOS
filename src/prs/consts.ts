@@ -5,6 +5,7 @@ export default {
 
     newPrepaidCardItemName: 'New Prepaid Card',
     reloadPrepaidCardItemName: 'Prepaid Card Reload',
+    giftCertificateItemName: 'Gift Certificate',
 
     productWithTaxesType: 1,
     productWithoutTaxesType: 3,

@@ -23,4 +23,16 @@ export default class ProductsFactory{
         this.context.dispatch('addCustomItem', data);
     }
 
+    static addGiftCertificateItem(data: any){
+        const item = {
+            id: consts.giftCertificateItemId,
+            name: consts.giftCertificateItemName,
+            product_type: consts.productWithTaxesType,
+            price: utils.roundPrice(data.value),
+            label: '#' + data.certId,
+            data,
+        }
+        this.context.dispatch('addCustomItem', item);
+    }
+
 }

@@ -25,12 +25,10 @@ export default class BarcodeScanner{
     }
 
     public static bind(handler: Function){
-        console.log('BS> Binding:', handler);
         this.bindedHandler = handler;
     }
 
     public static unBind(){
-        console.log('BS> Unbinding:', this.bindedHandler);
         this.bindedHandler = null;
     }
 

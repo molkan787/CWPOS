@@ -2,8 +2,11 @@
     <div>
         <h2>Total: {{ pos.values.total | price }}</h2>
         <h3>
-            <span class="sub-s">Amount: ${{ paid }}</span>
-            <span class="second sub-s">
+            <span v-if="disabled" class="sub-s">Amount: ---</span>
+            <span v-else class="sub-s">Amount: ${{ paid }}</span>
+            
+            <span v-if="disabled" class="second sub-s">Change: ---</span>
+            <span v-else class="second sub-s">
                 Change:
                 <span :class="{
                     positive: pos.values.changeDue > 0,
@@ -17,6 +20,8 @@
             Submit
             <i class="arrow right icon"></i>
         </sui-button>
+
+        <div v-if="disabled" class="dimmer"></div>
     </div>
 </template>
 
@@ -40,6 +45,12 @@ import MxHelper from '@/prs/MxHelper';
     },
     methods: {
         ...mapActions(['setPaidCash'])
+    },
+    watch: {
+        "pos.pay_method": function (){
+            // @ts-ignore
+            this.updateState();
+        }
     }
 })
 export default class Payments extends Vue{
@@ -47,6 +58,8 @@ export default class Payments extends Vue{
     private change: number = 7;
     private loading: boolean = false;
     private isSetBySystem: boolean = false;
+
+    private disabled: boolean = false;
 
     private cashButtons = [
         {text: '$ 10', key: '10'},
@@ -102,6 +115,11 @@ export default class Payments extends Vue{
         this.isSetBySystem = true;
     }
 
+    updateState(){
+        // @ts-ignore
+        this.disabled = this.pos.pay_method != 'cash';
+    }
+
     reset(){
         this.paid = '';
     }
@@ -120,6 +138,8 @@ export default class Payments extends Vue{
 @import '@/scss/vars.scss';
 h2{
     margin-bottom: 0;
+    position: relative;
+    z-index: 10;
 }
 h3{
     margin-top: 0.5rem;
@@ -154,9 +174,20 @@ h3{
     height: 3.5rem;
     box-shadow: 1px 1px 6px #ccc;
     font-size: 1.3rem;
+    position: relative;
+    z-index: 10;
     i{
         padding-left: 0.5rem;
         margin-right: -1rem !important;
     }
+}
+.dimmer{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0.8;
 }
 </style>

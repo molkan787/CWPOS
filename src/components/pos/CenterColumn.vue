@@ -39,6 +39,9 @@ export default class CenterColumn extends Vue{
         }else if(btnIdx == 1){
             // @ts-ignore
             MxHelper.openPrepaidCardModal(true);
+        }else if(btnIdx == 2){
+            // @ts-ignore
+            MxHelper.addGiftCertificate();
         }
     }
 }
