@@ -58,7 +58,7 @@ export default class ProductModal extends Vue{
 
     private options: any[] = [
         {value: '1', text: 'Fixed Price'},
-        {value: '2', text: 'Custom Price (Variable)'},
+        {value: '2', text: 'User Defined'},
     ];
 
     private saveClick(){

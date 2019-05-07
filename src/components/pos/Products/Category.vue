@@ -1,7 +1,7 @@
 <template>
     <div>
         <ProductItem v-for="(item, index) in items" :key="index"
-        :item="item"/>
+        :item="item" @resetTimer="resetTimer"/>
 
         <div v-if="items.length == 0" class="empty-text">This Category is empty</div>
     </div>
@@ -26,6 +26,10 @@ export default class Category extends Vue{
     @Prop({default: ''}) catID!: string;
 
     private items: any[] = [];
+
+    resetTimer(){
+        this.$emit('resetTimer');
+    }
 
     mounted(){
         // @ts-ignore

@@ -107,7 +107,7 @@ export default class PrepaidCardModal extends Vue{
         this.amounts.amount = this.amounts.amount.replace(' ', '');
         const {price, amount} = this.amounts;
         if(!this.isReload && (this.clientData.phone.length != 10 || this.clientData.first_name.length < 2)){
-            this.dialog('Please enter valid Phone Number and First Name');
+            this.dialog('Please enter valid phone number and first name');
         }else if(this.barcode.length < 6){
             this.dialog('Please enter a valid Barcode.');
         }else if(!price || !amount || isNaN(price) || isNaN(amount)){

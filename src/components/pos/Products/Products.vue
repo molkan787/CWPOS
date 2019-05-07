@@ -5,7 +5,7 @@
             {{ headerText }} <span class="label">({{ suffix }})</span>
         </div>
         <Categories v-if="catID == 'all'" @catSelected="categorySelected" />
-        <Category v-if="catID != 'all'" :catID="catID"/>
+        <Category v-if="catID != 'all'" :catID="catID" @resetTimer="resetTimer" />
     </div>
 </template>
 
@@ -29,7 +29,9 @@ import Modal from '../../Elts/Modal.vue';
     },
     watch: {
         "pos.catType": function (val: any){
+            // @ts-ignore
             this.updateHeader(val);
+            // @ts-ignore
             this.goBack();
         }
     }
@@ -41,6 +43,8 @@ export default class Products extends Vue{
     private catID: string = 'all';
 
     private headerClass: string = 'regular';
+
+    private goBackTimer = 0;
 
     categorySelected(cat_id: any){
         this.catID = cat_id;
@@ -61,6 +65,14 @@ export default class Products extends Vue{
 
     reset(){
         this.goBack();
+    }
+
+    resetTimer(){
+        if(this.goBackTimer) clearTimeout(this.goBackTimer);
+
+        if(!Comu.settings.getItem('categoryAutoBack')) return;
+        
+        this.goBackTimer = setTimeout(() => this.reset(), 700);
     }
 
     created(){

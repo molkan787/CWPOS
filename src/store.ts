@@ -57,9 +57,12 @@ export default new Vuex.Store({
     payment: {},
     ticket: '',
     nextOrderId: 0,
+    lastOrderDate: 0,
     discountReason: '',
     freeOrderReason: '',
     extraChargeReason: '',
+
+    actions: [],
 
     postingOrder: false,
     //=======================
@@ -84,6 +87,8 @@ export default new Vuex.Store({
       id: 0,
       user_type: 100000,
       username: '',
+      first_name: '',
+      last_name: '',
     },
 
     companies: [],
@@ -241,6 +246,8 @@ export default new Vuex.Store({
 
       context.state.areaAView = 'order';
       context.state.defaultExactPaid = true;
+
+      Vue.set(context.state, 'actions', []);
     },
 
     setItemCountOne(context, itemId){
@@ -311,6 +318,7 @@ export default new Vuex.Store({
         if(item.product_type == consts.productWithoutTaxesType){
           totalExludingTaxes += ltotal;
         }else if(item.addTaxes){
+          item.taxes = (state.taxes.gst + state.taxes.qst) * item.price;
           extraGst += ltotal * state.taxes.gst;
           extraQst += ltotal * state.taxes.qst;
           totalExludingTaxes += ltotal;

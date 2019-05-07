@@ -3,6 +3,7 @@ import comu from './comu';
 import _url from './api';
 import MxHelper from './MxHelper';
 import CardMachine from '@/drivers/cardMachine';
+import Printer from '@/drivers/printer';
 
 export default class Payments{
     
@@ -60,7 +61,7 @@ export default class Payments{
 
     private static _Cash(payload: any){
         return new Promise((resolve, reject) => {
-            // Open cash drawer...
+            Printer.openCashDrawer();
             resolve(true);
         });
     }

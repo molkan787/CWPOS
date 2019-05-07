@@ -1,5 +1,6 @@
 import config from '@/config';
 import axios from 'axios';
+import time from './time';
 import _url from './api';
 import Products from './dcr/products';
 import Clients from './dcr/clients';
@@ -15,6 +16,8 @@ import consts from './consts';
 import Utils from './utils';
 import extUtils from '@/utils';
 import Receipt from './receipt';
+import Printer from '@/drivers/printer';
+import LocalSettings from './localSettings';
 
 export default class Comu{
 
@@ -22,6 +25,8 @@ export default class Comu{
     private static objectsToReset: any[];
     private static interval: Number;
     private static apiToken: string = '';
+
+    public static settings: typeof LocalSettings;
 
     static setup(context: any){
         this.context = context;
@@ -32,13 +37,21 @@ export default class Comu{
         Dl.setup(context);
         Ds.setup(context);
         DM.setup(context, this);
-        Receipt.setup(context);
+        Receipt.setup();
         Login.setup(context, this);
+
+        this.settings = LocalSettings;
+        this.settings.load();
 
         this.updateTime();
         this.interval = setInterval(() => {
             this.updateTime();
         }, 15000);
+
+        try {
+            Printer.setup();
+        } catch (error) {}
+
 
         if(config.debug){
             this.loadData();
@@ -49,8 +62,11 @@ export default class Comu{
                     user_type: 1,
                     id: 1,
                 }
-            })
+            });
+            // @ts-ignore
+            window.state = context.state;
         }
+        
     }
 
     static setToken(token: string){
@@ -71,6 +87,7 @@ export default class Comu{
             };
             axios.post(_url('prepaid/add'), _data).then(({data}) => {
                 if(data.status == 'OK'){
+                    this.context.state.actions.push(data.actionId);
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -89,6 +106,7 @@ export default class Comu{
             };
             axios.post(_url('prepaid/reload'), data).then(({data}) => {
                 if(data.status == 'OK'){
+                    this.context.state.actions.push(data.actionId);
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -206,6 +224,7 @@ export default class Comu{
                 payment: state.payment,
                 invoiceData: state.invoiceData,
                 loyaltyCardId: state.loyaltyCard.id,
+                actions: state.actions,
             }
             axios.post(_url('order'), data).then(({data}) => {
                 if(data.status == 'OK'){
@@ -214,6 +233,7 @@ export default class Comu{
                     state.stats.rpp += stats.rpp;
                     state.stats.dt += stats.dt;
                     state.nextOrderId = data.nextOrderId;
+                    state.lastOrderDate = data.date_added;
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -230,6 +250,18 @@ export default class Comu{
         stats.pp = 0;
         stats.rpp = 0;
         stats.dt = 0;
+        stats.day = time.today();
+    }
+
+    static updateStats(newStats: any, substract?: boolean){
+        const dir = substract ? -1 : 1;
+        const stats = this.context.state.stats;
+        if(stats.day == newStats.day){
+            stats.cw += newStats.cw * dir;
+            stats.pp += newStats.pp * dir;
+            stats.rpp += newStats.rpp * dir;
+            stats.dt += newStats.dt * dir;
+        }
     }
 
     static markAsPaid(){
@@ -262,9 +294,18 @@ export default class Comu{
 
     static printReceipt(){
         console.log('Printing receipt');
-        axios.post(_url('setReceiptFlag'), {order_id: this.context.state.nextOrderId - 1})
-        .catch(() => {});
-        Receipt.print();
+        const state = this.context.state;
+        const order_id = state.nextOrderId - 1;
+        axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
+        
+        Receipt.print({
+            id: order_id,
+            date_added: state.lastOrderDate,
+            cashier: state.user,
+            products: state.pos.items,
+            counts: state.pos.itemsCount,
+            totals: state.pos.values,
+        });
     }
 
     static registerToReset(obj: any){
@@ -293,6 +334,7 @@ export default class Comu{
     // ---------------------------------
 
     private static getStats(items: any[], itemsCount: any){
+        const washesCats = [1, 2, 6, 7];
         const stats = {
             cw: 0,
             pp: 0,
@@ -301,14 +343,15 @@ export default class Comu{
         };
         for(let i = 0; i < items.length; i++){
             const item = items[i];
+            const c = itemsCount[item.id];
             if(item.id == consts.newPrepaidCardItemId){
-                stats.pp += itemsCount[item.id];
+                stats.pp += c;
             }else if(item.id == consts.reloadPrepaidCardItemId){
-                stats.rpp += itemsCount[item.id];
+                stats.rpp += c;
             }else if(item.category_id == 3){
-                stats.dt += itemsCount[item.id];
-            }else if(item.product_type == 1){
-                stats.cw += itemsCount[item.id];
+                stats.dt += c;
+            }else if(washesCats.includes(item.category_id)){
+                stats.cw += c;
             }
         }
         return stats;

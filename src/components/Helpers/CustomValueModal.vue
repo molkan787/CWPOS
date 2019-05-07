@@ -8,7 +8,7 @@
 
         <KeyPad class="keypad" :shadow="false" v-model="amount" />
 
-        <ReasonForm v-if="askForReason" v-model="reason" />
+        <ReasonForm v-if="askForReason" v-model="reason" :title="reasonTitle" />
 
         <template v-slot:buttons>
             <sui-checkbox v-if="askForTaxes" v-model="taxesIncluded" label="Taxes are included?" class="checkbox"/>
@@ -45,6 +45,7 @@ export default class CustomValueModal extends Vue{
     private amount: string = '';
     private taxesIncluded: boolean = true;
     private reason: string = '';
+    private reasonTitle: string = '';
 
     validate(){
         let value = parseFloat(this.amount || '0');
@@ -76,7 +77,10 @@ export default class CustomValueModal extends Vue{
         this.askForTaxes = params.taxes;
         this.askForReason = params.reason;
         if(params.taxes) this.taxesIncluded = params.taxesIncluded;
-        if(params.reason) this.reason = params.reasonText || '';
+        if(params.reason){
+            this.reason = params.reasonText || '';
+            this.reasonTitle = params.reasonTitle || 'Reason';
+        }
         this.open = true;
     }
 

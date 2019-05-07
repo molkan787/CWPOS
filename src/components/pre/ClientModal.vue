@@ -92,7 +92,7 @@ export default class ClientModal extends Vue{
     validateForm(){
         const d = this.formData;
         if(d.phone.length != 10 || d.first_name.length < 2){
-            this.dialog.show('Please enter a valid Phone number and First name');
+            this.dialog.show('Please enter a valid phone number and first name');
         }else{
             return true;
         }

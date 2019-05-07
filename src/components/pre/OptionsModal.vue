@@ -8,6 +8,8 @@
             </div>
             <sui-button class="p-btn" icon="plus" @click="plus"></sui-button>
         </div>
+        <h3>POS</h3>
+        <sui-checkbox v-model="categoryAutoBack" @change="categoryAutoBackChange" class="cb" label="Automatically go back to categories list after selecting an item/service?"/>
         <template v-slot:buttons>
             <sui-button @click="close">Close</sui-button>
         </template>
@@ -19,6 +21,7 @@ import Vue from 'vue';
 import Modal from '../Elts/Modal.vue';
 import Component from 'vue-class-component';
 import MxHelper from '@/prs/MxHelper';
+import LocalSettings from '@/prs/localSettings';
 
 @Component({
     components: {
@@ -29,6 +32,7 @@ export default class OptionsModal extends Vue{
     private open: boolean = false;
 
     private zoom: number = 100;
+    private categoryAutoBack: boolean = false;
 
     minus(){
         this.adjustZoom(-10);
@@ -37,7 +41,11 @@ export default class OptionsModal extends Vue{
         this.adjustZoom(10);
     }
 
-    adjustZoom(amt: any){
+    categoryAutoBackChange(){
+        this.saveCAB();
+    }
+
+    adjustZoom(amt: any, doNotSave?: boolean){
         this.zoom += amt;
         if(this.zoom < 50) this.zoom = 50;
         else if(this.zoom > 150) this.zoom = 150;
@@ -45,6 +53,8 @@ export default class OptionsModal extends Vue{
         const fontSize = Math.round((this.zoom / 100) * 14);
         // @ts-ignore
         document.body.parentElement.style.fontSize = fontSize + 'px';
+        
+        if(!doNotSave) this.saveZoom();
     }
 
 
@@ -52,10 +62,21 @@ export default class OptionsModal extends Vue{
         this.open = false;
     }
 
+    saveZoom(){
+        LocalSettings.setItem('zoom', this.zoom);
+    }
+    saveCAB(){
+        LocalSettings.setItem('categoryAutoBack', this.categoryAutoBack);
+    }
+
     created(){
         MxHelper.registerFunction('openOptions', () => {
             this.open = true;
         });
+
+        this.categoryAutoBack = LocalSettings.getItem('categoryAutoBack') || false;
+        this.zoom = LocalSettings.getItem('zoom') || 100;
+        this.adjustZoom(0, true);
     }
 
 }
@@ -87,5 +108,10 @@ export default class OptionsModal extends Vue{
 .p-btn{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+.cb{
+    font-size: 0.8rem;
+    zoom: 1.5;
+    line-height: 1.2;
 }
 </style>

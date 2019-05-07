@@ -20,6 +20,7 @@ import barcodeScanner from '@/prs/barcodeScanner';
             this.pvalue = newVal;
         },
         listen: function(newVal: boolean, oldVal: boolean){
+            // @ts-ignore
             this.updateBinding(newVal, oldVal);
         }
     }

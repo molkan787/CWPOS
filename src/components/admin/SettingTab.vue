@@ -29,6 +29,7 @@ import LabeledInput from '../Elts/inputs/LabeledInput.vue';
     watch: {
         taxes: {
             handler: function (){
+                // @ts-ignore
                 this.loadValues();
             },
             deep: true,

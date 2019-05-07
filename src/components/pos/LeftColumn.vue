@@ -36,6 +36,7 @@ import Stats from './Stats/Stats.vue';
     methods: mapActions(['setCatType']),
     watch: {
         "pos.catType": function (val: any){
+            // @ts-ignore
             this.updateIcons(val);
         }
     }

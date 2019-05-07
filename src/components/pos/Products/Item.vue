@@ -87,14 +87,21 @@ export default class Item extends Vue{
         this.updateCount();
     }
 
-    updateCount(){
+    updateCount(resetTimer?: boolean){
         // @ts-ignore
         this.count = this.pos.itemsCount[this.item.id];
+        if(resetTimer || typeof resetTimer == 'undefined'){
+            this.resetTimer();
+        }
     }
     // =============
 
+    resetTimer(){
+        this.$emit('resetTimer');
+    }
+
     mounted(){
-        this.updateCount();
+        this.updateCount(false);
     }
 
 }

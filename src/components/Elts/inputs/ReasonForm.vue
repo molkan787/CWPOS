@@ -21,7 +21,7 @@ import { Prop } from 'vue-property-decorator';
 export default class ReasonForm extends Vue{
     @Prop({default: ''}) value!: string;
     @Prop({default: 'Reason'}) title!: string;
-    @Prop({default: 'reason...'}) ph!: string;
+    @Prop({default: 'Type here...'}) ph!: string;
     @Prop({default: false}) disabled!: boolean;
 
     private pvalue: string = '';

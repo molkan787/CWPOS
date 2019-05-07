@@ -48,6 +48,7 @@ import PhoneInput from '../pre/PhoneInput.vue';
     methods: mapActions(['setTicket']),
     watch: {
         loyaltyCard: {
+            // @ts-ignore
             handler: function (){ this.updateLoyaltyBarcode() },
             deep: true,
         }

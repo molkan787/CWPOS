@@ -65,6 +65,16 @@ export default class DM{
         }
     }
 
+    public static async refundOrder(paylaod: any){
+        const {data} = await axios.post(_url('order/refund'), paylaod);
+        if(data.status == 'OK'){
+            this.comu.updateStats(data.stats, true);
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
     // -----------------------------------
 
     private static _getClientData(by: string, ref: any){

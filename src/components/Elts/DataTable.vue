@@ -33,7 +33,12 @@
 
                         <sui-table-cell v-for="(col, index) in cols" :key="index">
 
-                            <template v-if="col.buttons">
+                            <template v-if="checkConditional(col, item)">
+                                <span :class="col.conditional.styleClass || ''">
+                                    {{ col.conditional.text }}
+                                </span>
+                            </template>
+                            <template v-else-if="col.buttons">
                                 <sui-button v-for="(btn, index) in col.buttons" :key="index"
                                 @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])">
                                     <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
@@ -139,6 +144,35 @@ export default class DataTable extends Vue{
         this.$emit('filtersChanged', this.filtersValues);
     }
 
+    // -----------------------------
+
+    checkConditional(col: any, item: any){
+        if(col.conditional){
+            return this.checkCondition(item[col.conditional.prop], col.conditional.value, col.conditional.compareMethod || '=');
+        }else{
+            return false;
+        }
+    }
+
+    checkCondition(val1: any, val2: any, compareMethod: string){
+        switch (compareMethod) {
+            case '=':
+                return val1 == val2;
+            case '>':
+                return val1 > val2;
+            case '<':
+                return val1 < val2;
+            case '>=':
+                return val1 >= val2;
+            case '<=':
+                return val1 <= val2;
+            default:
+                return false;
+        }
+    }
+
+    // -----------------------------
+
     created(){
         this.updateOffset();
     }
@@ -159,5 +193,12 @@ hr{
 }
 .no-margin{
     margin: 0 !important;
+}
+button{
+    margin-top: -2rem !important;
+    margin-bottom: -2rem !important;
+    &:first-child{
+        margin-left: -0.6rem !important;
+    }
 }
 </style>

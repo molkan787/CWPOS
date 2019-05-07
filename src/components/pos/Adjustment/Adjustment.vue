@@ -45,6 +45,7 @@ export default class Adjustment extends Vue{
         MxHelper.getCustomValue({
             title: 'Extra Charge',
             reason: true,
+            reasonTitle: 'For what ?',
             // @ts-ignore
             reasonText: this.extraChargeReason,
             // @ts-ignore
@@ -72,7 +73,7 @@ export default class Adjustment extends Vue{
             reason: true,
             // @ts-ignore
             value: this.customDiscount
-        }).then(result => {
+        }).then((result: any) => {
             // @ts-ignore
             this.customDiscount = result.value;
             this.putDiscount('custom', result.reason);
@@ -94,7 +95,7 @@ export default class Adjustment extends Vue{
             MxHelper.getReason({title: 'Reason of full discount'}).then((reason: string) => {
                 // @ts-ignore
                 this.setDiscount({value: this.currentDiscount, reason});
-            }).catch(error => {
+            }).catch((error: any) => {
                 this.currentDiscount = prevDiscount;
                 this.customDiscount = prevCustom;
             });

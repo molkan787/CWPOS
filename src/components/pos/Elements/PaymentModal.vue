@@ -11,7 +11,7 @@
         </template>
 
         <template v-slot:buttons>
-            <sui-button v-if="pos.finished" @click="printReceipt" icon="file alternate">Print Receipt</sui-button>
+            <sui-button v-if="pos.finished" @click="printReceipt" icon="file alternate" :loading="printBtnLoading">Print Receipt</sui-button>
             <sui-button v-if="pos.finished" @click="close">Close</sui-button>
             <sui-button v-else @click="close">Cancel</sui-button>
         </template>
@@ -56,9 +56,13 @@ export default class PaymentModal extends Vue{
     private bus: any = new Vue();
     private dialogData: any = {};
 
+    private printBtnLoading = false;
+
     printReceipt(){
         // @ts-ignore
         Comu.printReceipt();
+        this.printBtnLoading = true;
+        setTimeout(() => this.printBtnLoading = false, 1500);
     }
 
     close(){

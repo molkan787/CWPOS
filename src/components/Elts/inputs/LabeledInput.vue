@@ -14,6 +14,7 @@ import { Prop } from 'vue-property-decorator';
 @Component({
     watch: {
         value: function (){
+            // @ts-ignore
             this.updateValue();
         }
     }

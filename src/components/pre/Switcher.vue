@@ -14,6 +14,7 @@ import { Prop } from 'vue-property-decorator';
 @Component({
     watch: {
         value: function (val: any){
+            // @ts-ignore
             this.pvalue = val;
         }
     }

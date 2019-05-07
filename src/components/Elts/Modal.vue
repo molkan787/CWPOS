@@ -81,7 +81,7 @@ export default class Modal extends Vue{
 div.dialogBox{
   width: 100%;
   height: 100%;
-  box-shadow: 1px 1px 50px #ccc !important;
+  box-shadow: 1px 1px 20px #ccc !important;
   color: #222;
   line-height: 1.4;
   div.text{

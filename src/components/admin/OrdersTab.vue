@@ -1,7 +1,7 @@
 <template>
     <DataTable :cols="tableSchema" :items="orders" :loading="loading" 
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
-    @filtersChanged="loadData" />
+    @filtersChanged="loadData" @refund="refund" />
 </template>
 
 <script lang="ts">
@@ -10,7 +10,9 @@ import Component from 'vue-class-component';
 import DataTable from '../Elts/DataTable.vue';
 import { mapState } from 'vuex';
 import Dl from '@/prs/dl';
+import DM from '@/prs/dm';
 import Pfs from '@/prs/pfs';
+import Message from '@/ccs/Message';
 
 @Component({
     components: {
@@ -35,6 +37,16 @@ export default class OrdersTab extends Vue{
         {name: 'Order value', prop: 'total', filter: 'price_m'},
         {name: 'Receipt', prop: 'receipt', filter: 'yesIfTrue'},
         {name: 'Cashier', prop: 'cashier', filter: 'joinnames'},
+        {name: '', prop: '@', buttons: [
+                {name: 'refund', text: 'Refund', icon: 'undo'}
+            ],
+            conditional: {
+                prop: 'status',
+                value: 3,
+                text: '(Refunded)',
+                styleClass: 'special-cell'
+            }
+        }
     ];
 
     private filtersSchema = Pfs.orders;
@@ -46,9 +58,28 @@ export default class OrdersTab extends Vue{
             console.log('Error: ', error);
         }).finally(() => {
             // @ts-ignore
-            console.log(this.orders);
+            // console.log(this.orders);
             this.loading = false;
         });
+    }
+
+    refund(order: any){
+        Message.ask(`Do do you realy want to refund order id ${order.id} ?`)
+        .then((e: any) => {
+            if(e.answer){
+                e.loading();
+                DM.refundOrder({id: order.id}).then(() => {
+                    order.status = 3;
+                    e.dialog.show(`Order id ${order.id} was successfully refunded!`)
+                    .then(() => e.hide());
+                }).catch(error => {
+                    e.dialog.show('We could not complete the current action.')
+                    .then(() => e.hide());
+                });
+            }else{
+                e.hide();
+            }
+        })
     }
 
     created(){
