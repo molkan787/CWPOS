@@ -53,4 +53,9 @@ export default class Utils {
         return yyyy + '/' + mm + '/' + dd;
     }
 
+    static getFilenameExtension(filename: string){
+        const parts = filename.split('.');
+        return parts[parts.length - 1];
+    }
+
 }

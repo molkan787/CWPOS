@@ -1,6 +1,7 @@
 <template>
     <DataTable :cols="cols" :items="cards" :loading="loading"
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
+    :controlls="controlls"
     @filtersChanged="loadData" @editBalance="editBalance" />
 </template>
 
@@ -34,6 +35,11 @@ export default class LoyaltyCardTab extends Vue{
         {name: 'Options', prop: '@', buttons: [
             {name: 'editBalance', text: 'Edit balance', icon: 'edit'}
         ]}
+    ];
+
+    private controlls = [
+        {text: 'Import', icon: 'plus', handler: () => {}},
+        {text: 'Export', icon: 'download', handler: () => {}}
     ];
 
     private filtersSchema = pfs.POLCards;

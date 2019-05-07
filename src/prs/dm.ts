@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import _url from '@/prs/api';
+import FormData from 'form-data';
 
 export default class DM{
 
@@ -73,6 +74,27 @@ export default class DM{
         }else{
             throw new Error(`Unknow error, Response status: "${data.status}"`);
         }
+    }
+
+    public static async sendFile(payload: any){
+        const file = payload.file;
+        const data = new FormData();
+        data.append('file', file, file.name);
+
+        const resp = await axios.post(_url('import/' + payload.dest), data, {
+            headers: {
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+            }
+        });
+
+        if(resp.data.status == 'OK'){
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${resp.data.status}"`);
+        }
+
     }
 
     // -----------------------------------

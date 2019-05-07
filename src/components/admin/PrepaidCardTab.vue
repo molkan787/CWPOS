@@ -1,6 +1,7 @@
 <template>
     <DataTable :cols="cols" :items="cards" :loading="loading"
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
+    :controlls="controlls"
     @filtersChanged="loadData" @editBalance="editBalance" />
 </template>
 
@@ -36,6 +37,11 @@ export default class PrepaidCardTab extends Vue{
         ]}
     ];
 
+    private controlls = [
+        {text: 'Import', icon: 'plus', handler: () => { this.importData() }},
+        {text: 'Export', icon: 'download', handler: () => {}}
+    ];
+
     private filtersSchema = pfs.POLCards;
 
     private loadData(){
@@ -51,6 +57,13 @@ export default class PrepaidCardTab extends Vue{
     private editBalance(card: any){
         // @ts-ignore
         MxHelper.editCardBalance({card, type: 'prepaid'});
+    }
+
+    private importData(){
+        // @ts-ignore
+        MxHelper.openDataImportWizard({title: 'Import Prepaid Cards', dest: 'prepaids'}).then(() => {
+            this.loadData();
+        }).catch(err => {});
     }
 
     created(){

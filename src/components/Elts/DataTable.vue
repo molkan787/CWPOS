@@ -39,7 +39,7 @@
                                 </span>
                             </template>
                             <template v-else-if="col.buttons">
-                                <sui-button v-for="(btn, index) in col.buttons" :key="index"
+                                <sui-button class="row-buttons" v-for="(btn, index) in col.buttons" :key="index"
                                 @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])">
                                     <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
                                     {{ btn.text }}
@@ -194,7 +194,7 @@ hr{
 .no-margin{
     margin: 0 !important;
 }
-button{
+.row-buttons{
     margin-top: -2rem !important;
     margin-bottom: -2rem !important;
     &:first-child{
