@@ -38,8 +38,8 @@ export default class LoyaltyCardTab extends Vue{
     ];
 
     private controlls = [
-        {text: 'Import', icon: 'plus', handler: () => {}},
-        {text: 'Export', icon: 'download', handler: () => {}}
+        {text: 'Import', icon: 'plus', handler: () => this.importData() },
+        {text: 'Export', icon: 'download', handler: () => { this.exportData() }}
     ];
 
     private filtersSchema = pfs.POLCards;
@@ -57,6 +57,16 @@ export default class LoyaltyCardTab extends Vue{
     private editBalance(card: any){
         // @ts-ignore
         MxHelper.editCardBalance({card, type: 'loyalty'});
+    }
+
+    private importData(){
+        // @ts-ignore
+        MxHelper.openDataImportWizard({title: 'Import Loyalty Cards', dest: 'loyalties'});
+    }
+
+    private exportData(){
+        // @ts-ignore
+        MxHelper.openDataExportWizard({dataName: 'loyalties'});
     }
 
     created(){

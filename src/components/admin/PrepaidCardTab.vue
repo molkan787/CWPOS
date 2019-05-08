@@ -39,7 +39,7 @@ export default class PrepaidCardTab extends Vue{
 
     private controlls = [
         {text: 'Import', icon: 'plus', handler: () => { this.importData() }},
-        {text: 'Export', icon: 'download', handler: () => {}}
+        {text: 'Export', icon: 'download', handler: () => { this.exportData() }}
     ];
 
     private filtersSchema = pfs.POLCards;
@@ -61,9 +61,12 @@ export default class PrepaidCardTab extends Vue{
 
     private importData(){
         // @ts-ignore
-        MxHelper.openDataImportWizard({title: 'Import Prepaid Cards', dest: 'prepaids'}).then(() => {
-            this.loadData();
-        }).catch(err => {});
+        MxHelper.openDataImportWizard({title: 'Import Prepaid Cards', dest: 'prepaids'});
+    }
+
+    private exportData(){
+        // @ts-ignore
+        MxHelper.openDataExportWizard({dataName: 'prepaids'});
     }
 
     created(){
