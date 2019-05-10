@@ -5,7 +5,8 @@
         <FileInput :bus="bus" v-model="file" :disabled="loading"/>
 
         <template v-slot:buttons>
-            <sui-button @click="cancel">CANCEL</sui-button>
+            <h3 class="p-lbl" v-if="loading">This may take a while...</h3>
+            <sui-button @click="cancel">{{ closeText }}</sui-button>
             <sui-button @click="okClick" color="green" :loading="loading">Import</sui-button>
         </template>
 
@@ -35,9 +36,10 @@ export default class DataImportModal extends Vue{
     private dialog = new ModalDialog();
     private bus = new Vue();
 
-    private file: File = null;
+    private file!: File;
 
     private title: string = 'Import Prepaid Cards';
+    private closeText: string = 'CANCEL';
 
     private payload!: any;
 
@@ -46,9 +48,11 @@ export default class DataImportModal extends Vue{
 
     okClick(){
         if(this.validateForm()){
+            this.closeText = 'CLOSE';
             this.loading = true;
             DM.sendFile({file: this.file, dest: this.payload.dest}).then(() => {
                 this.dialog.show('Data was successfully imported!', 1, 'success');
+                this.resolve(true);
             }).catch(err => {
                 this.dialog.show('We could not complete the current action');
             }).finally(() => {
@@ -83,8 +87,10 @@ export default class DataImportModal extends Vue{
     }
 
     resetForm(){
-        this.bus.$emit('reset');
-        this.loading = false;
+        if(!this.loading){
+            this.bus.$emit('reset');
+            this.closeText = 'CANCEL';
+        }
     }
 
     dialogAnswer(answer: string){
@@ -97,9 +103,13 @@ export default class DataImportModal extends Vue{
         // @ts-ignore
         MxHelper.registerFunction('openDataImportWizard', (payload: any) => {
             return new Promise((resolve, reject) => {
-                this.handle(payload);
-                this.resolve = resolve;
-                this.reject = reject;
+                if(this.loading){
+                    this.open = true;
+                }else{
+                    this.handle(payload);
+                    this.resolve = resolve;
+                    this.reject = reject;
+                }
             });
         });
     }
@@ -124,6 +134,11 @@ hr{
     &.negative{
         color: $red;
     }
+}
+.p-lbl{
+    float: left;
+    margin-top: 2%;
+    margin-left: 2%;
 }
 </style>
 

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import _url from '@/prs/api';
+// @ts-ignore
 import FormData from 'form-data';
 
 export default class DM{
@@ -66,8 +67,8 @@ export default class DM{
         }
     }
 
-    public static async refundOrder(paylaod: any){
-        const {data} = await axios.post(_url('order/refund'), paylaod);
+    public static async refundOrder(payload: any){
+        const {data} = await axios.post(_url('order/refund'), payload);
         if(data.status == 'OK'){
             this.comu.updateStats(data.stats, true);
             return true;
@@ -95,6 +96,15 @@ export default class DM{
             throw new Error(`Unknow error, Response status: "${resp.data.status}"`);
         }
 
+    }
+
+    public static async genExportDataFile(payload: any){
+        const {data} = await axios.post(_url('export/' + payload.dataName), payload);
+        if(data.status == 'OK'){
+            return data;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
     }
 
     // -----------------------------------

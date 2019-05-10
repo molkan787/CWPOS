@@ -12,6 +12,7 @@
     <ClientModal />
     <ReasonModal />
     <ImportDataModal />
+    <ExportDataModal />
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import OptionsModal from './components/pre/OptionsModal.vue';
 import ClientModal from './components/pre/ClientModal.vue';
 import ReasonModal from './components/pre/ReasonModal.vue';
 import ImportDataModal from './components/pre/ImportDataModal.vue';
+import ExportDataModal from './components/pre/ExportDataModal.vue';
 
 export default Vue.extend({
   components: {
@@ -39,6 +41,7 @@ export default Vue.extend({
     ClientModal,
     ReasonModal,
     ImportDataModal,
+    ExportDataModal,
   },
   methods: {
     ...mapActions(['setup'])
