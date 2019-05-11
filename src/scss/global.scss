@@ -1,5 +1,9 @@
 * {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    user-select: none;
+}
+img {
+    pointer-events: none;
 }
 .page{
     height: calc(100vh - #{$navbar-h});

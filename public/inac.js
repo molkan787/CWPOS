@@ -51,4 +51,8 @@ class Inac{
 Inac.hanlders = [];
 Inac.active = false;
 
-global.Inac = Inac;
+if(typeof global == 'undefined'){
+    window.Inac = Inac;
+}else{
+    global.Inac = Inac;
+}

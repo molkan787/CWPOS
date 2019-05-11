@@ -22,6 +22,7 @@ import Modal from '../Elts/Modal.vue';
 import Component from 'vue-class-component';
 import MxHelper from '@/prs/MxHelper';
 import LocalSettings from '@/prs/localSettings';
+import EFF from '@/drivers/eff';
 
 @Component({
     components: {
@@ -77,6 +78,12 @@ export default class OptionsModal extends Vue{
         this.categoryAutoBack = LocalSettings.getItem('categoryAutoBack') || false;
         this.zoom = LocalSettings.getItem('zoom') || 100;
         this.adjustZoom(0, true);
+
+        document.addEventListener("keydown", (e: any) => {
+            if (this.open && e.which === 123) {
+                EFF.openDevTools();
+            }
+        });
     }
 
 }

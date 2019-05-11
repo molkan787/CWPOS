@@ -36,7 +36,7 @@ export default class DataImportModal extends Vue{
     private dialog = new ModalDialog();
     private bus = new Vue();
 
-    private file!: File;
+    private file: any = null;
 
     private title: string = 'Import Prepaid Cards';
     private closeText: string = 'CANCEL';

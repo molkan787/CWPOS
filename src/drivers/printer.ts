@@ -1,6 +1,6 @@
 class Printer{
 
-    static ready: boolean = false;
+    static device: any;
     static printer: any;
 
     static setup(){
@@ -9,36 +9,41 @@ class Printer{
         const device  = new escpos.USB();
         const options = { encoding: "GB18030" };
 
+        this.device = device;
         this.printer = new escpos.Printer(device, options);
 
-        this.ready = false;
-        device.open(() => {
-            this.ready = true;
-        });
     }
 
     static print(str: string){
-        if(!this.ready) return;
 
         const lines = str.split("\n");
-        this.printer
-        .font('a')
-        .align('ct')
-        .style('bu')
-        .size(1, 1);
 
-        for (let i = 0; i < lines.length; i++) {
-            this.printer.text(lines[i]);
-        }
-        
-        this.printer.cut();
+        this.device.open(() => {
+            this.printer
+            .font('a')
+            .align('ct')
+            .style('bu')
+            .size(1, 1);
+
+            for (let i = 0; i < lines.length; i++) {
+                this.printer.text(lines[i]);
+            }
+            
+            this.printer.cut();
+            this.printer.close();
+        });
         
     }
 
     static openCashDrawer(){
-        if(!this.ready) return;
 
-        this.printer.cashdraw(27);
+        this.device.open(() => {
+            console.log('Opening Cashdrawer...');
+            this.printer.cashdraw(5);
+            this.printer.cashdraw(2);
+            this.printer.close();
+        });
+
     }
 
 }

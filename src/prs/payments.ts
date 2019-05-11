@@ -50,6 +50,7 @@ export default class Payments{
                 }
             }
         }).catch(error => {
+            console.log(error);
             comu.resetStatus();
             // @ts-ignore
             MxHelper.payment({state: 'fail', error});
@@ -67,8 +68,6 @@ export default class Payments{
     }
 
     private static _DebitCard(payload: any){
-        // Amount is Int format - need to be divided by 100
-        // payload.amount = payload.amount / 100;
         return CardMachine.request(payload);
     }
 
