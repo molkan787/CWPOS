@@ -16,7 +16,7 @@ class Printer{
 
     static print(lines: any){
         // @ts-ignore
-        if(window.printToConsole || true){
+        if(window.printToConsole){
             for(let line of lines){
                 const lns = line.text.split("\n");
                 for(let ln of lns){

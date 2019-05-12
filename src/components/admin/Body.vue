@@ -1,6 +1,6 @@
 <template>
     <sui-tab class="root">
-        <sui-tab-pane title="Reports" icon="chart bar">
+        <sui-tab-pane title="Reports" icon="chart bar" v-if="userType < 4">
             <ReportsTab />
         </sui-tab-pane>
 
@@ -16,7 +16,7 @@
             <LoyaltyCardTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Clients" icon="users" v-if="userType < 4">
+        <sui-tab-pane title="Clients" icon="users">
             <ClientsTab />
         </sui-tab-pane>
 

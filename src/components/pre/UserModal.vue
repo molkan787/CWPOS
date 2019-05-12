@@ -31,7 +31,9 @@
                     selection
                     :options="user_types"
                     v-model="u_type"
+                    v-if="u_id != 1"
                 />
+                <h3 v-else>Full Access</h3>
             </div>
 
         </form>
@@ -68,7 +70,7 @@ export default class UserModal extends Vue{
     private lockUsername: boolean = false;
     private user_types = [
         {value: 5, text: 'Access to POS only'},
-        {value: 4, text: 'Access to POS & Basic Admin Panel Tabs'},
+        {value: 4, text: 'Access to POS & Admin Panel (Orders & Clients Tabs)'},
         {value: 3, text: 'Access to POS & Full Admin Panel (Without Users tab)'},
         {value: 2, text: 'Access to POS & Full Admin Panel (Including Users tab)'}
     ];

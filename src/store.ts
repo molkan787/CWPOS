@@ -98,6 +98,8 @@ export default new Vuex.Store({
       last_name: '',
     },
 
+    receipt_msg: '',
+
     companies: [],
 
     stats: {cw: 0, pp: 0,  rpp: 0, dt: 0},
@@ -130,8 +132,10 @@ export default new Vuex.Store({
           break;
         case 'extra':
           state.extraChargeReason = reason;
+          break;
         case 'free':
           state.freeOrderReason = reason;
+          break;
         default:
           break;
       }

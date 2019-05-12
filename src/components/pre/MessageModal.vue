@@ -79,6 +79,6 @@ export default class MessageModal extends Vue{
 
 <style scoped>
 .content-area{
-    white-space: pre;
+    white-space: pre-wrap;
 }
 </style>

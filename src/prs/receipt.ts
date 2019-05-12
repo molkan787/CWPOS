@@ -1,13 +1,17 @@
 import POSReceiptBuilder from '../Libs/POSReceiptBuilder';
 import Printer from '../drivers/printer';
 import utils from '../utils';
+import utils2 from './utils';
 import things from '../prs/things';
 
 export default class Receipt{
 
     static prb: POSReceiptBuilder;
 
-    static setup(){
+    static state: any;
+
+    static setup(context: any){
+        this.state = context.state;
         this.prb = new POSReceiptBuilder();
     }
 
@@ -21,7 +25,7 @@ export default class Receipt{
                 "3540 boul. des Sources, DDO QC  H9B 1Z9\n514-472-9947"
             ],
             orderId: order.id,
-            date: utils.timestampToDate(order.date_added, 2),
+            date: utils.timestampToDate(order.date_added, 2, true),
             cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
             client: order.client.id ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
         });
@@ -66,14 +70,41 @@ export default class Receipt{
             amount: order.totals.total,
         });
 
-        r.addNormalMessage('Client Fidele vous avez $ 4.00 en dollars fidélite', true);
-        r.addNormalMessage('Le solde de votre carte prépayée est $ 176');
+        const paym = order.pay_method;
+        if(paym == 'cash'){
+            r.addTotalsItem({ name: 'Comptant', amount: order.totals.paidCash });
+            r.addTotalsItem({ name: 'Monnaie', amount: order.totals.changeDue });
+        }else if(paym == 'card'){
+            r.addTotalsItem({ name: 'Comptant', text: 'Credit ou Debit' });
+        }else if(paym == 'prepaid'){
+            r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode });
+        }else if(paym == 'loyalty'){
+            r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode });
+        }
+
+        const lc = order.loyaltyCard;
+        if(lc && paym != 'loyalty'){
+            const points = order.totals.total / 10;
+            const points_str = utils2.price(points);
+            const bal_str = utils2.price(lc.balance / 100 + points);
+            r.addNormalMessage(`Client Fidele vous avez ${points_str} en dollars fidelite`, true);
+            r.addNormalMessage('Le solde de votre carte prepayee est ' + bal_str);
+        }
+
+        const msg = this.state.receipt_msg.replace(/\s/g, '');
+        if(msg){
+            r.addSeparator();
+            const lines = this.state.receipt_msg.split("\n");
+            for(let line of lines){
+                if(line[0] == '*'){
+                    r.addBigMessage(line.substring(1));
+                }else{
+                    r.addNormalMessage(line);
+                }
+            }
+        }
 
         r.addSeparator();
-        r.addBigMessage('Spring Special save $ 25 on a hand wax');
-        r.addNormalMessage('Please present this receipt.\nExpires:   30-05-2019\nAVANTI AUTOSPA');
-        r.addSeparator(1);
-
         r.addBigMessage('MERCI POUR VOTRE VISITE', true);
         r.addNormalMessage('TPS: 762219293  TVQ:  1223960291', true);
         r.addSpace();

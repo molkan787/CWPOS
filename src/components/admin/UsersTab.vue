@@ -7,7 +7,8 @@
             </sui-button>
         </sui-segment>
         <DataTable :cols="cols" :items="users" :loading="loading" :filtersValues="filtersValues"
-                    @filtersChanged="loadData" @edit="editClick" @delete="deleteClick" />
+                    @filtersChanged="loadData" @edit="editClick" @delete="deleteClick"
+                    :condition="condition" />
     </div>
 </template>
 
@@ -35,6 +36,8 @@ import Message from '@/ccs/Message';
 export default class UsersTab extends Vue{
     private loading: boolean = false;
 
+    private condition!: Function;
+
     private cols = [
         {name: 'Id', prop: 'id'},
         {name: 'Added date', prop: 'date_added', filter: 'ts2datetime'},
@@ -43,7 +46,7 @@ export default class UsersTab extends Vue{
         {name: 'Username', prop: 'username'},
         {name: 'Options', prop: 'id', buttons: [
             {name: 'edit', text: 'Edit', icon: 'edit'},
-            {name: 'delete', text: 'Delete', icon: 'delete'},
+            {name: 'delete', text: 'Delete', icon: 'delete', hideIf: {prop: 'id', value: 1}},
         ]},
     ];
 
@@ -91,6 +94,10 @@ export default class UsersTab extends Vue{
     created(){
         // @ts-ignore
         if(!this.loaded) this.loadData();
+        this.condition = (item: any) => {
+            // @ts-ignore
+            return item.id == 1 && this.currentUser.id != 1;
+        };
     }
 }
 </script>

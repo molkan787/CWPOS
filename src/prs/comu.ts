@@ -38,7 +38,7 @@ export default class Comu{
         Dl.setup(context);
         Ds.setup(context);
         DM.setup(context, this);
-        Receipt.setup();
+        Receipt.setup(context);
         Login.setup(context, this);
 
         this.settings = LocalSettings;
@@ -184,8 +184,9 @@ export default class Comu{
 
     public static putSettings(settings: any){
         const state = this.context.state;
-        state.taxes.gst = settings.gst;
-        state.taxes.qst = settings.qst;
+        if(settings.gst) state.taxes.gst = settings.gst;
+        if(settings.qst) state.taxes.qst = settings.qst;
+        if(settings.receipt_msg) state.receipt_msg = settings.receipt_msg;
     }
 
     // ==================================
@@ -310,6 +311,9 @@ export default class Comu{
             products: state.pos.items,
             counts: state.pos.itemsCount,
             totals: state.pos.values,
+            pay_method: state.pos.pay_method,
+            payment: state.payment,
+            loyaltyCard: state.loyaltyCard,
         });
     }
 
@@ -323,7 +327,10 @@ export default class Comu{
             nextOrderId: state.nextOrderId,
             lastOrderDate: state.lastOrderDate,
             user: state.user,
+            client: state.client,
             pos: state.pos,
+            payment: state.payment,
+            loyaltyCard: state.loyaltyCard,
         };
         this.prevState = JSON.parse(JSON.stringify(_state));
     }

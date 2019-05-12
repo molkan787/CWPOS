@@ -29,7 +29,7 @@
 
                 <sui-table-body>
 
-                    <sui-table-row v-for="(item, index) in items" :key="index">
+                    <sui-table-row v-for="(item, index) in items" :key="index" :class="needToBeHidden(item, condition) ? 'hidden' : ''">
 
                         <sui-table-cell v-for="(col, index) in cols" :key="index">
 
@@ -40,7 +40,8 @@
                             </template>
                             <template v-else-if="col.buttons">
                                 <sui-button class="row-buttons" v-for="(btn, index) in col.buttons" :key="index"
-                                @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])">
+                                @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])"
+                                :class="needToBeHidden(item, btn.hideIf) ? 'hidden' : ''">
                                     <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
                                     {{ btn.text }}
                                 </sui-button>
@@ -103,6 +104,9 @@ export default class DataTable extends Vue{
 
     @Prop({default: () => []}) controlls!: any[];
 
+    @Prop({default: () => null}) condition!: any;
+
+
     applyFilter(filterName: string, value: any){
         if(filterName)
             return Vue.filter(filterName)(value);
@@ -145,6 +149,18 @@ export default class DataTable extends Vue{
     }
 
     // -----------------------------
+
+    needToBeHidden(item:any, cn: any){
+        if(cn){
+            if(typeof cn == 'function'){
+                return cn(item);
+            }else{
+                return item[cn.prop] == cn.value;
+            }
+        }else{
+            return false;
+        }
+    }
 
     checkConditional(col: any, item: any){
         if(col.conditional){
@@ -201,5 +217,9 @@ hr{
     &:first-child{
         margin-left: -0.6rem !important;
     }
+}
+.hidden{
+    visibility: hidden;
+    display: none;
 }
 </style>
