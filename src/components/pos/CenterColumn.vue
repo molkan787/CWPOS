@@ -23,13 +23,16 @@ import TripleButton from '../Elts/TripleButton.vue';
 import Products from './Products/Products.vue';
 import Adjustment from './Adjustment/Adjustment.vue';
 import MxHelper from '@/prs/MxHelper';
+import Message from '@/ccs/Message';
+import { mapState } from 'vuex';
 
 @Component({
     components: {
         TripleButton,
         Products,
         Adjustment,
-    }
+    },
+    computed: mapState(['client']),
 })
 export default class CenterColumn extends Vue{
     buttonClicked(comp: any, btnIdx: number){
@@ -37,6 +40,11 @@ export default class CenterColumn extends Vue{
             // @ts-ignore
             MxHelper.openPrepaidCardModal(false);
         }else if(btnIdx == 1){
+            // @ts-ignore
+            // if(!this.client.phone){
+            //     Message.info('Please load client history before')
+            //     return;
+            // }
             // @ts-ignore
             MxHelper.openPrepaidCardModal(true);
         }else if(btnIdx == 2){

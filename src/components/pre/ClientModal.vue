@@ -31,6 +31,7 @@ export default class ClientModal extends Vue{
     private title: string = '';
     private dialog = new ModalDialog();
 
+    private payload!: any;
     private callback!: Function;
 
     private clientId!: any;
@@ -44,7 +45,7 @@ export default class ClientModal extends Vue{
     save(){
         if(this.validateForm()){
             this.loading = true;
-            const clientData = {id: this.clientId, ...this.formData};
+            const clientData = {id: this.clientId, ...this.formData, loyaltyCardId: this.payload.loyaltyCardId};
             DM.editClient(clientData).then((data: any) => {
                 if(this.callback) this.callback(data);
                 this.open = false;
@@ -62,6 +63,7 @@ export default class ClientModal extends Vue{
     }
 
     loadClient(payload: any){
+        this.payload = payload;
         const id = payload.id;
         this.clientId = id;
         if(id == 'new'){

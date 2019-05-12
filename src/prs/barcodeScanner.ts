@@ -15,7 +15,9 @@ export default class BarcodeScanner{
     private static scanned(barcode: string){
         if(this.bindedHandler){
             this.bindedHandler(barcode);
+            console.log('BS> Called bindedHandler');
         }else if(this.noBindHandler){
+            console.log('BS> Called noBindHandler');
             this.noBindHandler(barcode);
         }
     }

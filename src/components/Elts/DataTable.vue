@@ -197,6 +197,7 @@ hr{
 .row-buttons{
     margin-top: -2rem !important;
     margin-bottom: -2rem !important;
+    background-color: #f1f1f1;
     &:first-child{
         margin-left: -0.6rem !important;
     }

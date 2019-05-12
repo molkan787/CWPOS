@@ -4,12 +4,19 @@
         <h2 v-if="!isReload">Client information</h2>
         <ClientInfoForm v-if="!isReload" :data="clientData" />
         <hr v-if="!isReload">
-        <BarcodeInput v-model="barcode" :listen="open" />
-        <hr>
-        <AmountPriceForm :value="amounts" />
+        <div class="ui dimmable">
+            <BarcodeInput v-model="barcode" :listen="open" />
+            <hr>
+            <AmountPriceForm :value="amounts" />
+            <div v-if="isReload && !clientLoaded" class="ui active inverted dimmer">
+                <div class="content">
+                    Please load client data using phone number<br>before reloading a prepaid card
+                </div>
+            </div>
+        </div>
         <template v-slot:buttons>
             <sui-button @click="open = false">Cancel</sui-button>
-            <sui-button @click="addClick" color="green">
+            <sui-button @click="addClick" color="green" :disabled="isReload && !clientLoaded">
                 <span v-if="isReload">Reload</span>
                 <span v-else>Activate</span>
             </sui-button>
@@ -47,6 +54,7 @@ export default class PrepaidCardModal extends Vue{
 
     private title: string = '';
 
+    private clientLoaded: boolean = false;
     private isReload: boolean = false;
     private barcode: string = '';
     private clientData: any = {};
@@ -126,6 +134,7 @@ export default class PrepaidCardModal extends Vue{
             // @ts-ignore
             ...this.client
         };
+        this.clientLoaded = this.clientData.id;
         this.amounts = {
             amount: '',
             price: '',
@@ -158,6 +167,14 @@ h2{
 }
 hr{
     margin: 1.4rem 0 1rem 0;
+}
+.dimmer > div.content{
+    color: #444;
+    font-size: 1.5rem;
+    user-select: none;
+    line-height: 1.5;
+    background: white;
+    box-shadow: 0 0 30px white;
 }
 </style>
 

@@ -67,6 +67,16 @@ export default class DM{
         }
     }
 
+    public static async deleteCard(payload: any){
+        const {data} = await axios.post(_url(payload.type + '/del'), payload);
+        if(data.status == 'OK'){
+            this.removeFromCache(payload.type, payload.id);
+            return true;
+        }else{
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
     public static async refundOrder(payload: any){
         const {data} = await axios.post(_url('order/refund'), payload);
         if(data.status == 'OK'){

@@ -4,6 +4,8 @@
         <CBody />
         <PaymentModal />
         <GiftCertificateModal />
+        <ToolsModal />
+        <LoyaltyScanModal />
     </div>
 </template>
 
@@ -13,6 +15,8 @@ import Header from './Header.vue';
 import CBody from './CBody.vue';
 import PaymentModal from './Elements/PaymentModal.vue';
 import GiftCertificateModal from '../pre/GiftCertificateModal.vue';
+import ToolsModal from '../pre/ToolsModal.vue';
+import LoyaltyScanModal from '../pre/LoyaltyScanModal.vue';
 
 @Component({
     components: {
@@ -20,14 +24,9 @@ import GiftCertificateModal from '../pre/GiftCertificateModal.vue';
         CBody,
         PaymentModal,
         GiftCertificateModal,
+        ToolsModal,
+        LoyaltyScanModal,
     },
 })
-export default class Home extends Vue {
-    
-}
+export default class Home extends Vue {}
 </script>
-
-<style lang="scss" scoped>
-@import '@/scss/vars.scss';
-
-</style>

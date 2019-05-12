@@ -1,5 +1,9 @@
 import config from '../config';
 
+const defaultSetting = {
+    barcodeAutoFill: true,
+};
+
 export default class LocalSetting{
 
     private static _values: any;
@@ -11,7 +15,8 @@ export default class LocalSetting{
     }
 
     static getItem(key: string){
-        return this._values[key] || null;
+        // @ts-ignore
+        return this._values[key] || defaultSetting[key] || null;
     }
 
     static setItem(key: string, value: any){

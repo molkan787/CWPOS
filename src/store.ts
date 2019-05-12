@@ -81,6 +81,13 @@ export default new Vuex.Store({
     loyaltyCard: {
       id: 0,
       barcode: '',
+      balance: 0,
+    },
+    prepaidCard: {
+      id: 0,
+      barcode: '',
+      balance: 0,
+      updateCount: 0,
     },
 
     user: {
@@ -172,6 +179,7 @@ export default new Vuex.Store({
     },
 
     setClientData(context, clientData: any){
+      const prepaid = context.state.prepaidCard;
       const client = context.state.client;
       if(clientData){
         client.id = clientData.id || 0;
@@ -181,6 +189,21 @@ export default new Vuex.Store({
         client.email = clientData.email || '';
         client.want_receipt = clientData.want_receipt || false;
         client.history = clientData.history || [];
+
+        const card = clientData.prepaid || {};
+        prepaid.id = card.id || 0;
+        prepaid.barcode = card.barcode || '';
+        prepaid.balance = card.balance || 0;
+        prepaid.updateCount++;
+      }
+    },
+
+    setLoyaltyCardIfEmpty({state}, card: any){
+      const c = state.loyaltyCard;
+      if(!c.id){
+        c.id = card.id || 0;
+        c.barcode = card.barcode || '';
+        c.balance = card.balance || 0;
       }
     },
 
@@ -195,6 +218,7 @@ export default new Vuex.Store({
       context.state.pos.finished = true;
     },
     resetPOS(context){
+      const {state} = context;
       const pos = context.state.pos;
       const values = pos.values;
       pos.items = [];
@@ -224,11 +248,11 @@ export default new Vuex.Store({
           item.addTaxes = false;
         }
       }
-      context.state.payment = {};
-      context.state.ticket = '';
-      context.state.discountReason =  '';
-      context.state.freeOrderReason =  '';
-      context.state.extraChargeReason = '';
+      state.payment = {};
+      state.ticket = '';
+      state.discountReason =  '';
+      state.freeOrderReason =  '';
+      state.extraChargeReason = '';
 
       const client = context.state.client;
       client.id = 0;
@@ -239,13 +263,18 @@ export default new Vuex.Store({
       client.want_receipt = false;
       client.history = [];
 
-      context.state.loyaltyCard.id = 0;
-      context.state.loyaltyCard.barcode = '';
+      state.loyaltyCard.id = 0;
+      state.loyaltyCard.barcode = '';
+      state.loyaltyCard.balance = 0;
+      
+      state.prepaidCard.id = 0;
+      state.prepaidCard.barcode = '';
+      state.prepaidCard.balance = 0;
 
-      context.state.invoiceData.clientName = '';
+      state.invoiceData.clientName = '';
 
-      context.state.areaAView = 'order';
-      context.state.defaultExactPaid = true;
+      state.areaAView = 'order';
+      state.defaultExactPaid = true;
 
       Vue.set(context.state, 'actions', []);
     },

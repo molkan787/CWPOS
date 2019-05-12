@@ -1,8 +1,8 @@
 <template>
     <div class="barcodeinput">
         <h3>Scan or type barcode here</h3>
-        <sui-input placeholder="123012301230"
-        icon="barcode" v-model="pvalue" @change="change" />
+        <sui-input :disabled="disabled" placeholder="123012301230"
+        icon="barcode" v-model="pvalue" @input="change" ref="input" />
     </div>
 </template>
 
@@ -27,16 +27,20 @@ import barcodeScanner from '@/prs/barcodeScanner';
 })
 export default class BarcodeInput extends Vue{
 
+    @Prop({default: false}) disabled!: boolean;
+    @Prop({default: ''}) briRef!: string;
     @Prop({default: false}) listen!: boolean;
     @Prop({default: ''}) value!: string;
     private pvalue: string = '';
 
     change(){
+        this.pvalue = this.pvalue.replace(/\D/g,'');
         this.$emit('input', this.pvalue);
     }
 
     mounted(){
         this.pvalue = this.value;
+        this.setup();
     }
 
     handleScan(barcode: string){
@@ -52,6 +56,20 @@ export default class BarcodeInput extends Vue{
         }else{
             barcodeScanner.unBind();
         }
+    }
+
+    created(){
+        // if(this.bus){
+        //     this.bus.$on('focus', () => this.focusInput());
+        // }
+    }
+
+    setup(){
+        if(!this.briRef) return;
+        // @ts-ignore
+        const el = this.$refs.input.$el;
+        const inpEl = el.children[0];
+        inpEl.id = 'br-input-' + this.briRef;
     }
 }
 </script>

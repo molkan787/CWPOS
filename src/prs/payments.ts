@@ -62,7 +62,9 @@ export default class Payments{
 
     private static _Cash(payload: any){
         return new Promise((resolve, reject) => {
-            Printer.openCashDrawer();
+            try{
+                Printer.openCashDrawer();
+            }catch(err) {}
             resolve(true);
         });
     }

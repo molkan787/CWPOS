@@ -9,7 +9,7 @@
             <i class="ticket icon"></i>
             Loyalty Card
         </h2>
-        <BarcodeInput @scanned="finish" v-model="barcode" class="barcodeInput" />
+        <BarcodeInput @scanned="finish" v-model="barcode" class="barcodeInput" briRef="pol_card_pay" />
         <div>
             <sui-button :icon="pos.finished ? 'circle check' : ''" size="large"
             :class="pos.finished ? 'green' : ''" @click="finish">
@@ -27,12 +27,13 @@ import Component from 'vue-class-component';
 import BarcodeInput from '../../pre/BarcodeInput.vue';
 import { mapState, mapActions } from 'vuex';
 import Payments from '@/prs/payments';
+import LocalSettings from '@/prs/localSettings';
 
 @Component({
     components: {
         BarcodeInput,
     },
-    computed: mapState(['pos']),
+    computed: mapState(['pos', 'prepaidCard', 'loyaltyCard']),
     methods: mapActions(['markAsPaid']),
 })
 export default class POLCardPayment extends Vue{
@@ -50,8 +51,15 @@ export default class POLCardPayment extends Vue{
             barcode: this.barcode
         });
     }
-    start(talkingTo: string){
-        // if(talkingTo !== 'cash') return;
+    start(paym: string){
+        if(!LocalSettings.getItem('barcodeAutoFill')) return;
+        if(paym == 'prepaid'){
+            // @ts-ignore
+            this.barcode = this.prepaidCard.barcode || '';
+        }else if(paym == 'loyalty'){
+            // @ts-ignore
+            this.barcode = this.loyaltyCard.barcode || '';
+        }
     }
     mounted() {
         // @ts-ignore;

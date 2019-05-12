@@ -23,6 +23,7 @@ export default class Comu{
 
     private static context: any;
     private static objectsToReset: any[];
+    private static prevState: any;
     private static interval: Number;
     private static apiToken: string = '';
 
@@ -65,6 +66,8 @@ export default class Comu{
             });
             // @ts-ignore
             window.state = context.state;
+            // @ts-ignore
+            window.comu = this;
         }
         
     }
@@ -125,7 +128,7 @@ export default class Comu{
             };
             axios.post(_url('loyalty/add'), data).then(({data}) => {
                 if(data.status == 'OK'){
-                    resolve(true);
+                    resolve(data);
                 }else{
                     reject(data.cause);
                 }
@@ -234,6 +237,7 @@ export default class Comu{
                     state.stats.dt += stats.dt;
                     state.nextOrderId = data.nextOrderId;
                     state.lastOrderDate = data.date_added;
+                    this.backupState();
                     resolve(true);
                 }else{
                     reject(data.cause);
@@ -292,9 +296,9 @@ export default class Comu{
 
     // ==================================
 
-    static printReceipt(){
+    static printReceipt(_state?: any){
         console.log('Printing receipt');
-        const state = this.context.state;
+        const state = _state || this.context.state;
         const order_id = state.nextOrderId - 1;
         axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
         
@@ -302,10 +306,26 @@ export default class Comu{
             id: order_id,
             date_added: state.lastOrderDate,
             cashier: state.user,
+            client: state.client,
             products: state.pos.items,
             counts: state.pos.itemsCount,
             totals: state.pos.values,
         });
+    }
+
+    static reprintReceipt(){
+        this.printReceipt(this.prevState);
+    }
+
+    static backupState(){
+        const state = this.context.state;
+        const _state = {
+            nextOrderId: state.nextOrderId,
+            lastOrderDate: state.lastOrderDate,
+            user: state.user,
+            pos: state.pos,
+        };
+        this.prevState = JSON.parse(JSON.stringify(_state));
     }
 
     static registerToReset(obj: any){

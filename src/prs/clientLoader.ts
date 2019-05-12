@@ -1,6 +1,8 @@
 import axios from 'axios';
 import _url from './api';
 import MxHelper from '@/prs/MxHelper';
+import Message from '@/ccs/Message';
+import Vue from 'vue';
 
 export default class ClientLoader{
 
@@ -14,6 +16,7 @@ export default class ClientLoader{
         return new Promise((resolve, reject) => {
             axios.get(_url('clcref/phone/' + phone)).then(({data}) => {
                 if(data.status == 'OK'){
+                    console.log('loadClient:', data);
                     this.setClientData(data.clientData);
                     resolve(true);
                 }else{
@@ -29,6 +32,7 @@ export default class ClientLoader{
         return new Promise((resolve, reject) => {
             axios.get(_url('clcref/loyalty_card/' + barcode)).then(({data}) => {
                 if(data.status == 'OK'){
+                    console.log('loadLoyaltyCard:', data);
                     this.setLoyaltyCard(data.loyaltyCard);
                     resolve(data.loyaltyCard);
                 }else{
@@ -51,8 +55,17 @@ export default class ClientLoader{
         const loyaltyCard = this.context.state.loyaltyCard;
         loyaltyCard.id = data.id || 0;
         loyaltyCard.barcode = data.barcode || '';
+        loyaltyCard.balance = data.balance || 0;
+        if(loyaltyCard.updateCount){
+            loyaltyCard.updateCount++;
+        }else{
+            Vue.set(loyaltyCard, 'updateCount', 1);
+        }
         if(!doNotCallback){
             this.setClientData(data.client || {}, true);
+            if(!data.client && loyaltyCard.id){
+                this.askToAddClient(loyaltyCard.id);
+            }
         }
     }
 
@@ -67,11 +80,21 @@ export default class ClientLoader{
     }
 
 
-    static addNewClient(phone: string){
+    static addNewClient(phone: string, loyaltyCardId?: any){
         // @ts-ignore
-        MxHelper.editClient({id: 'new', phone}).then((client: any) => {
+        MxHelper.editClient({id: 'new', phone, loyaltyCardId}).then((client: any) => {
             this.context.dispatch('setClientData', client);
         })
+    }
+
+    static askToAddClient(loyaltyCardId: any){
+        Message.ask('This loyalty card is not linked to any of client phone number, Do you want to link a new client now ?', 'Add new client?')
+        .then((e: any) => {
+            e.hide();
+            if(e.answer){
+                this.addNewClient('', loyaltyCardId);
+            }
+        });
     }
 
 }

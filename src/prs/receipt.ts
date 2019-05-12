@@ -15,10 +15,15 @@ export default class Receipt{
         const r = this.prb;
         r.clear();
         r.addHeader({
-            title: '( AvantAutoSpa )',
+            title: 'AVANTI AUTOSPA',
+            subtitles: [
+                "LAVE AUTO À LA MAIN ET CENTRE\nESTHÉTIQUE PROFESSIONNELLE",
+                "3540 boul. des Sources, DDO QC  H9B 1Z9\n514-472-9947"
+            ],
             orderId: order.id,
-            date: utils.timestampToDate(order.date_added, true),
+            date: utils.timestampToDate(order.date_added, 2),
             cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
+            client: order.client.id ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
         });
         
         const items = order.products;
@@ -42,30 +47,38 @@ export default class Receipt{
         }
 
         r.addTotalsItem({
-            name: 'Sub-Total',
-            amount: order.totals.itemsTotal - order.totals.tips,
-        });
-        r.addTotalsItem({
-            name: 'Discount',
-            amount: order.totals.discount,
+            name: 'Sous-total',
+            amount: order.totals.subTotal,
         });
 
         if(order.totals.tips){
             r.addTotalsItem({
-                name: 'Tips',
+                name: 'Pourboire (non taxable)',
                 amount: order.totals.tips,
             });
         }
 
+        r.addTotalsItem({ name: 'TPS', amount: order.totals.taxGST, leftPadding: true });
+        r.addTotalsItem({ name: 'TVQ', amount: order.totals.taxQST, leftPadding: true });
+
         r.addTotalsItem({
             name: 'TOTAL',
             amount: order.totals.total,
-            isFinal: true,
         });
 
-        const raw = r.getString();
-        // console.log(raw);
-        Printer.print(raw);
+        r.addNormalMessage('Client Fidele vous avez $ 4.00 en dollars fidélite', true);
+        r.addNormalMessage('Le solde de votre carte prépayée est $ 176');
+
+        r.addSeparator();
+        r.addBigMessage('Spring Special save $ 25 on a hand wax');
+        r.addNormalMessage('Please present this receipt.\nExpires:   30-05-2019\nAVANTI AUTOSPA');
+        r.addSeparator(1);
+
+        r.addBigMessage('MERCI POUR VOTRE VISITE', true);
+        r.addNormalMessage('TPS: 762219293  TVQ:  1223960291', true);
+        r.addSpace();
+
+        Printer.print(r.getLines());
     }
 
     static _getLabel(p: any){

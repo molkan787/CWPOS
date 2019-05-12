@@ -16,7 +16,7 @@ class BarcodeScanner {
                 setTimeout(() => {
                     if (this.chars.length >= 10) {
                         const barcode = this.chars.join("");
-                        // console.log("Barcode Scanned: " + barcode);
+                        console.log("Barcode Scanned: " + barcode);
                         if(this.handler)
                         this.handler(barcode);
                     }
@@ -33,8 +33,16 @@ class BarcodeScanner {
         this.handler = handler;
     }
 
+    static simulate(barcode: string){
+        console.log("Barcode Scanned (Simulated): " + barcode);
+        this.handler(barcode);
+    }
+
 }
 export default BarcodeScanner;
+
+// @ts-ignore
+window.BarcodeScanner = BarcodeScanner;
 
 document.addEventListener("DOMContentLoaded", () => {
     BarcodeScanner.init();

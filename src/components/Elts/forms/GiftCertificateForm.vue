@@ -2,13 +2,13 @@
     <div class="ui form">
         <div class="field">
             <label>Certificate</label>
-            <LabeledInput v-model="data.certId" class="tior" label="Cert #" labelWidth="37.5%" inputWidth="62.5%" maxlength="5"/>
-            <LabeledInput v-model="data.value" class="tior"  label="Value ($)" labelWidth="37.5%" inputWidth="62.5%" type="number" min="0" />
+            <LabeledInput v-model="data.certId" class="tior" label="Cert #" labelWidth="42%" inputWidth="58%" maxlength="5"/>
+            <LabeledInput v-model="data.value" class="tior"  label="Value ($)" labelWidth="42%" inputWidth="58%" type="number" min="0" />
         </div>
         <div class="field">
             <label>Person receiving the certificate</label>
-            <LabeledInput v-model="data.receiver.first_name" class="tior" label="First name" labelWidth="37.5%" inputWidth="62.5%"/>
-            <LabeledInput v-model="data.receiver.last_name" class="tior"  label="Last name" labelWidth="37.5%" inputWidth="62.5%"/>
+            <LabeledInput v-model="data.receiver.first_name" class="tior" label="First name" labelWidth="42%" inputWidth="58%"/>
+            <LabeledInput v-model="data.receiver.last_name" class="tior"  label="Last name" labelWidth="42%" inputWidth="58%"/>
         </div>
         <div class="field">
             <label>Description</label>

@@ -37,7 +37,7 @@ export default class UsersTab extends Vue{
 
     private cols = [
         {name: 'Id', prop: 'id'},
-        {name: 'Added date', prop: 'date_added', filter: 'ts2date'},
+        {name: 'Added date', prop: 'date_added', filter: 'ts2datetime'},
         {name: 'First Name', prop: 'first_name'},
         {name: 'Last Name', prop: 'last_name'},
         {name: 'Username', prop: 'username'},

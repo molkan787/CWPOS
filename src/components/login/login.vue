@@ -12,7 +12,7 @@
                     <input v-model="username" type="text" placeholder="Username">
                 </div>
                 <div class="field">
-                    <label>Last Name</label>
+                    <label>Password</label>
                     <input v-model="password" type="password" placeholder="Password">
                 </div>
                 <button class="ui button" @click="loginClick">

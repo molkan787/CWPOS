@@ -14,23 +14,34 @@ class Printer{
 
     }
 
-    static print(str: string){
+    static print(lines: any){
+        // @ts-ignore
+        if(window.printToConsole || true){
+            for(let line of lines){
+                const lns = line.text.split("\n");
+                for(let ln of lns){
+                    console.log('%c' + ln, `font-size:${line.font.x * 12}px;text-align:center;`);
+                }
+            }
+            return;
+        }
 
-        const lines = str.split("\n");
-
+        const p = this.printer;
         this.device.open(() => {
-            this.printer
-            .font('a')
+            p.font('a')
             .align('ct')
-            .style('bu')
-            .size(1, 1);
+            .style('bu');
 
-            for (let i = 0; i < lines.length; i++) {
-                this.printer.text(lines[i]);
+            for(let line of lines){
+                p.size(line.font.x, line.font.y);
+                const lns = line.text.split("\n");
+                for(let ln of lns){
+                    p.text(ln);
+                }
             }
             
-            this.printer.cut();
-            this.printer.close();
+            p.cut();
+            p.close();
         });
         
     }

@@ -16,7 +16,7 @@
         </h3>
         <ButtonsGrid @buttonClick="buttonClicked" class="buttonsGrid" :buttons="cashButtons" />
         <KeyPad @keyPressed="changePaid" />
-        <sui-button color="grey" class="submit" :loading="loading" @click="submit" :disabled="pos.items.length == 0 || !pos.pay_method" >
+        <sui-button onclick="window.PaymentsComponent.focusBRI()" color="grey" class="submit" :loading="loading" @click="submit" :disabled="pos.items.length == 0 || !pos.pay_method" >
             Submit
             <i class="arrow right icon"></i>
         </sui-button>
@@ -34,6 +34,7 @@ import ButtonsGrid from '../../Elts/ButtonsGrid.vue';
 import Comu from '@/prs/comu';
 import PrsUtils from '@/prs/utils';
 import MxHelper from '@/prs/MxHelper';
+import BRI from '@/ccs/BRI';
 
 @Component({
     components: {
@@ -75,6 +76,14 @@ export default class Payments extends Vue{
     submit(){
         // @ts-ignore
         Comu.startSubmission();
+    }
+
+    focusBRI(){
+        // @ts-ignore
+        const paym = this.pos.pay_method;
+        if(paym == 'prepaid' || paym == 'loyalty'){
+            BRI.focus('pol_card_pay');
+        }
     }
 
     buttonClicked(key: string){
@@ -130,6 +139,8 @@ export default class Payments extends Vue{
             this.buttonClicked(amount);
         });
         MxHelper.registerFunction('setExactPaid', () => this.setExact() );
+        // @ts-ignore
+        window.PaymentsComponent = this;
     }
 }
 </script>

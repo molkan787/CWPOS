@@ -10,6 +10,7 @@
         </div>
         <h3>POS</h3>
         <sui-checkbox v-model="categoryAutoBack" @change="categoryAutoBackChange" class="cb" label="Automatically go back to categories list after selecting an item/service?"/>
+        <sui-checkbox v-model="barcodeAutoFill" @change="barcodeAutoFillChange" class="cb" label="Automatically fill barcode of Prepaid/Loyalty card of current client in Payment box?"/>
         <template v-slot:buttons>
             <sui-button @click="close">Close</sui-button>
         </template>
@@ -34,6 +35,7 @@ export default class OptionsModal extends Vue{
 
     private zoom: number = 100;
     private categoryAutoBack: boolean = false;
+    private barcodeAutoFill: boolean = true;
 
     minus(){
         this.adjustZoom(-10);
@@ -43,7 +45,11 @@ export default class OptionsModal extends Vue{
     }
 
     categoryAutoBackChange(){
-        this.saveCAB();
+        LocalSettings.setItem('categoryAutoBack', this.categoryAutoBack);
+    }
+
+    barcodeAutoFillChange(){
+        LocalSettings.setItem('barcodeAutoFill', this.barcodeAutoFill);
     }
 
     adjustZoom(amt: any, doNotSave?: boolean){
@@ -66,9 +72,6 @@ export default class OptionsModal extends Vue{
     saveZoom(){
         LocalSettings.setItem('zoom', this.zoom);
     }
-    saveCAB(){
-        LocalSettings.setItem('categoryAutoBack', this.categoryAutoBack);
-    }
 
     created(){
         MxHelper.registerFunction('openOptions', () => {
@@ -76,6 +79,7 @@ export default class OptionsModal extends Vue{
         });
 
         this.categoryAutoBack = LocalSettings.getItem('categoryAutoBack') || false;
+        this.barcodeAutoFill = LocalSettings.getItem('barcodeAutoFill');
         this.zoom = LocalSettings.getItem('zoom') || 100;
         this.adjustZoom(0, true);
 
@@ -120,5 +124,6 @@ export default class OptionsModal extends Vue{
     font-size: 0.8rem;
     zoom: 1.5;
     line-height: 1.2;
+    margin-bottom: 2rem;
 }
 </style>

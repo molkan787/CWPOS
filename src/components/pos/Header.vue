@@ -7,11 +7,12 @@
             <sui-label class="logout-btn" icon="power off" @click="logout">Logout</sui-label>
         </span>
         <div class="right-side">
-            <sui-button compact icon="search" @click="searchClient" />
+            <sui-button compact icon="search" @click="searchClient()" />
             <PhoneInput v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
             <sui-input :value="ticket" @input="updateTicket" placeholder="Ticket #" icon="ticket" iconPosition="left" />
+            <sui-button compact icon="barcode" @click="openLoyaltyScanModal" onclick="window.lsm.focusBRI()" />
         </div>
-        <div v-if="message.visible" class="ui icon message">
+        <div v-if="message.visible" class="ui icon message message1">
             <i :class="message.icon"></i>
             <div class="content">
                 <div class="header">
@@ -35,6 +36,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { mapState, mapActions } from 'vuex';
 import Utils from '@/utils';
 import comu from '@/prs/comu';
+import MxHelper from '@/prs/MxHelper';
 import Message from '@/ccs/Message';
 import barcodeScanner from '@/prs/barcodeScanner';
 import ClientLoader from '@/prs/clientLoader';
@@ -55,6 +57,8 @@ import PhoneInput from '../pre/PhoneInput.vue';
     },
 })
 export default class Header extends Vue {
+    private statusCallback!: Function;
+
     private message = {
         visible: false,
         status: '',
@@ -79,17 +83,18 @@ export default class Header extends Vue {
 
     private phone: string = '';
 
-    searchClient(){
-        if(this.phone.length != 10){
-            if(this.phone.length > 0) this.setMessageContent(1, 'invalid_number', true);
+    searchClient(_phone?: string){
+        const phone = _phone || this.phone;
+        if(phone.length != 10){
+            if(phone.length > 0) this.setMessageContent(1, 'invalid_number', true);
             return;
         }
         this.setMessageContent(1, 'fetching');
-        ClientLoader.loadClient(this.phone).then(() => {
+        ClientLoader.loadClient(phone).then(() => {
             this.setMessageContent(1, 'found', true);
             this.phone = '';
         }).catch(error => {
-            console.log(error);
+            if(error == 'NOT_FOUND') this.phone = '';
             this.setMessageContent(1, error, true);
         });
     }
@@ -127,6 +132,15 @@ export default class Header extends Vue {
         if(msg.timeout) clearTimeout(msg.timeout);
         msg.visible = true;
         if(autoHide) this.hideMessage(msg);
+
+        if(this.statusCallback){
+            this.statusCallback({
+                msgId,
+                status,
+                text: msg.text,
+                icon: msg.icon,
+            });
+        }
     }
 
     updateLoyaltyBarcode(){
@@ -140,6 +154,14 @@ export default class Header extends Vue {
             msg.color = 'blue';
             if(msg.timeout) clearTimeout(msg.timeout);
             msg.visible = true;
+            if(this.statusCallback){
+                this.statusCallback({
+                    status: 'found',
+                    text: msg.text,
+                    icon: msg.icon,
+                    msgId: 2,
+                });
+            }
         }else if(msg.status == 'data'){
             msg.visible = false;
         }
@@ -149,6 +171,12 @@ export default class Header extends Vue {
         msg.timeout = setTimeout(() => {
             msg.visible = false;
         }, 4000);
+    }
+
+
+    openLoyaltyScanModal(){
+        // @ts-ignore
+        MxHelper.openLoyaltyScanModal();
     }
 
     // ========================================
@@ -168,6 +196,14 @@ export default class Header extends Vue {
 
     created(){
         barcodeScanner.setNoBindHandler((barcode: string) => this.searchLoyaltyCard(barcode));
+        MxHelper.registerFunction('searchClient', (phone: string, callback: Function) => {
+            this.statusCallback = callback;
+            this.searchClient(phone);
+        });
+        MxHelper.registerFunction('searchLoyaltyCard', (barcode: string, callback: Function) => {
+            this.statusCallback = callback;
+            this.searchLoyaltyCard(barcode);
+        });
     }
 
 }
@@ -192,13 +228,13 @@ div.m-el{
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 20.5rem;
+    width: 21.8rem;
     float: right;
     padding: 1rem;
     margin-right: 1rem;
     button{
         float: right;
-        width: 2.7rem;
+        width: 4rem;
         height: 2.7rem;
     }
     div{
@@ -211,7 +247,6 @@ div.m-el{
 }
 div.message{
     display: inline-block !important;
-    width: 250px !important;
     height: 3rem !important;
     float: right !important;
     padding: 0.8rem !important;
@@ -226,9 +261,13 @@ div.message{
         line-height: 1.5;
     }
 }
+.message1{
+    width: 18rem !important;
+}
 .message2{
     position: relative !important;
     top: 38%;
     left: 0;
+    width: 22rem !important;
 }
 </style>

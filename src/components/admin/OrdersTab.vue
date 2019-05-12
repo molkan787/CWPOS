@@ -32,7 +32,7 @@ export default class OrdersTab extends Vue{
         {name: 'Id', prop: 'id'},
         {name: 'ticket #', prop: 'other_data', filter: 'orderTicket'},
         {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
-        {name: 'Order Date', prop: 'date_added', filter: 'ts2date'},
+        {name: 'Order Date', prop: 'date_added', filter: 'ts2datetime'},
         {name: 'Payment method', prop: 'pay_method', filter: 'paym'},
         {name: 'Order value', prop: 'total', filter: 'price_m'},
         {name: 'Receipt', prop: 'receipt', filter: 'yesIfTrue'},

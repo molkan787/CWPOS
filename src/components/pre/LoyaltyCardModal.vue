@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import MxHelper from '@/prs/MxHelper';
 import comu from '@/prs/comu';
 import Modal from '../Elts/Modal.vue';
@@ -30,6 +30,7 @@ import ClientInfoForm from './ClientInfoForm.vue';
         ClientInfoForm
     },
     computed: mapState(['client']),
+    methods: mapActions(['setLoyaltyCardIfEmpty']),
 })
 export default class LoyaltyCardModal extends Vue{
 
@@ -52,6 +53,7 @@ export default class LoyaltyCardModal extends Vue{
     activate(){
         // @ts-ignore
         comu.activateLoyaltyCard(this.barcode, this.clientData).then(response => {
+            this.loadCard(this.barcode);
             this.dialog('Loyalty Card was successfully activated!', 'success');
         }).catch(error => {
             if(error == 'CARD_EXIST'){
@@ -104,6 +106,12 @@ export default class LoyaltyCardModal extends Vue{
         this.dialogData.text = text;
         this.dialogData.ref = ref;
         this.dialogData.open = true;
+    }
+
+    loadCard(barcode: string){
+        // @ts-ignore
+        MxHelper.searchLoyaltyCard(barcode, null);
+
     }
 
     created(){

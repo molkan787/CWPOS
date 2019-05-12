@@ -1,6 +1,6 @@
 <template>
     <Modal v-model="open" :title="title" :loading="mr._loading" @dialogAnswer="open = false" :dialog="dialog">
-        <h3>{{text}}</h3>
+        <h3 class="content-area">{{text}}</h3>
         <template v-slot:buttons>
             <template v-if="type == 2">
                 <sui-button @click="noClick">NO</sui-button>
@@ -77,3 +77,8 @@ export default class MessageModal extends Vue{
 }
 </script>
 
+<style scoped>
+.content-area{
+    white-space: pre;
+}
+</style>

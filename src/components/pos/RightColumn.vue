@@ -2,7 +2,7 @@
     <div class="ui attached vertical segment no-padding">
         
         <sui-segment attached class="padding-2">
-            <TripleButton :texts="['CLEAR POS','OPTIONS','QUIT APP']" @click="buttonClicked" />
+            <TripleButton :texts="['CLEAR POS','OPTIONS','NO SALE']" @click="buttonClicked" :moreButton="true" />
         </sui-segment>
 
         <sui-segment attached class="row1-block">
@@ -19,12 +19,14 @@
 import Vue from 'vue';
 import Comu from '@/prs/comu';
 import App from '@/app_service';
+import Printer from '@/drivers/printer';
 import Message from '@/ccs/Message';
 import MxHelper from '@/prs/MxHelper';
 import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
 import Payments from './Payments/Payments.vue';
 import PaymentMethods from './PaymentMethods/PaymentMethods.vue';
+
 
 @Component({
     components: {
@@ -40,19 +42,11 @@ export default class RightColumn extends Vue{
         }else if(btnIdx == 1){
             // @ts-ignore
             MxHelper.openOptions();
-            // Message.ask('Are you sure you want to restart the app?').then((e: any) => {
-            //     e.hide();
-            //     if(e.answer){
-            //         App.restart();
-            //     }
-            // });
         }else if(btnIdx == 2){
-            Message.ask('Are you sure you want to quit the app?').then((e: any) => {
-                e.hide();
-                if(e.answer){
-                    App.quit();
-                }
-            });
+            Printer.openCashDrawer();
+        }else if(btnIdx == 3){
+            // @ts-ignore
+            MxHelper.openToolsModal();
         }
     }
 }

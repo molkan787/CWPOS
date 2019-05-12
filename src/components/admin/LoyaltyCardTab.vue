@@ -2,7 +2,8 @@
     <DataTable :cols="cols" :items="cards" :loading="loading"
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
     :controlls="controlls"
-    @filtersChanged="loadData" @editBalance="editBalance" />
+    @filtersChanged="loadData" @editBalance="editBalance"
+    @exportHistory="exportHistory" @deleteCard="deleteCard" />
 </template>
 
 <script lang="ts">
@@ -11,8 +12,10 @@ import Component from 'vue-class-component';
 import DataTable from '../Elts/DataTable.vue';
 import { mapState } from 'vuex';
 import Dl from '@/prs/dl';
+import DM from '@/prs/dm';
 import pfs from '@/prs/pfs';
 import MxHelper from '@/prs/MxHelper';
+import Message from '@/ccs/Message';
 
 @Component({
     components: {
@@ -29,11 +32,13 @@ export default class LoyaltyCardTab extends Vue{
 
     private cols = [
         {name: 'Barcode', prop: 'barcode'},
-        {name: 'Activation date', prop: 'date_added', filter: 'ts2date'},
+        {name: 'Activation date', prop: 'date_added', filter: 'ts2datetime'},
         {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
         {name: 'Balance', prop: 'balance', filter: 'price_m'},
         {name: 'Options', prop: '@', buttons: [
-            {name: 'editBalance', text: 'Edit balance', icon: 'edit'}
+            {name: 'editBalance', text: '', icon: 'edit'},
+            {name: 'exportHistory', text: '', icon: 'download'},
+            {name: 'deleteCard', text: '', icon: 'delete'},
         ]}
     ];
 
@@ -57,6 +62,27 @@ export default class LoyaltyCardTab extends Vue{
     private editBalance(card: any){
         // @ts-ignore
         MxHelper.editCardBalance({card, type: 'loyalty'});
+    }
+
+    private exportHistory(card: any){
+        // @ts-ignore
+        MxHelper.openDataExportWizard({dataName: 'loyalty:' + card.id, barcode: card.barcode});
+    }
+
+    private deleteCard(card: any){
+        Message.ask(`Do you realy want to delete this loyalty card ?\n(${card.barcode})`)
+        .then((e: any) => {
+            if(e.answer){
+                e.loading();
+                DM.deleteCard({type: 'loyalty', id: card.id}).then(() => {
+                    e.hide(); 
+                }).catch(err => {
+                    e.dialog.show('We could not complete the current action.');
+                });
+            }else{
+                e.hide();
+            }
+        });
     }
 
     private importData(){

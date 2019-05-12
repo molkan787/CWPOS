@@ -1,6 +1,6 @@
 <template>
   <sui-modal v-model="value" :animationDuration="300" size="tiny" :closable="false">
-      <sui-modal-header v-if="title">{{ title }}</sui-modal-header>
+      <sui-modal-header style="user-select: none" v-if="title">{{ title }}</sui-modal-header>
       <sui-modal-content>
         <sui-modal-description>
           <slot></slot>

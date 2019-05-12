@@ -4,7 +4,7 @@
         <div class="tableParent">
             <sui-table celled striped>
                 <sui-table-header>
-                    <sui-table-row>
+                    <sui-table-row class="throw">
                         <sui-table-headerCell>Date</sui-table-headerCell>
                         <sui-table-headerCell>Amount</sui-table-headerCell>
                     </sui-table-row>
@@ -12,7 +12,7 @@
 
                 <sui-table-body>
 
-                    <sui-table-row v-for="(item, index) in items" :key="index">
+                    <sui-table-row class="trow" v-for="(item, index) in items" :key="index">
                         <sui-table-cell>
                             {{ item.date }}
                         </sui-table-cell>
@@ -45,16 +45,27 @@ export default class ClientHistory extends Vue{}
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
 h3{
-    margin-top: 1rem;
+    margin-top: 0rem;
+    margin-bottom: 0.7rem;
 }
 .tableParent{
     border: 1px solid rgba(34,36,38, 0.15);
-    height: $block1-height - 10rem;
+    height: $block1-height - 9rem;
     background-color: #f9f9f9;
 }
 .ui.table{
     border: none;
     border-bottom: 1px solid rgba(34,36,38,.1);
     border-radius: 0;
+}
+
+$mrg: 4px;
+.trow > td{
+    padding-top: $mrg !important;
+    padding-bottom: $mrg !important;
+}
+.throw > th{
+    padding-top: $mrg !important;
+    padding-bottom: $mrg !important;
 }
 </style>
