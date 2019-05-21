@@ -82,6 +82,7 @@ export default new Vuex.Store({
       id: 0,
       barcode: '',
       balance: 0,
+      updateCount: 0,
     },
     prepaidCard: {
       id: 0,
@@ -122,6 +123,22 @@ export default new Vuex.Store({
   actions: {
     setup(context){
       Comu.setup(context);
+    },
+
+    updateCardBarcode({state}, payload: any){
+      const {type, card} = payload;
+      const s_card = type == 'prepaid' ? state.prepaidCard : state.loyaltyCard;
+      if(s_card.id == card.id){
+        s_card.barcode = card.barcode;
+      }
+    },
+    
+    updateCardBalance({state}, payload: any){
+      const {type, card} = payload;
+      const s_card = type == 'prepaid' ? state.prepaidCard : state.loyaltyCard;
+      if(s_card.id == card.id){
+        s_card.balance = card.balance;
+      }
     },
 
     setReason({state}, payload: any){
@@ -194,11 +211,13 @@ export default new Vuex.Store({
         client.want_receipt = clientData.want_receipt || false;
         client.history = clientData.history || [];
 
-        const card = clientData.prepaid || {};
-        prepaid.id = card.id || 0;
-        prepaid.barcode = card.barcode || '';
-        prepaid.balance = card.balance || 0;
-        prepaid.updateCount++;
+        if(!clientData.keepCards){
+          const card = clientData.prepaid || {};
+          prepaid.id = card.id || 0;
+          prepaid.barcode = card.barcode || '';
+          prepaid.balance = card.balance || 0;
+          prepaid.updateCount++;
+        }
       }
     },
 

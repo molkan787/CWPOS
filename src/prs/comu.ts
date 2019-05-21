@@ -51,7 +51,9 @@ export default class Comu{
 
         try {
             Printer.setup();
-        } catch (error) {}
+        } catch (error) {
+            console.log('Error whilte initiating Printer:', error);
+        }
 
 
         if(config.debug){
@@ -59,7 +61,7 @@ export default class Comu{
             Login.setUser({
                 token: '',
                 user: {
-                    username: 'foo',
+                    username: 'system',
                     user_type: 1,
                     id: 1,
                 }
@@ -216,7 +218,8 @@ export default class Comu{
                         discount: state.discountReason,
                         extra: state.extraChargeReason,
                         free: state.freeOrderReason,
-                    }
+                    },
+                    taxes: state.taxes,
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0,
@@ -229,6 +232,11 @@ export default class Comu{
                 invoiceData: state.invoiceData,
                 loyaltyCardId: state.loyaltyCard.id,
                 actions: state.actions,
+                cards: {
+                    prepaid: state.prepaidCard.id,
+                    loyalty: state.loyaltyCard.id,
+                },
+                taxes: state.taxes,
             }
             axios.post(_url('order'), data).then(({data}) => {
                 if(data.status == 'OK'){
@@ -238,6 +246,7 @@ export default class Comu{
                     state.stats.dt += stats.dt;
                     state.nextOrderId = data.nextOrderId;
                     state.lastOrderDate = data.date_added;
+                    this.setCardsBalances(data.balances);
                     this.backupState();
                     resolve(true);
                 }else{
@@ -247,6 +256,16 @@ export default class Comu{
                 reject(error);
             });
         });
+    }
+
+    static setCardsBalances(cards: any){
+        const state = this.context.state;
+        if(typeof cards.prepaid == 'number'){
+            state.prepaidCard.balance = cards.prepaid;
+        }
+        if(typeof cards.loyalty == 'number'){
+            state.loyaltyCard.balance = cards.loyalty;
+        }
     }
 
     static resetStats(){
@@ -314,6 +333,8 @@ export default class Comu{
             pay_method: state.pos.pay_method,
             payment: state.payment,
             loyaltyCard: state.loyaltyCard,
+            prepaidCard: state.prepaidCard,
+            taxes: state.taxes,
         });
     }
 
@@ -331,6 +352,8 @@ export default class Comu{
             pos: state.pos,
             payment: state.payment,
             loyaltyCard: state.loyaltyCard,
+            prepaidCard: state.prepaidCard,
+            taxes: state.taxes,
         };
         this.prevState = JSON.parse(JSON.stringify(_state));
     }

@@ -44,7 +44,8 @@ export default class Utils {
     }
 
     static dateToTimestamp(dateString: string){
-        return (new Date(dateString)).getTime() / 1000;
+        const str = dateString.replace(/-/g, '/');
+        return (new Date(str)).getTime() / 1000;
     }
 
     static todaysDate(){

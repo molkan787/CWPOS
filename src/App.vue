@@ -13,6 +13,9 @@
     <ReasonModal />
     <ImportDataModal />
     <ExportDataModal />
+    <EditCardBarcodeModal />
+
+    <portal-target name="semantic-ui-vue" />
   </div>
 </template>
 
@@ -29,6 +32,7 @@ import ClientModal from './components/pre/ClientModal.vue';
 import ReasonModal from './components/pre/ReasonModal.vue';
 import ImportDataModal from './components/pre/ImportDataModal.vue';
 import ExportDataModal from './components/pre/ExportDataModal.vue';
+import EditCardBarcodeModal from './components/pre/EditCardBarcodeModal.vue';
 
 export default Vue.extend({
   components: {
@@ -42,6 +46,7 @@ export default Vue.extend({
     ReasonModal,
     ImportDataModal,
     ExportDataModal,
+    EditCardBarcodeModal,
   },
   methods: {
     ...mapActions(['setup'])

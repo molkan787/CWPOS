@@ -16,7 +16,7 @@ export default class PredefinedFiltersSchema{
 
     static get clients(){
         return [
-            {name: 'phone', type: 'text', text: 'Phone number'},
+            {name: 'phone', type: 'phone', text: 'Phone number'},
             ...this.dateRange
         ];
     }

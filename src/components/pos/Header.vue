@@ -7,10 +7,14 @@
             <sui-label class="logout-btn" icon="power off" @click="logout">Logout</sui-label>
         </span>
         <div class="right-side">
-            <sui-button compact icon="search" @click="searchClient()" />
+            <sui-button compact @click="searchClient()" >
+                <i class="search icon"></i>Search
+            </sui-button>
             <PhoneInput v-model="phone" placeholder="Telephone" icon="phone" iconPosition="left" />
             <sui-input :value="ticket" @input="updateTicket" placeholder="Ticket #" icon="ticket" iconPosition="left" />
-            <sui-button compact icon="barcode" @click="openLoyaltyScanModal" onclick="window.lsm.focusBRI()" />
+            <sui-button compact @click="openLoyaltyScanModal" onclick="window.lsm.focusBRI()" >
+                <i class="barcode icon"></i>Scan
+            </sui-button>
         </div>
         <div v-if="message.visible" class="ui icon message message1">
             <i :class="message.icon"></i>
@@ -101,7 +105,10 @@ export default class Header extends Vue {
 
     searchLoyaltyCard(barcode: string){
         this.setMessageContent(2, 'fetching_card');
-        ClientLoader.loadLoyaltyCard(barcode).catch(error => {
+        ClientLoader.loadLoyaltyCard(barcode).then(() => {
+            this.message2.visible = false;
+            this.callSuccessCallback();
+        }).catch(error => {
             this.setMessageContent(2, error, true);
         });
     }
@@ -113,14 +120,14 @@ export default class Header extends Vue {
             msg.text = 'Fetching data...';
             msg.icon = 'notched circle loading icon';
         }else if(status == 'fetching_card'){
-            msg.text = 'Loading loyalty card...';
+            msg.text = 'Loading loyalty/prepaid card...';
             msg.icon = 'notched circle loading icon';
             msg.color = '';
         }else if(status == 'found'){
             msg.text = 'Client history loaded';
             msg.icon = 'circle check outline icon';
         }else if(status == 'NOT_FOUND'){
-            msg.text = (msgId == 1 ? 'Client' : 'Loyalty card') + ' not found';
+            msg.text = (msgId == 1 ? 'Client' : 'Loyalty/Prepaid card') + ' not found';
             msg.icon = 'ban icon';
         }else if(status == 'invalid_number'){
             msg.text = 'Invalid phone number';
@@ -154,16 +161,17 @@ export default class Header extends Vue {
             msg.color = 'blue';
             if(msg.timeout) clearTimeout(msg.timeout);
             msg.visible = true;
-            if(this.statusCallback){
-                this.statusCallback({
-                    status: 'found',
-                    text: msg.text,
-                    icon: msg.icon,
-                    msgId: 2,
-                });
-            }
         }else if(msg.status == 'data'){
             msg.visible = false;
+        }
+    }
+
+    callSuccessCallback(){
+        if(this.statusCallback){
+            this.statusCallback({
+                status: 'found',
+                msgId: 2,
+            });
         }
     }
 
@@ -177,6 +185,20 @@ export default class Header extends Vue {
     openLoyaltyScanModal(){
         // @ts-ignore
         MxHelper.openLoyaltyScanModal();
+    }
+
+
+    handleBarcodeScan(barcode: string){
+        if(this.$route.name == 'pos'){
+            this.searchLoyaltyCard(barcode);
+        }else{
+            try {
+                // @ts-ignore
+                MxHelper.redirectScannedBarcode(barcode);
+            } catch (error) {
+                
+            }
+        }
     }
 
     // ========================================
@@ -195,7 +217,7 @@ export default class Header extends Vue {
     }
 
     created(){
-        barcodeScanner.setNoBindHandler((barcode: string) => this.searchLoyaltyCard(barcode));
+        barcodeScanner.setNoBindHandler((barcode: string) => this.handleBarcodeScan(barcode));
         MxHelper.registerFunction('searchClient', (phone: string, callback: Function) => {
             this.statusCallback = callback;
             this.searchClient(phone);
@@ -228,14 +250,17 @@ div.m-el{
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 21.8rem;
+    width: 25.2rem;
     float: right;
     padding: 1rem;
-    margin-right: 1rem;
+    margin-right: 0rem;
     button{
         float: right;
-        width: 4rem;
+        width: 8rem;
         height: 2.7rem;
+        i{
+            float: left;
+        }
     }
     div{
         float: left;

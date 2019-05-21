@@ -1,7 +1,7 @@
 * {
     font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
 }
-img, h1, h2, h3, h4{
+img, h1, h2, h3, h4, label.ui.label{
     user-select: none;
 }
 img {
@@ -48,4 +48,13 @@ hr{
 
 .segment{
     box-shadow: none !important;
+}
+
+.emptyMsg {
+    text-align: center;
+    margin-top: 9rem;
+    color: #999;
+    font-size: 1.2rem;
+    font-weight: normal;
+    font-style: italic;
 }

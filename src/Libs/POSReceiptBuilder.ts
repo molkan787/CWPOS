@@ -39,7 +39,7 @@ class POSReceiptBuilder {
 		this.nameLength = this.lineLength - this.totalLength - this.priceLength - this.quantityLength - 3;
 
 		this.tPriceLength = this.priceLength + 3;
-		this.tNameLength = 20;
+		this.tNameLength = 22;
 
 		this.spaceChar = ' ';
 		this.separatorChar = '*';
@@ -71,10 +71,12 @@ class POSReceiptBuilder {
 		this._line(data.title, doNotCenterTitle ? false : CENTER);
 
 		this._fontNormal();
+		let ctr = 1;
 		for(let st of data.subtitles){
 			this._line(st, doNotCenterTitle ? false : CENTER);
-			this._separator(25);
+			if(ctr++ % 2 == 0) this._separator(25);
 		}
+		if(ctr % 2 == 0) this._separator(25);
 		this._emptyLine();
 
 		this._line(`Commande ID: ${data.orderId}`);
@@ -88,11 +90,12 @@ class POSReceiptBuilder {
 	}
 
 	addItem(item: any){
+		const ltotal = item.q ? item.price * item.q : item.price;
 		this._item({
 			name: item.name,
 			q: this._qty(item.q),
 			price: this._price(item.price),
-			total: this._price(item.price * item.q)
+			total: this._price(ltotal)
 		});
 	}
 
@@ -173,7 +176,7 @@ class POSReceiptBuilder {
 		line += this.spaceChar;
 		line += this._block(item.q, this.quantityLength);
 		line += this.spaceChar;
-		line += this._block(item.price, this.priceLength, RIGHT);
+		line += this._block(item.q ? item.price : '', this.priceLength, RIGHT);
 		line += this.spaceChar;
 		line += this._block(item.total, this.totalLength, RIGHT);
 

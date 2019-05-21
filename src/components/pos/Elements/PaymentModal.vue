@@ -1,5 +1,5 @@
 <template>
-    <Modal v-model="open" :loading="loading" :title="title" :dialog="dialogData">
+    <Modal class="root" v-model="open" :loading="loading" :title="title" :dialog="dialogData">
 
         <template v-slot:default>
             <h2>Total: {{ pos.values.total | price }}</h2>
@@ -13,7 +13,7 @@
         <template v-slot:buttons>
             <sui-button v-if="pos.finished" @click="printReceipt" icon="file alternate" :loading="printBtnLoading">Print Receipt</sui-button>
             <sui-button v-if="pos.finished" @click="close">Close</sui-button>
-            <sui-button v-else @click="close">Cancel</sui-button>
+            <sui-button v-else @click="cancel">Cancel</sui-button>
         </template>
 
     </Modal>
@@ -34,6 +34,7 @@ import POLCardPayment from './POLCardPayment.vue';
 import CardPayment from './CardPayment.vue';
 import OtherPayment from './OtherPayment.vue';
 import InvoicePayment from './InvoicePayment.vue';
+import Payments from '@/prs/payments';
 
 @Component({
     components: {
@@ -69,6 +70,11 @@ export default class PaymentModal extends Vue{
         this.open = false;
         // @ts-ignore
         this.endOrderPosting();
+    }
+
+    cancel(){
+        this.close();
+        Payments.cancelPayment();
     }
 
     handle(payload: any){
@@ -139,5 +145,8 @@ h2{
     margin-bottom: 0;
     text-align: center;
     font-size: 2.3rem;
+}
+.root{
+    text-align: center;
 }
 </style>

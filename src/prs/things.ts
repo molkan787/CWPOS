@@ -1,7 +1,9 @@
 const $ = {
     prefix: {
-        '1': 'IN & OUT',
-        '2': 'IN/OUT'
+        '1': 'INT & EXT',
+        '2': 'INT/EXT',
+        '6': 'INT & EXT',
+        '7': 'INT/EXT',
     },
     taxes: {
         gst: 0.05,

@@ -1,7 +1,11 @@
 <template>
     <div class="root ui labeled input">
         <label class="ui label" :style="labelWidth ? 'width: ' + labelWidth : ''">{{label}}</label>
-        <input :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"
+
+        <PhoneInput v-if="type == 'phone'" v-model="pvalue" @input="change" :placeholder="ph || label"
+            :disabled="disabled" :style="inputWidth ? 'width: ' + inputWidth : ''"/>
+
+        <input v-else :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"
             :style="inputWidth ? 'width: ' + inputWidth : ''" :maxlength="maxlength" :min="min" :max="max" />
     </div>
 </template>
@@ -10,8 +14,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
+import PhoneInput from '@/components/pre/PhoneInput.vue';
 
 @Component({
+    components: {
+        PhoneInput,
+    },
     watch: {
         value: function (){
             // @ts-ignore

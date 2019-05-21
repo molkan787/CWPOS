@@ -58,12 +58,6 @@ export default class BarcodeInput extends Vue{
         }
     }
 
-    created(){
-        // if(this.bus){
-        //     this.bus.$on('focus', () => this.focusInput());
-        // }
-    }
-
     setup(){
         if(!this.briRef) return;
         // @ts-ignore
@@ -90,6 +84,7 @@ div.barcodeinput{
     div {
         font-size: 1.2rem !important;
         input{
+            width: 19rem;
             background: #f9f9f9 !important;
         }
     }

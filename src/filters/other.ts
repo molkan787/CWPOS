@@ -1,3 +1,5 @@
+import utils from '@/prs/utils';
+
 export default {
     joinnames: (person: any) => `${person.first_name} ${person.last_name}`,
     yesIfTrue: (val: any) => val ? 'Yes' : '',
@@ -8,13 +10,9 @@ export default {
         return '---';
     },
     phone: (num: string) => {
-        let result = '';
-        for(let i = 0; i < num.length && i < 10; i++){
-            if(i == 3 || i == 6)
-                result += '-';
-            result += num.charAt(i);
-        }
-        return result;
+        if(num == '5555555555' || num == '0000000000')
+            return 'NO TEL.';
+        return utils.formatPhoneNumber(num);
     },
     orderTicket: (obj: any) => {
         return obj.ticket;

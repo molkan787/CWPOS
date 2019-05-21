@@ -18,7 +18,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { mapState } from 'vuex';
+import { mapActions } from 'vuex';
 import MxHelper from '@/prs/MxHelper';
 import DM from '@/prs/dm';
 import Modal from '../Elts/Modal.vue';
@@ -28,7 +28,8 @@ import LabeledInput from '../Elts/inputs/LabeledInput.vue';
     components: {
         Modal,
         LabeledInput,
-    }
+    },
+    methods: mapActions(['updateCardBalance']),
 })
 export default class EditCardBalanceModal extends Vue{
 
@@ -59,7 +60,7 @@ export default class EditCardBalanceModal extends Vue{
     save(){
         const balance = parseFloat(this.balance) * 100;
         DM.editCardBalance({type: this.type, id: this.card.id, balance}).then(() => {
-            this.card.balance = balance;
+            this.updateLocalData(balance);
             this.open = false;
         }).catch(error => {
             this.dialog('We could not complete the current action.');
@@ -79,6 +80,12 @@ export default class EditCardBalanceModal extends Vue{
             return true;
         }
         return false;
+    }
+
+    updateLocalData(balance: number){
+        this.card.balance = balance;
+        // @ts-ignore
+        this.updateCardBalance({type: this.type, card: this.card});
     }
 
     handle(payload: any){

@@ -13,6 +13,7 @@ export default class ReportsDownloader{
     static async dailySales(date: any){
         try {
             const _date = utils.dateToTimestamp(date);
+            console.log(_date);
             const response = await axios.post(_url('reports'), {type: dailySales, day: _date});
             await this.downloadFile(response.data);
             return true;
@@ -64,13 +65,12 @@ export default class ReportsDownloader{
     }
 
     private static getReturnFilename(params: any){
+        const date = utils.timestampToDate(params.day || 0);
         switch (params.type) {
             case dailySales:
-                const date = utils.timestampToDate(params.day);
                 return `Daily Sales - ${date}.xlsx`;
             case dailySummary:
-                const date2 = utils.timestampToDate(params.day);
-                return `Daily Summary - ${date2}.xlsx`;
+                return `Daily Summary - ${date}.xlsx`;
             case weeklySummary:
                 const date_from = utils.timestampToDate(params.date_from);
                 const date_to = utils.timestampToDate(params.date_to);

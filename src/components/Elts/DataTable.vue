@@ -31,7 +31,7 @@
 
                     <sui-table-row v-for="(item, index) in items" :key="index" :class="needToBeHidden(item, condition) ? 'hidden' : ''">
 
-                        <sui-table-cell v-for="(col, index) in cols" :key="index">
+                        <sui-table-cell v-for="(col, index) in cols" :key="index" :class="col.buttons ? 'collapsing' : ''">
 
                             <template v-if="checkConditional(col, item)">
                                 <span :class="col.conditional.styleClass || ''">
@@ -39,12 +39,27 @@
                                 </span>
                             </template>
                             <template v-else-if="col.buttons">
-                                <sui-button class="row-buttons" v-for="(btn, index) in col.buttons" :key="index"
-                                @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])"
-                                :class="needToBeHidden(item, btn.hideIf) ? 'hidden' : ''">
-                                    <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
-                                    {{ btn.text }}
-                                </sui-button>
+
+                                <template v-for="(btn, index) in col.buttons">
+
+                                    <sui-popup v-if="btn.tooltip" :key="index" :content="btn.tooltip" position="top center" >
+                                        <sui-button class="row-buttons" :key="index" slot="trigger"
+                                            @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])"
+                                            :class="needToBeHidden(item, btn.hideIf) ? 'hidden' : ''">
+                                            <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
+                                            {{ btn.text }}
+                                        </sui-button>
+                                    </sui-popup>
+
+                                    <sui-button v-else class="row-buttons" :key="index"
+                                        @click="buttonClick(btn.name, (col.prop == '@') ? item : item[col.prop])"
+                                        :class="needToBeHidden(item, btn.hideIf) ? 'hidden' : ''">
+                                        <i v-if="btn.icon" :class="btn.icon + ' icon' + (btn.text ? '' : ' no-margin')"></i>
+                                        {{ btn.text }}
+                                    </sui-button>
+
+                                </template>
+
                             </template>
 
                             <template v-else-if="item[col.prop] || item[col.prop] == 0">
@@ -214,9 +229,9 @@ hr{
     margin-top: -2rem !important;
     margin-bottom: -2rem !important;
     background-color: #f1f1f1;
-    &:first-child{
-        margin-left: -0.6rem !important;
-    }
+    // &:first-child{
+    //     margin-left: -0.6rem !important;
+    // }
 }
 .hidden{
     visibility: hidden;

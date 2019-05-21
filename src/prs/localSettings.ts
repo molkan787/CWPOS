@@ -15,8 +15,13 @@ export default class LocalSetting{
     }
 
     static getItem(key: string){
-        // @ts-ignore
-        return this._values[key] || defaultSetting[key] || null;
+        let val = this._values[key];
+        if(typeof val == 'undefined'){
+            // @ts-ignore
+            return defaultSetting[key];
+        }else{
+            return val;
+        }
     }
 
     static setItem(key: string, value: any){

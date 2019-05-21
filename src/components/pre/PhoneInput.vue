@@ -26,6 +26,7 @@ export default class PhoneInput extends Vue{
     private val: string = '';
 
     change(){
+        if(!this.val) this.val = '';
         const raw = this.extractRawNumber(this.val);
         this.$emit('input', raw.substring(0, 10));
         this.val = this.formatPhoneNumber(raw);

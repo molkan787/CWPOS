@@ -37,9 +37,9 @@ export default class ClientsTab extends Vue{
         {name: 'Last Name', prop: 'last_name'},
         {name: 'Prepaid Card', prop: 'prepaid', filter: 'pol_barcode', default: '---'},
         {name: 'Loyalty Card', prop: 'loyalty', filter: 'pol_barcode', default: '---'},
-        {name: '', prop: 'id', buttons: [
-            {name: 'edit', text: '', icon: 'edit'},
-            {name: 'delete', text: '', icon: 'delete'},
+        {name: '', prop: '@', buttons: [
+            {name: 'edit', text: '', icon: 'edit', tooltip: 'Edit info'},
+            {name: 'delete', text: '', icon: 'delete', tooltip: 'Delete'},
         ]},
     ];
 
@@ -49,16 +49,13 @@ export default class ClientsTab extends Vue{
 
     private filtersSchema = Pfs.clients;
 
-    editClick(id: number){
+    editClick(client: any){
         // @ts-ignore
-        MxHelper.editClient({id});
+        MxHelper.editClient(client);
     }
 
-    async deleteClick(id: number){
-        // @ts-ignore
-        let client = this.clients.filter((item: any) => item.id == id);
-        if(client.length) client = client[0];
-        else return;
+    async deleteClick(client: any){
+        const id = client.id;
         Message.ask(`Do you realy want to delete client "${client.first_name} ${client.last_name}" ?`)
         .then((e: any) => {
             if(e.answer){
@@ -85,7 +82,7 @@ export default class ClientsTab extends Vue{
 
     addClient(){
         // @ts-ignore
-        MxHelper.editClient({id: 'new'});
+        MxHelper.editClient({id: 'new', forceNew: true});
     }
 
     created(){

@@ -36,6 +36,7 @@ import BarcodeInput from './BarcodeInput.vue';
 import ClientInfoForm from './ClientInfoForm.vue';
 import AmountPriceForm from './AmountPriceForm.vue';
 import Comu from '@/prs/comu';
+import LocalSettings from '@/prs/localSettings';
 
 @Component({
     components: {
@@ -44,7 +45,7 @@ import Comu from '@/prs/comu';
         ClientInfoForm,
         AmountPriceForm
     },
-    computed: mapState(['client']),
+    computed: mapState(['client', 'prepaidCard']),
 })
 export default class PrepaidCardModal extends Vue{
 
@@ -144,6 +145,11 @@ export default class PrepaidCardModal extends Vue{
             type: 1,
             text: ''
         };
+
+        if(this.isReload && LocalSettings.getItem('barcodeAutoFill')){
+            // @ts-ignore
+            this.barcode = this.prepaidCard.barcode || '';
+        }
     }
 
     dialog(text: string, ref?: string){

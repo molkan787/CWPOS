@@ -6,10 +6,12 @@ import CardMachine from '@/drivers/cardMachine';
 import Printer from '@/drivers/printer';
 
 export default class Payments{
+
+    static lastMethod: string = '';
     
     static requestPayment(method: string, payload: any){
         if(!comu.canRequestPayment()) return;
-
+        this.lastMethod = method;
         if(method == 'prepaid' || method == 'prepaid'){
             // @ts-ignore
             MxHelper.payment({state: 'posting'});
@@ -59,6 +61,15 @@ export default class Payments{
             }
         });
     }
+
+
+    static cancelPayment(){
+        if(this.lastMethod == 'card'){
+            CardMachine.cancel();
+        }
+    }
+
+    // ---------------------------------------
 
     private static _Cash(payload: any){
         return new Promise((resolve, reject) => {

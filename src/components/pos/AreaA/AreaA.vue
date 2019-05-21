@@ -3,18 +3,18 @@
         <h3 class="vm-normal">
             <sui-icon name="book" />
             Order #: {{ nextOrderId }}
-            <span class="lbl" :class="!loyaltyCard.id ? 'low-imp' : ''"><span>LOY BAL: </span>
+            <span class="lbl clnl" :class="!loyaltyCard.id ? 'low-imp' : ''"><span>LOY BAL: </span>
                 <template v-if="loyaltyCard.id">
                     {{ loyaltyCard.balance | price_m }}
                 </template>
                 <template v-else>---</template>
             </span>
+            <sui-label color="blue" icon="info circle" v-if="client.want_receipt" class="lbl receipt">Prefer receipt</sui-label>
         </h3>
-            <sui-label color="blue" icon="info circle" v-if="client.want_receipt" class="lbl">Preffer receipt</sui-label>
         <h3 class="vm-normal">
             <sui-icon name="user" />
             Customer: {{ clientName }}
-            <span class="lbl" :class="!prepaidCard.id ? 'low-imp' : ''"><span>PP BAL: </span>
+            <span class="lbl clnl" :class="!prepaidCard.id ? 'low-imp' : ''"><span>PP BAL: </span>
                 <template v-if="prepaidCard.id">
                     {{ prepaidCard.balance | price_m }}
                 </template>
@@ -62,6 +62,7 @@ export default class AreaA extends Vue{
 
 
 <style lang="scss" scoped>
+@import '@/scss/vars.scss';
 div{
     text-align: left;
 }
@@ -70,9 +71,22 @@ div{
     span{
         opacity: 0.7;
     }
+    &.receipt{
+        margin-right: 1rem;
+        margin-bottom: -20rem;
+        margin-top: -0.2rem;
+    }
 }
 .low-imp{
     opacity: 0.5;
+}
+.clnl{
+    padding: 0 2px;
+    border-radius: 7px;
+    transition: background 0.2s;
+    &.active{
+        background-color: lighten($green, 0.4);
+    }
 }
 </style>
 

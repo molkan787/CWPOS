@@ -52,13 +52,16 @@ export default class POLCardPayment extends Vue{
         });
     }
     start(paym: string){
-        if(!LocalSettings.getItem('barcodeAutoFill')) return;
-        if(paym == 'prepaid'){
-            // @ts-ignore
-            this.barcode = this.prepaidCard.barcode || '';
-        }else if(paym == 'loyalty'){
-            // @ts-ignore
-            this.barcode = this.loyaltyCard.barcode || '';
+        if(LocalSettings.getItem('barcodeAutoFill')){
+            if(paym == 'prepaid'){
+                // @ts-ignore
+                this.barcode = this.prepaidCard.barcode || '';
+            }else if(paym == 'loyalty'){
+                // @ts-ignore
+                this.barcode = this.loyaltyCard.barcode || '';
+            }
+        }else{
+            this.barcode = '';
         }
     }
     mounted() {

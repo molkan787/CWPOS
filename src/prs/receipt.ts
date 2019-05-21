@@ -3,6 +3,7 @@ import Printer from '../drivers/printer';
 import utils from '../utils';
 import utils2 from './utils';
 import things from '../prs/things';
+import consts from './consts';
 
 export default class Receipt{
 
@@ -21,14 +22,16 @@ export default class Receipt{
         r.addHeader({
             title: 'AVANTI AUTOSPA',
             subtitles: [
-                "LAVE AUTO À LA MAIN ET CENTRE\nESTHÉTIQUE PROFESSIONNELLE",
-                "3540 boul. des Sources, DDO QC  H9B 1Z9\n514-472-9947"
+                "LAVE AUTO A LA MAIN ET CENTRE",
+                "ESTHETIQUE PROFESSIONNELLE",
+                "3540 boul. des Sources, DDO QC  H9B 1Z9",
+                "514-472-9947",
             ],
             orderId: order.id,
             date: utils.timestampToDate(order.date_added, 2, true),
             cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
             client: order.client.id ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
-        });
+        }, true);
         
         const items = order.products;
         const counts = order.counts;
@@ -38,15 +41,22 @@ export default class Receipt{
             if(!c) continue;
             r.addItem({
                 name: p.name + ' ' + this._getLabel(p),
-                price: p.price + (p.taxes || 0),
+                price: this._getPriceWithoutTaxes(p, order.taxes),
                 q: counts[p.id],
             });
         }
         if(order.totals.extraCharge){
             r.addItem({
                 name: 'Extra charge',
-                price: order.totals.extraCharge,
+                price: this._removeTaxes(order.totals.extraCharge, order.taxes),
                 q: 0,
+            });
+        }
+
+        if(order.totals.discount){
+            r.addTotalsItem({
+                name: 'Discount',
+                amount: this._removeTaxes(order.totals.discount, order.taxes),
             });
         }
 
@@ -77,17 +87,23 @@ export default class Receipt{
         }else if(paym == 'card'){
             r.addTotalsItem({ name: 'Comptant', text: 'Credit ou Debit' });
         }else if(paym == 'prepaid'){
-            r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode });
+            r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode.substr(-5) });
         }else if(paym == 'loyalty'){
-            r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode });
+            r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
         }
 
-        const lc = order.loyaltyCard;
-        if(lc && paym != 'loyalty'){
-            const points = order.totals.total / 10;
-            const points_str = utils2.price(points);
-            const bal_str = utils2.price(lc.balance / 100 + points);
-            r.addNormalMessage(`Client Fidele vous avez ${points_str} en dollars fidelite`, true);
+        r.addSpace();
+
+        if(order.loyaltyCard.id){
+            const card = order.loyaltyCard;
+            const bal_str = utils2.price(card.balance / 100);
+            r.addNormalMessage(`Client Fidele vous avez ${bal_str}`);
+            r.addNormalMessage(`en dollars fidelite`);
+        }
+
+        if(order.prepaidCard.id){
+            const card = order.prepaidCard;
+            const bal_str = utils2.price(card.balance / 100);
             r.addNormalMessage('Le solde de votre carte prepayee est ' + bal_str);
         }
 
@@ -121,6 +137,19 @@ export default class Receipt{
             return '';
         }
 
+    }
+
+    static _getPriceWithoutTaxes(p: any, taxes: any){
+        if(p.product_type == consts.productWithoutTaxesType || p.addTaxes){
+            return p.price;
+        }else{
+            return this._removeTaxes(p.price, taxes);
+        }
+    }
+
+    static _removeTaxes(value: any, taxes: any){
+        const totalTaxRate = taxes.gst + taxes.qst;
+        return value / (totalTaxRate + 1);
     }
 
 }

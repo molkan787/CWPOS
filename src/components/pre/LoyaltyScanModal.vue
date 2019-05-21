@@ -1,6 +1,6 @@
 <template>
-    <Modal v-model="open" title="Load Loyalty Card" :dialog="dialog">
-        <BarcodeInput :disabled="loading" v-model="barcode" briRef="lsm" />
+    <Modal v-model="open" title="Load Loyalty/Prepaid Card" :dialog="dialog">
+        <BarcodeInput :disabled="loading" v-model="barcode" briRef="lsm" :listen="open" @scanned="search" />
         <center>
             <sui-button @click="search" :loading="loading" class="searchButton" size="large" icon="search">Search</sui-button>
         </center>
@@ -15,7 +15,6 @@ import Vue from 'vue';
 import Modal from '../Elts/Modal.vue';
 import Component from 'vue-class-component';
 import MxHelper from '@/prs/MxHelper';
-import { mapState } from 'vuex';
 import BarcodeInput from './BarcodeInput.vue';
 import ModalDialog from '@/ccs/ModalDialog';
 import BRI from '@/ccs/BRI';
@@ -26,7 +25,6 @@ import BRI from '@/ccs/BRI';
         Modal,
         BarcodeInput,
     },
-    // computed: mapState(['loyaltyCard'])
 })
 export default class LoyaltyScanModal extends Vue{
     private open: boolean = false;

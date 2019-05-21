@@ -1,16 +1,22 @@
 import axios from 'axios';
 import queryString  from 'query-string';
 
-const PES_URL = 'https://localemv.com:8887';
+const PES_URL = 'http://127.0.0.1:8887';
 
-export default class CardMachine{
+class CardMachine{
 
     static cancel(){
+        console.log('Canceling Card Payment...');
         this.cancelTransaction();
     }
 
     static request(payload: any){
         return new Promise(async (resolve, reject) => {
+            // try {
+            //     await this.cancelTransaction();
+            // } catch (error) {
+                
+            // }
             try {
                 payload.callback('READY');
                 const amount = (payload.amount / 100).toFixed(2);
@@ -18,12 +24,12 @@ export default class CardMachine{
                     xInvoice: '1',
                     xCommand: 'cc:sale',
                     xAmount: amount,
-                    xStreet: '123 Main St',
-                    xZip: '11111',
+                    xStreet: '3540 Boul. des Sources',
+                    xZip: 'H9B 1Z9',
                 };
                 
                 const response = await axios.post(PES_URL, queryString.stringify(params));
-                const data = queryString.parse(response.data);
+                const data = response.data;
                 console.log('CCP:Response>', response);
                 console.log('CCP:Data>', data);
 
@@ -42,9 +48,16 @@ export default class CardMachine{
         });
     }
 
-    private static cancelTransaction(){
-        axios.post(PES_URL, queryString.stringify({xCancel: 1}))
-        .catch(err => console.log(err));
+    private static async cancelTransaction(){
+        try {
+            await axios.post(PES_URL, queryString.stringify({xCancel: 1}));
+        } catch (error) {
+            console.log('cancelTransaction:Error', error);
+        }
     }
 
 }
+
+export default CardMachine;
+// @ts-ignore
+window.cardMachine = CardMachine;

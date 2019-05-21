@@ -18,6 +18,7 @@ import MxHelper from '@/prs/MxHelper';
 import ModalDialog from '@/ccs/ModalDialog';
 import DM from '@/prs/dm';
 import ClientInfoForm from './ClientInfoForm.vue';
+import utils from '@/prs/utils';
 
 @Component({
     components: {
@@ -35,6 +36,7 @@ export default class ClientModal extends Vue{
     private callback!: Function;
 
     private clientId!: any;
+    private forceNew: boolean = false;
     private formData: any = {
         phone: '',
         email: '',
@@ -45,12 +47,22 @@ export default class ClientModal extends Vue{
     save(){
         if(this.validateForm()){
             this.loading = true;
-            const clientData = {id: this.clientId, ...this.formData, loyaltyCardId: this.payload.loyaltyCardId};
+            const clientData = {
+                id: this.clientId,
+                ...this.formData,
+                forceNew: this.forceNew,
+                loyaltyCardId: this.payload.loyaltyCardId,
+                prepaidCardId: this.payload.prepaidCardId
+            };
             DM.editClient(clientData).then((data: any) => {
                 if(this.callback) this.callback(data);
                 this.open = false;
             }).catch(error => {
-                this.dialog.show('We could not complete current action.');
+                if(error == 'CLIENT_EXIST'){
+                    this.dialog.show(`A diffrent client with number "${utils.formatPhoneNumber(this.formData.phone)}" already exist on the system.`);
+                }else{
+                    this.dialog.show('We could not complete current action.');
+                }
             }).finally(() => {
                 this.loading = false;
             });
@@ -66,21 +78,13 @@ export default class ClientModal extends Vue{
         this.payload = payload;
         const id = payload.id;
         this.clientId = id;
+        this.forceNew = payload.forceNew || false;
         if(id == 'new'){
             this.title = 'Add new client';
-            this.setFormData(payload);
         }else{
             this.title = 'Client id: ' + id;
-            this.loading = true;
-            this.setFormData({});
-            DM.getClientData({id}).then((data: any) => {
-                this.setFormData(data);
-            }).catch(error => {
-                this.dialog.show('We could not load client data.', 1, 'loading_error');
-            }).finally(() => {
-                this.loading = false;
-            });
         }
+        this.setFormData(payload);
     }
 
     setFormData(data: any){

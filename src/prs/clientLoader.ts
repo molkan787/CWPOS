@@ -33,13 +33,23 @@ export default class ClientLoader{
             axios.get(_url('clcref/loyalty_card/' + barcode)).then(({data}) => {
                 if(data.status == 'OK'){
                     console.log('loadLoyaltyCard:', data);
-                    this.setLoyaltyCard(data.loyaltyCard);
-                    resolve(data.loyaltyCard);
+                    resolve(true);
+                    this.setData(data);
                 }else{
                     reject(data.cause);
                 }
             }).catch(error => reject(error));
         });
+    }
+
+    static setData(data: any){
+        if(data.clientData){
+            this.setClientData(data.clientData);
+        }else if(data.loyaltyCard){
+            this.setLoyaltyCard(data.loyaltyCard);
+        }else if(data.prepaidCard){
+            this.setPrepaidCard(data.prepaidCard);
+        }
     }
 
     static setClientData(data: any, doNotCallback?: boolean){
@@ -56,16 +66,25 @@ export default class ClientLoader{
         loyaltyCard.id = data.id || 0;
         loyaltyCard.barcode = data.barcode || '';
         loyaltyCard.balance = data.balance || 0;
-        if(loyaltyCard.updateCount){
-            loyaltyCard.updateCount++;
-        }else{
-            Vue.set(loyaltyCard, 'updateCount', 1);
-        }
+        loyaltyCard.updateCount++;
+
         if(!doNotCallback){
-            this.setClientData(data.client || {}, true);
-            if(!data.client && loyaltyCard.id){
-                this.askToAddClient(loyaltyCard.id);
+            if(data.client){
+                this.setClientData(data.client, true);
+            }else if(loyaltyCard.id){
+                this.linkCard(loyaltyCard.id, 'loyalty');
             }
+        }
+    }
+
+    static setPrepaidCard(data: any, doNotAsk?: boolean){
+        const prepaidCard = this.context.state.prepaidCard;
+        prepaidCard.id = data.id || 0;
+        prepaidCard.barcode = data.barcode || '';
+        prepaidCard.balance = data.balance || 0;
+        prepaidCard.updateCount++;
+        if(!data.client && prepaidCard.id && !doNotAsk){
+            this.linkCard(prepaidCard.id, 'prepaid');
         }
     }
 
@@ -79,22 +98,96 @@ export default class ClientLoader{
         client.want_receipt = Math.round(sum / orders.length);
     }
 
-
-    static addNewClient(phone: string, loyaltyCardId?: any){
-        // @ts-ignore
-        MxHelper.editClient({id: 'new', phone, loyaltyCardId}).then((client: any) => {
-            this.context.dispatch('setClientData', client);
-        })
+    static linkCard(cardId: any, cardType: string){
+        const clientId = this._getCurrentClientId();
+        if(clientId){
+            this.askToLinkClient(cardId, cardType);
+        }else{
+            this.askToAddClient(cardId, cardType);
+        }
     }
 
-    static askToAddClient(loyaltyCardId: any){
-        Message.ask('This loyalty card is not linked to any of client phone number, Do you want to link a new client now ?', 'Add new client?')
+    static askToAddClient(cardId: any, cardType: string){
+        Message.ask(`This ${cardType} card is not linked to any of client phone number, Do you want to link a new client now ?`, 'Add new client?')
         .then((e: any) => {
             e.hide();
             if(e.answer){
-                this.addNewClient('', loyaltyCardId);
+                this.addNewClient('', cardId, cardType);
             }
         });
+    }
+
+    static askToLinkClient(cardId: any, cardType: string){
+        const clientName = this._getCurrentClientName();
+        Message.ask(`This ${cardType} card is not linked to any of client phone number,\nDo you want to link it to the current client "${clientName}" ?`, 'Link the card to current client')
+        .then((e: any) => {
+            if(e.answer){
+                e.loading();
+                this.patchCardClientId(cardId, cardType).then(() => {
+                    e.hide();
+                }).catch(err => {
+                    e.dialog.show('We could not complete the current action, Please try again.');
+                });
+            }else{
+                e.hide();
+            }
+        });
+    }
+
+    static addNewClient(phone: string, cardId?: any, cardType?: string){
+        const data: any = {id: 'new', phone};
+        if(cardType == 'loyalty') data.loyaltyCardId = cardId;
+        else if(cardType == 'prepaid') data.prepaidCardId = cardId;
+        // @ts-ignore
+        MxHelper.editClient(data).then((client: any) => {
+            client.keepCards = true;
+            this.context.dispatch('setClientData', client);
+            this.setClientCards(client);
+        })
+    }
+
+    static setClientCards(client: any){
+        const state = this.context.state;
+        if(state.prepaidCard.id == 0 && client.prepaid){
+            this.setPrepaidCard(client.prepaid, true);
+        }
+        if(state.loyaltyCard.id == 0 && client.loyalty){
+            this.setLoyaltyCard(client.loyalty, true);
+        }
+    }
+
+    // ------------------------------------
+
+    static patchCardClientId(cardId: any, cardType: string){
+        return new Promise((resolve, reject) => {
+            axios.post(_url(cardType + '/setClientId'), {
+                id: cardId,
+                client_id: this.context.state.client.id,
+            }).then(({data}) => {
+                if(data.status == 'OK'){
+                    resolve(true);
+                }else{
+                    reject(data.cause);
+                }
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
+    // ------------------------------------
+
+    static _getCurrentClient(){
+        return this.context.state.client;
+    }
+    
+    static _getCurrentClientId(){
+        return this.context.state.client.id;
+    }
+    
+    static _getCurrentClientName(){
+        const ln = this.context.state.client.last_name;
+        return this.context.state.client.first_name + (ln ? ' ' + ln : '');
     }
 
 }

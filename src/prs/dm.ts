@@ -34,7 +34,7 @@ export default class DM{
             this.setToCache('clients', payload, data);
             return data;
         }else{
-            throw new Error(`Unknow error, Response status: "${data.status}"`);
+            throw data.cause;
         }
     }
 
@@ -64,6 +64,15 @@ export default class DM{
             return true;
         }else{
             throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+    
+    public static async editCardBarcode(payload: any){
+        const {data} = await axios.post(_url('editCardBarcode'), payload);
+        if(data.status == 'OK'){
+            return true;
+        }else{
+            throw data.cause;
         }
     }
 
@@ -149,7 +158,7 @@ export default class DM{
     private static setToCache(dataName: string, originData: any, newData: any){
         const data = this.cache[dataName];
         const id = originData.id;
-        if(id == 'new'){
+        if(newData.isNew){
             data.unshift(newData);
         }else{
             for(let i = 0; i < data.length; i++){

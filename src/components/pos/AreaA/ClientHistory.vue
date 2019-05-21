@@ -1,6 +1,12 @@
 <template>
     <div>
-        <h3>Latest orders</h3>
+        <h3>
+            Latest orders
+            <label class="ui orange label h-lbl" v-if="isNoTell">
+                <i class="ban icon"></i>
+                No Tel.
+            </label>
+        </h3>
         <div class="tableParent">
             <sui-table celled striped>
                 <sui-table-header>
@@ -24,6 +30,7 @@
 
                 </sui-table-body>
             </sui-table>
+            <h4 class="emptyMsg" v-if="items.length == 0">No previous orders</h4>
         </div>
     </div>
 </template>
@@ -36,7 +43,11 @@ import { mapState } from 'vuex';
 
 @Component({
     computed: mapState({
-        items: (state: any) => state.client.history
+        items: (state: any) => state.client.history,
+        isNoTell: (state: any) => {
+            const no = state.client.phone;
+            return no == '0000000000' || no == '5555555555';
+        },
     })
 })
 export default class ClientHistory extends Vue{}
@@ -67,5 +78,8 @@ $mrg: 4px;
 .throw > th{
     padding-top: $mrg !important;
     padding-bottom: $mrg !important;
+}
+.h-lbl{
+    float: right;
 }
 </style>

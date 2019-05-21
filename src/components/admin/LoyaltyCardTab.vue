@@ -3,7 +3,8 @@
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
     :controlls="controlls"
     @filtersChanged="loadData" @editBalance="editBalance"
-    @exportHistory="exportHistory" @deleteCard="deleteCard" />
+    @exportHistory="exportHistory" @deleteCard="deleteCard"
+    @editBarcode="editBarcode" />
 </template>
 
 <script lang="ts">
@@ -36,14 +37,15 @@ export default class LoyaltyCardTab extends Vue{
         {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
         {name: 'Balance', prop: 'balance', filter: 'price_m'},
         {name: 'Options', prop: '@', buttons: [
-            {name: 'editBalance', text: '', icon: 'edit'},
-            {name: 'exportHistory', text: '', icon: 'download'},
-            {name: 'deleteCard', text: '', icon: 'delete'},
+            {name: 'editBalance', text: '', icon: 'edit', tooltip: 'Edit Balance'},
+            {name: 'exportHistory', text: '', icon: 'download', tooltip: 'Export activities'},
+            {name: 'deleteCard', text: '', icon: 'delete', tooltip: 'Delete'},
+            {name: 'editBarcode', text: '', icon: 'exchange', tooltip: 'Replace Card Number'}
         ]}
     ];
 
     private controlls = [
-        {text: 'Import', icon: 'plus', handler: () => this.importData() },
+        {text: 'Import', icon: 'upload', handler: () => this.importData() },
         {text: 'Export', icon: 'download', handler: () => { this.exportData() }}
     ];
 
@@ -84,6 +86,11 @@ export default class LoyaltyCardTab extends Vue{
             }
         });
     }
+    
+    private editBarcode(card: any){
+        // @ts-ignore
+        MxHelper.editCardBarcode({card, type: 'loyalty'});
+    }
 
     private importData(){
         // @ts-ignore
@@ -94,6 +101,27 @@ export default class LoyaltyCardTab extends Vue{
         // @ts-ignore
         MxHelper.openDataExportWizard({dataName: 'loyalties'});
     }
+
+    private listeningForScan = false;
+    handleBarcodeScan(barcode: string){
+        if(!this.listeningForScan) return;
+        // @ts-ignore
+        const filters = this.filtersValues;
+        Vue.set(filters, 'barcode', barcode);
+        Vue.set(filters, 'date_from', '');
+        Vue.set(filters, 'date_to', '');
+        this.loadData();
+    }
+
+    mounted(){
+        MxHelper.registerFunction('redirectScannedBarcode', (barcode: string) => this.handleBarcodeScan(barcode));
+        this.listeningForScan = true;
+    }
+    
+    beforeDestroy(){
+        this.listeningForScan = false;
+    }
+
 
     created(){
         // @ts-ignore

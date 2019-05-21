@@ -6,7 +6,7 @@
         </h2>
         <LabeledInput class="company-input" label="Company" v-model="current" :disabled="pos.finished" />
         <div>
-            <sui-button :icon="pos.finished ? 'circle check' : ''" size="large"
+            <sui-button  class="btn" :icon="pos.finished ? 'circle check' : ''" size="large"
             :class="pos.finished ? 'green' : ''" @click="finish">
                 <span v-if="pos.finished">Finished</span>
                 <span v-else>Finish</span>
@@ -63,6 +63,9 @@ div{
 button.dropdown{
     margin-bottom: 1rem;
     font-size: 1.2rem;
+}
+.btn{
+    width: 24rem;
 }
 </style>
 
