@@ -88,19 +88,22 @@ export default class PaymentModal extends Vue{
                     this.dialog(`The balance on this ${this.getCardName()} is insufficient for this order.`);
                 }else if(payload.error == 'CARD_DOES_NOT_EXIST'){
                     this.dialog(`This ${this.getCardName()} is not activated.`);
-                }else{
+                // @ts-ignore
+                }else if(typeof payload.error.xError == 'undefined'){
                     this.dialog('An unknow error occured, We could not complete the current action.');
                 }
             }
-        }else{
-            // Comu.resetStatus();
-            // @ts-ignore
-            this.title = 'Payment: ' + texts.payments[this.pos.pay_method];
-            this.resetDialog();
-            this.open = true;
-            // @ts-ignore
-            this.bus.$emit('start', this.pos.pay_method);
         }
+    }
+
+    openThis(){
+        if(this.open) return;
+        // @ts-ignore
+        this.title = 'Payment: ' + texts.payments[this.pos.pay_method];
+        this.resetDialog();
+        this.open = true;
+        // @ts-ignore
+        this.bus.$emit('start', this.pos.pay_method);
     }
 
     getCardName(){
@@ -130,6 +133,7 @@ export default class PaymentModal extends Vue{
 
     created(){
         MxHelper.registerFunction('payment', this);
+        MxHelper.registerFunction('openPayment', () => this.openThis());
         this.bus.$on('posting', () => {
             this.loading = true;
         });

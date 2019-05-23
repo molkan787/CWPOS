@@ -39,7 +39,7 @@ export default class CardPayment extends Vue{
     private icon: string = '';
     private colorClass: string = '';
 
-    statusUpdate(status: string){
+    statusUpdate(status: any){
         if(status == 'READY'){
             this.title = 'Credit Card Terminal is Ready';
             this.message = 'Waiting for Card Swipe...';
@@ -60,6 +60,11 @@ export default class CardPayment extends Vue{
             this.message = 'The order was successfully submitted.';
             this.icon = 'circle check icon';
             this.colorClass = 'success';
+        }else if(status.xError){
+            this.title = 'Terminal Error.';
+            this.message = status.xError;
+            this.icon = 'close circle icon';
+            this.colorClass = 'warning';
         }else{
             this.title = 'An unknow error occured.';
             this.message = 'An unknow error occured during the request of payment.';
@@ -91,7 +96,7 @@ export default class CardPayment extends Vue{
         this.colorClass = '';
     }
 
-    mounted() {
+    created() {
         // @ts-ignore;
         this.bus.$on('start', this.start);
         this.$store.watch(

@@ -5,6 +5,9 @@ const PES_URL = 'http://127.0.0.1:8887';
 
 class CardMachine{
 
+    static dpPtr: number = 0;
+    static lastInvoiceId: number = 0;
+
     static cancel(){
         console.log('Canceling Card Payment...');
         this.cancelTransaction();
@@ -12,16 +15,21 @@ class CardMachine{
 
     static request(payload: any){
         return new Promise(async (resolve, reject) => {
-            // try {
-            //     await this.cancelTransaction();
-            // } catch (error) {
-                
-            // }
+
+            if (this.lastInvoiceId == payload.invoiceId){
+                this.dpPtr++;
+            }else{
+                this.dpPtr = 0;
+            }
+            this.lastInvoiceId = payload.invoiceId
+            const invoice = (payload.invoiceId * 100) + this.dpPtr;
+
+            console.log('Requesting card payment for Invoice:' + invoice);
             try {
                 payload.callback('READY');
                 const amount = (payload.amount / 100).toFixed(2);
                 const params = {
-                    xInvoice: '1',
+                    xInvoice: invoice + '',
                     xCommand: 'cc:sale',
                     xAmount: amount,
                     xStreet: '3540 Boul. des Sources',
@@ -38,7 +46,7 @@ class CardMachine{
                 }else if(data.xResult == 'D'){
                     resolve(false);
                 }else{
-                    reject(`xResult:${data.xResult}`);
+                    reject(data);
                 }
             } catch (error) {
                 reject(error);

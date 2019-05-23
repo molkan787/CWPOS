@@ -140,6 +140,10 @@ export default class Comu{
         });
     }
 
+    static getInvoiceId(){
+        return this.context.state.nextOrderId;
+    }
+
     static loadData(){
         return new Promise((resolve, reject) => {
             axios.get(_url('asd')).then(response => {
@@ -150,6 +154,7 @@ export default class Comu{
                 state.productsByIds = Products.mapById(data.products, false);
                 state.productsArray = data.products;
                 state.stats = data.stats;
+                state.nextOrderId = data.orderPtr;
                 state.companies = Clients.prepareData(data.companies);
                 this.putSettings(data.settings);
                 resolve(true);
@@ -196,7 +201,7 @@ export default class Comu{
     static startSubmission(){
         this.context.state.postingOrder = true;
         // @ts-ignore
-        MxHelper.payment();
+        MxHelper.openPayment();
     }
 
     static postOrder(){

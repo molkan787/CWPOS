@@ -81,6 +81,7 @@ export default class Payments{
     }
 
     private static _DebitCard(payload: any){
+        payload.invoiceId = comu.getInvoiceId();
         return CardMachine.request(payload);
     }
 
