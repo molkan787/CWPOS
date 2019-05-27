@@ -1,8 +1,8 @@
 <template>
     <div is="sui-button-group">
-        <sui-button :positive="pvalue == 1" @click="clicked(1)">{{leftText}}</sui-button>
+        <sui-button :disabled="disabled" :positive="pvalue == 1" @click="clicked(1)">{{leftText}}</sui-button>
         <sui-button-or />
-        <sui-button :positive="pvalue == 2" @click="clicked(2)">{{rightText}}</sui-button>
+        <sui-button :disabled="disabled" :positive="pvalue == 2" @click="clicked(2)">{{rightText}}</sui-button>
     </div>
 </template>
 
@@ -15,13 +15,14 @@ import { Prop } from 'vue-property-decorator';
     watch: {
         value: function (val: any){
             // @ts-ignore
-            this.pvalue = val;
+            this.pvalue = this.value;
         }
     }
 })
 export default class Switcher extends Vue{
     private pvalue = 1;
 
+    @Prop({default: false}) disabled!: boolean;
     @Prop({default: 1}) value!: number;
 
     @Prop({default: ''}) leftText!: string;

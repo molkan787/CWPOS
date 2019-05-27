@@ -96,6 +96,19 @@ export default class DM{
         }
     }
 
+    public static async addLoyaltyPoints(payload: any){
+        payload.user = this.context.state.user;
+        const { data } = await axios.post(_url('loyalty/addPoints'), payload);
+        if (data.status == 'OK') {
+            if (this.context.state.loyaltyCard.id == payload.cardId){
+                this.context.state.loyaltyCard.balance += payload.amount;
+            }
+            return true;
+        } else {
+            throw new Error(`Unknow error, Response status: "${data.status}"`);
+        }
+    }
+
     public static async sendFile(payload: any){
         const file = payload.file;
         const data = new FormData();

@@ -1,5 +1,6 @@
 <template>
-    <sui-input v-model="val" @input="change" :placeholder="placeholder" :icon="icon" :iconPosition="iconPosition" />
+    <sui-input class="phoneInput" :class="flatBorder == 'left' ? 'fl' : ''"
+        v-model="val" @input="change" :placeholder="placeholder" :icon="icon" :iconPosition="iconPosition" />
 </template>
 
 <script lang="ts">
@@ -22,6 +23,7 @@ export default class PhoneInput extends Vue{
     @Prop({default: ''}) placeholder!: string;
     @Prop({default: ''}) icon!: string;
     @Prop({default: 'right'}) iconPosition!: string;
+    @Prop({default: ''}) flatBorder!: string;
 
     private val: string = '';
 
@@ -48,3 +50,10 @@ export default class PhoneInput extends Vue{
 
 }
 </script>
+
+<style lang="scss">
+.phoneInput.fl > input{
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+</style>

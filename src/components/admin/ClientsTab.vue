@@ -44,7 +44,7 @@ export default class ClientsTab extends Vue{
     ];
 
     private controlls = [
-        {icon: 'plus', text: 'ADD CLIENT', handler: () => this.addClient() }
+        {icon: 'plus', text: 'NEW', handler: () => this.addClient() }
     ];
 
     private filtersSchema = Pfs.clients;

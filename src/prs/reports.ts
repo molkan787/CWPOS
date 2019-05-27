@@ -7,6 +7,7 @@ import utils from '@/utils';
 const dailySales = 'daily-sales';
 const dailySummary = 'daily-summary';
 const weeklySummary = 'weekly-summary';
+const loyaltyPoints = 'loyalty-points';
 
 export default class ReportsDownloader{
 
@@ -32,16 +33,28 @@ export default class ReportsDownloader{
             throw new Error('Unknow error at ReportsDownloader.dailySummary');
         }
     }
-    
-    static async weeklySummary(date_from: any, date_to: any){
+
+    static async weeklySummary(date_from: any, date_to: any) {
         try {
             const _from = utils.dateToTimestamp(date_from);
             const _to = utils.dateToTimestamp(date_to);
-            const response = await axios.post(_url('reports'), {type: weeklySummary, date_from: _from, date_to: _to});
+            const response = await axios.post(_url('reports'), { type: weeklySummary, date_from: _from, date_to: _to });
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
             throw new Error('Unknow error at ReportsDownloader.weeklySummary');
+        }
+    }
+
+    static async loyaltyPoints(date_from: any, date_to: any) {
+        try {
+            const _from = utils.dateToTimestamp(date_from);
+            const _to = utils.dateToTimestamp(date_to);
+            const response = await axios.post(_url('reports'), { type: loyaltyPoints, date_from: _from, date_to: _to });
+            await this.downloadFile(response.data);
+            return true;
+        } catch (error) {
+            throw new Error('Unknow error at ReportsDownloader.loyaltyPoints');
         }
     }
 
@@ -66,15 +79,17 @@ export default class ReportsDownloader{
 
     private static getReturnFilename(params: any){
         const date = utils.timestampToDate(params.day || 0);
+        const date_from = utils.timestampToDate(params.date_from);
+        const date_to = utils.timestampToDate(params.date_to);
         switch (params.type) {
             case dailySales:
                 return `Daily Sales - ${date}.xlsx`;
             case dailySummary:
                 return `Daily Summary - ${date}.xlsx`;
             case weeklySummary:
-                const date_from = utils.timestampToDate(params.date_from);
-                const date_to = utils.timestampToDate(params.date_to);
                 return `Weekly Summary ${date_from} - ${date_to}.xlsx`;
+            case loyaltyPoints:
+                return `Loyalty Points (Manually) ${date_from} - ${date_to}.xlsx`;
             default:
                 return 'Reports.xlsx';
         }

@@ -3,13 +3,14 @@
 
         <h2>{{ title }}</h2>
         <hr>
-        <Switcher class="type-switcher" v-model="addType" leftText="Regular" rightText="Prepaid"/>
+        <Switcher :disabled="noChoice" class="type-switcher" v-model="addType" :leftText="leftText" rightText="Custom amount"/>
         <h3></h3>
-        <LabeledInput label="Amount ($)" v-model="amount" type="number" />
+        <LabeledInput v-if="addType == 2" label="Amount ($)" v-model="amount" type="number" />
+        <h3 v-else>Loyalty points to add: {{ loyaltyPoints | price_m }}</h3>
 
         <template v-slot:buttons>
             <sui-button @click="open = false">CANCEL</sui-button>
-            <sui-button @click="saveClick" color="green">SAVE</sui-button>
+            <sui-button @click="saveClick" color="green">ADD POINTS</sui-button>
         </template>
 
     </Modal>
@@ -24,6 +25,7 @@ import DM from '@/prs/dm';
 import Modal from '../Elts/Modal.vue';
 import LabeledInput from '../Elts/inputs/LabeledInput.vue';
 import Switcher from './Switcher.vue';
+import utils from '@/prs/utils';
 
 @Component({
     components: {
@@ -44,10 +46,12 @@ export default class AddLoyaltyPointsModal extends Vue{
         open: false,
     };
 
-    private amount: number = 0;
+    private amount: any = 0;
 
     private title: string = '';
     private addType: number = 1;
+    private noChoice: boolean = false;
+    private leftText: string = '';
 
     saveClick(){
         if(this.validateForm()){
@@ -57,23 +61,23 @@ export default class AddLoyaltyPointsModal extends Vue{
     }
 
     save(){
-        const balance = parseFloat(this.balance) * 100;
-        DM.editCardBalance({type: this.type, id: this.card.id, balance}).then(() => {
-            this.updateLocalData(balance);
-            this.open = false;
+        // @ts-ignore
+        const amount = this.addType == 1 ? this.loyaltyPoints : Math.round(this.amount * 100);
+        DM.addLoyaltyPoints({
+                // @ts-ignore
+                cardId: this.loyaltyCard.id,
+                amount,
+        }).then(() => {
+            this.dialog('Loyalty points was successfully added!', 'success');
         }).catch(error => {
             this.dialog('We could not complete the current action.');
         });
     }
-    
-    changed(){
-        
-    }
 
     validateForm(){
-        const newBalance = parseFloat(this.balance);
-        if(newBalance < 0){
-            this.dialog('Amount cannot be negative, Please type a valid value.');
+        const amount = parseFloat(this.amount);
+        if(this.addType == 2 && amount <= 0){
+            this.dialog('Amount cannot be negative nor equal to 0, Please enter a valid amount.');
         }else{
             return true;
         }
@@ -81,25 +85,34 @@ export default class AddLoyaltyPointsModal extends Vue{
     }
 
     updateLocalData(balance: number){
-        this.card.balance = balance;
         // @ts-ignore
         this.updateCardBalance({type: this.type, card: this.card});
     }
 
     handle(payload: any){
         //@ts-ignore
+        const loyaltyPoints = this.loyaltyPoints / 100;
+        //@ts-ignore
         const barcode = this.loyaltyCard.barcode;
         this.resetForm();
         this.title = 'Loyalty-' + barcode;
 
-        // @ts-ignore
-        this.amount = this.loyaltyPoints / 100;
+        if(loyaltyPoints <= 0){
+            this.leftText = 'No previous order';
+            this.noChoice = true;
+            this.addType = 2;
+        }else{
+            this.leftText = `Last order (${utils.price(loyaltyPoints)})`;
+            this.noChoice = false;
+            this.addType = 1;
+        }
 
         this.open = true;
     }
 
     resetForm(){
         this.loading = false;
+        this.amount = 0;
     }
 
     dialog(text: string, ref?: string){
@@ -132,15 +145,8 @@ h2{
 hr{
     margin: 1.4rem 0 1rem 0;
 }
-.change-label{
-    font-size: 1.3rem;
-    margin-left: 1rem;
-    &.positive{
-        color: $green;
-    }
-    &.negative{
-        color: $red;
-    }
+.type-switcher{
+    width: 100%;
 }
 </style>
 

@@ -3,7 +3,7 @@
         <label class="ui label" :style="labelWidth ? 'width: ' + labelWidth : ''">{{label}}</label>
 
         <PhoneInput v-if="type == 'phone'" v-model="pvalue" @input="change" :placeholder="ph || label"
-            :disabled="disabled" :style="inputWidth ? 'width: ' + inputWidth : ''"/>
+            :disabled="disabled" :style="inputWidth ? 'width: ' + inputWidth : ''" flatBorder="left"/>
 
         <input v-else :disabled="disabled" :type="type" v-model="pvalue" @input="change" :placeholder="ph || label"
             :style="inputWidth ? 'width: ' + inputWidth : ''" :maxlength="maxlength" :min="min" :max="max" />
