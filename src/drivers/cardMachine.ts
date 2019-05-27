@@ -1,12 +1,19 @@
 import axios from 'axios';
 import queryString  from 'query-string';
 
+// @ts-ignore
+window.axios = axios;
+// @ts-ignore
+window.queryString = queryString;
+
+
 const PES_URL = 'http://127.0.0.1:8887';
 
 class CardMachine{
 
     static dpPtr: number = 0;
     static lastInvoiceId: number = 0;
+    static timer: number = 0;
 
     static cancel(){
         console.log('Canceling Card Payment...');
@@ -15,6 +22,10 @@ class CardMachine{
 
     static request(payload: any){
         return new Promise(async (resolve, reject) => {
+            // if (this.activeTransaction) {
+            //     payload.callback('READY');
+            //     return;
+            // }
 
             if (this.lastInvoiceId == payload.invoiceId){
                 this.dpPtr++;
@@ -26,28 +37,32 @@ class CardMachine{
 
             console.log('Requesting card payment for Invoice:' + invoice);
             try {
-                payload.callback('READY');
                 const amount = (payload.amount / 100).toFixed(2);
                 const params = {
                     xInvoice: invoice + '',
+                    xBatch: 201,
                     xCommand: 'cc:sale',
                     xAmount: amount,
                     xStreet: '3540 Boul. des Sources',
                     xZip: 'H9B 1Z9',
                 };
                 
-                const response = await axios.post(PES_URL, queryString.stringify(params));
-                const data = response.data;
-                console.log('CCP:Response>', response);
-                console.log('CCP:Data>', data);
+                if(this.timer) clearTimeout(this.timer);
+                this.timer = setTimeout(async () => {
+                    payload.callback('READY');
+                    const response = await axios.post(PES_URL, queryString.stringify(params));
+                    const data = response.data;
+                    console.log('CCP:Response>', response);
+                    console.log('CCP:Data>', data);
 
-                if(data.xResult == 'A'){
-                    resolve(true);
-                }else if(data.xResult == 'D'){
-                    resolve(false);
-                }else{
-                    reject(data);
-                }
+                    if (data.xResult == 'A') {
+                        resolve(true);
+                    } else if (data.xResult == 'D') {
+                        resolve(false);
+                    } else {
+                        reject(data);
+                    }
+                }, 500);
             } catch (error) {
                 reject(error);
             }

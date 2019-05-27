@@ -1,3 +1,3 @@
 # Apos
 
-Customer POS for Car Washe Company
+Custom POS for Car Washe Company

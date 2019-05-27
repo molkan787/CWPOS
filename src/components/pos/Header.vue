@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="message2.visible" class="ui icon message message2" :class="message2.color">
+        <div v-if="message2.visible" class="ui icon message message2" :class="message2.color" @click="msg2Click">
             <i :class="message2.icon"></i>
             <div class="content">
                 <div class="header">
@@ -79,6 +79,13 @@ export default class Header extends Vue {
         color: '',
         timeout: 0,
     };
+
+    msg2Click(){
+        if(this.message2.status == 'data'){
+            // @ts-ignore
+            MxHelper.addLoyaltyPoints();
+        }
+    }
 
     updateTicket(val: any){
         // @ts-ignore

@@ -14,6 +14,7 @@
     <ImportDataModal />
     <ExportDataModal />
     <EditCardBarcodeModal />
+    <AddLoyaltyPointsModal />
 
     <portal-target name="semantic-ui-vue" />
   </div>
@@ -33,6 +34,7 @@ import ReasonModal from './components/pre/ReasonModal.vue';
 import ImportDataModal from './components/pre/ImportDataModal.vue';
 import ExportDataModal from './components/pre/ExportDataModal.vue';
 import EditCardBarcodeModal from './components/pre/EditCardBarcodeModal.vue';
+import AddLoyaltyPointsModal from './components/pre/AddLoyaltyPointsModal.vue';
 
 export default Vue.extend({
   components: {
@@ -47,6 +49,7 @@ export default Vue.extend({
     ImportDataModal,
     ExportDataModal,
     EditCardBarcodeModal,
+    AddLoyaltyPointsModal,
   },
   methods: {
     ...mapActions(['setup'])

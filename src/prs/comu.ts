@@ -52,7 +52,7 @@ export default class Comu{
         try {
             Printer.setup();
         } catch (error) {
-            console.log('Error whilte initiating Printer:', error);
+            // console.log('Error whilte initiating Printer:', error);
         }
 
 
@@ -251,6 +251,7 @@ export default class Comu{
                     state.stats.dt += stats.dt;
                     state.nextOrderId = data.nextOrderId;
                     state.lastOrderDate = data.date_added;
+                    state.loyaltyPoints = data.loyaltyPoints;
                     this.setCardsBalances(data.balances);
                     this.backupState();
                     resolve(true);

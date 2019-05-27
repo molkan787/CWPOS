@@ -90,6 +90,7 @@ export default new Vuex.Store({
       balance: 0,
       updateCount: 0,
     },
+    loyaltyPoints: -1,
 
     user: {
       id: 0,

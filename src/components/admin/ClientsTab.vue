@@ -85,6 +85,27 @@ export default class ClientsTab extends Vue{
         MxHelper.editClient({id: 'new', forceNew: true});
     }
 
+    private listeningForScan = false;
+    handleBarcodeScan(barcode: string){
+        if(!this.listeningForScan) return;
+        // @ts-ignore
+        const filters = this.filtersValues;
+        Vue.set(filters, 'pol_card', barcode);
+        Vue.set(filters, 'date_from', '');
+        Vue.set(filters, 'date_to', '');
+        Vue.set(filters, 'phone', '');
+        this.loadData();
+    }
+
+    mounted(){
+        MxHelper.registerFunction('redirectScannedBarcode', (barcode: string) => this.handleBarcodeScan(barcode));
+        this.listeningForScan = true;
+    }
+    
+    beforeDestroy(){
+        this.listeningForScan = false;
+    }
+
     created(){
         // @ts-ignore
         if(!this.loaded) this.loadData();

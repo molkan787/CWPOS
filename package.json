@@ -11,14 +11,17 @@
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
     "form-data": "^2.3.3",
+    "luxon": "^1.15.0",
     "portal-vue": "^2.1.4",
     "query-string": "^6.4.2",
     "semantic-ui-vue": "^0.8.1",
     "vue": "^2.6.6",
     "vue-class-component": "^6.3.2",
+    "vue-datetime": "^1.0.0-beta.10",
     "vue-property-decorator": "^7.3.0",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "weekstart": "^1.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.4",
