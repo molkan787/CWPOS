@@ -9,6 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    demoMode: false,
     currentTime: '00:00',
 
     categories: [],
@@ -50,6 +51,7 @@ export default new Vuex.Store({
       items: [],
       itemsCount: {},
       pay_method: 'cash',
+      cantUsePrepaid: false,
       paid: false,
       finished: false,
       catType: 1,
@@ -248,6 +250,7 @@ export default new Vuex.Store({
       pos.items = [];
       pos.itemsCount = {};
       pos.pay_method = 'cash';
+      pos.cantUsePrepaid = false;
       pos.paid = false;
       pos.finished = false;
       pos.catType = 1;

@@ -24,7 +24,7 @@
         <sui-button icon="setting" @click="goToAdmin" :disabled="userType >= 5">Admin Panel</sui-button>
         <sui-button icon="chart bar" :disabled="userType >= 5" @click="downloadReports">
             <template v-if="downloading">Downloading...</template>
-            <template v-else>Daily Reports</template>
+            <template v-else>Daily Balancing Reports</template>
         </sui-button>
     </div>
 </template>
@@ -53,7 +53,7 @@ export default class Stats extends Vue{
     downloadReports(){
         if(this.downloading) return;
         this.downloading = true;
-        Reports.dailySales(utils.todaysDate())
+        Reports.dailySummary(utils.todaysDate())
         .then(() => this.successMessage())
         .catch(() => this.failureMessage())
         .finally(() => this.downloading = false);

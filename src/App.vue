@@ -16,13 +16,17 @@
     <EditCardBarcodeModal />
     <AddLoyaltyPointsModal />
 
+    <div class="demo-label" v-if="demoMode">
+      DEMO / TESTING
+    </div>
+
     <portal-target name="semantic-ui-vue" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {mapActions} from 'vuex';
+import {mapActions, mapState} from 'vuex';
 import CustomValueModal from './components/Helpers/CustomValueModal.vue';
 import PrepaidCardModal from './components/pre/PrepaidCardModal.vue';
 import LoyaltyCardModal from './components/pre/LoyaltyCardModal.vue';
@@ -54,6 +58,7 @@ export default Vue.extend({
   methods: {
     ...mapActions(['setup'])
   },
+  computed: mapState(['demoMode']),
 
   created(){
     this.setup();
@@ -94,5 +99,26 @@ body{
       color: #42b983;
     }
   }
+}
+
+$dl-w: 14rem;
+.demo-label{
+  position: fixed;
+  top: 0;
+  left: 50%;
+  margin-left: $dl-w / -2;
+  width: $dl-w;
+  height: 2rem;
+  background-color: #42b983;
+  color: white;
+  border: 1px solid #2b865d;
+  font-size: 1.2rem;
+  box-sizing: border-box;
+  padding-top: 0.2rem;
+  font-weight: bold;
+  box-shadow: 0 0 3px #2b865d;
+  border-bottom-left-radius: 100px;
+  border-bottom-right-radius: 100px;
+  user-select: none;
 }
 </style>

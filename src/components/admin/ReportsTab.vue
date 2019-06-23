@@ -38,6 +38,17 @@
             <sui-button icon="download" @click="loyaltyPoints"
                 :loading="dg_loyaltyPoints" :disabled="dg_loyaltyPoints">Download</sui-button>
         </sui-segment>
+        
+        <sui-segment class="last-con">
+            <h3>Prepaid/Loyalty cards balance adjustment</h3>
+            <hr>
+            <LabeledDropdown :options="[{value: 'prepaid', text: 'Prepaid cards'}, {value: 'loyalty', text: 'Loyalty cards'}]" 
+                :disabled="dg_balancesAdjust" v-model="card_type" label="Type"/>
+            <LabeledInput label="Date from" type="date" v-model="date_from3" :disabled="dg_balancesAdjust"/>
+            <LabeledInput label="Date to" type="date" v-model="date_to3" :disabled="dg_balancesAdjust"/>
+            <sui-button icon="download" @click="balancesAdjust"
+                :loading="dg_balancesAdjust" :disabled="dg_balancesAdjust">Download</sui-button>
+        </sui-segment>
 
     </div>
 </template>
@@ -46,12 +57,14 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import LabeledInput from '../Elts/inputs/LabeledInput.vue';
+import LabeledDropdown from '../Elts/inputs/LabeledDropdown.vue';
 import Message from '@/ccs/Message';
 import Reports from '@/prs/reports';
 
 @Component({
     components: {
         LabeledInput,
+        LabeledDropdown,
     }
 })
 export default class ReportsTab extends Vue{
@@ -61,11 +74,15 @@ export default class ReportsTab extends Vue{
     private date_to: any = '';
     private date_from2: any = '';
     private date_to2: any = '';
+    private date_from3: any = '';
+    private date_to3: any = '';
+    private card_type: string = 'prepaid';
 
     private dg_dailySales = false;
     private dg_daileSum = false;
     private dg_weeklySum = false;
     private dg_loyaltyPoints = false;
+    private dg_balancesAdjust = false;
 
     dailySales(){
         if(this.checkForInputsErrors(this.day)) return;
@@ -101,6 +118,15 @@ export default class ReportsTab extends Vue{
         .then(() => this.successMessage())
         .catch(() => this.failureMessage())
         .finally(() => this.dg_loyaltyPoints = false);
+    }
+
+    balancesAdjust(){
+        if(this.checkForInputsErrors(this.date_from3, this.date_to3)) return;
+        this.dg_balancesAdjust = true;
+        Reports.cardBalancesAdjust(this.date_from3, this.date_to3, this.card_type)
+        .then(() => this.successMessage())
+        .catch(() => this.failureMessage())
+        .finally(() => this.dg_balancesAdjust = false);
     }
 
     checkForInputsErrors(a1?: any, a2?: any){

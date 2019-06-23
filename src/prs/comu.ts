@@ -377,6 +377,11 @@ export default class Comu{
         }
     }
 
+    static switchMode(demo: boolean){
+        config.demoMode = demo;
+        this.context.state.demoMode = demo;
+    }
+
 
     // ---------------------------------
 

@@ -8,6 +8,7 @@ const dailySales = 'daily-sales';
 const dailySummary = 'daily-summary';
 const weeklySummary = 'weekly-summary';
 const loyaltyPoints = 'loyalty-points';
+const balanceAdjust = 'balance-adjust';
 
 export default class ReportsDownloader{
 
@@ -58,6 +59,21 @@ export default class ReportsDownloader{
         }
     }
 
+    static async cardBalancesAdjust(date_from: any, date_to: any, card_type: string) {
+        try {
+            const _from = utils.dateToTimestamp(date_from);
+            const _to = utils.dateToTimestamp(date_to);
+            const response = await axios.post(_url('reports'), { 
+                type: balanceAdjust, card_type,
+                date_from: _from, date_to: _to 
+            });
+            await this.downloadFile(response.data);
+            return true;
+        } catch (error) {
+            throw new Error('Unknow error at ReportsDownloader.cardBalancesAdjust');
+        }
+    }
+
     // ==============================================
 
     static downloadFile(data: any){
@@ -90,6 +106,9 @@ export default class ReportsDownloader{
                 return `Weekly Summary ${date_from} - ${date_to}.xlsx`;
             case loyaltyPoints:
                 return `Loyalty Points (Manually) ${date_from} - ${date_to}.xlsx`;
+            case balanceAdjust:
+                const cardType = params.card_type == 'prepaid' ? 'Prepaid' : 'Loyalty';
+                return `${cardType} balances adjustment - ${date_from} - ${date_to}.xlsx`;
             default:
                 return 'Reports.xlsx';
         }

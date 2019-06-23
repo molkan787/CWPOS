@@ -2,7 +2,8 @@
     <div>
         <sui-button v-for="(method, index) in methods" :key="index"
         :class="pos.pay_method == method.name ? 'grey' : ''"
-        @click="pos.pay_method = method.name">
+        @click="pos.pay_method = method.name"
+        :disabled="method.name == 'prepaid' && pos.cantUsePrepaid">
             <i v-if="method.icon" :class="'icon ' + method.icon"></i> <br>
             {{ method.text }}
         </sui-button>

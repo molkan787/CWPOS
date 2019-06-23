@@ -1,5 +1,6 @@
 export default {
-    debug: false,
-    devMode: false,
+    debug: true,
+    devMode: true,
+    demoMode: false,
     localSettingsKey: 'cwpos_settings',
 };

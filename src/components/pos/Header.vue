@@ -247,6 +247,9 @@ div.m-el{
     img{
         height: 100%;
         float: left;
+        // height: 50%;
+        // float: left;
+        // margin: 2rem 1rem;
     }
 }
 .bis{

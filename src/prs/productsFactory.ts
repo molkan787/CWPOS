@@ -20,6 +20,9 @@ export default class ProductsFactory{
             clientData,
             amount: utils.roundPrice(amounts.amount)
         }
+        const POSstate = this.context.state.pos;
+        if (POSstate.pay_method == 'prepaid') POSstate.pay_method = 'cash';
+        POSstate.cantUsePrepaid = true;
         this.context.dispatch('addCustomItem', data);
     }
 

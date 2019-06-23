@@ -97,6 +97,9 @@ div.m-el{
     img{
         height: 100%;
         float: left;
+        // height: 70%;
+        // float: left;
+        // margin: 1rem;
     }
 }
 h1{

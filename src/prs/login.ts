@@ -26,8 +26,11 @@ export default class Login{
                     reject(data.cause)
                 }
             }).catch(error => {
-                console.log(error);
-                reject(error);
+                if (error.response && error.response.status == 401){
+                    reject('WRONG');
+                }else{
+                    reject(error);
+                }
             });
         });
     }
