@@ -16,7 +16,8 @@ export default class Receipt{
         this.prb = new POSReceiptBuilder();
     }
 
-    static print(order: any){
+    static print(order: any, frod?: Boolean){
+        if (frod) order = this.prepareROD(order);
         const r = this.prb;
         r.clear();
         r.addHeader({
@@ -30,7 +31,7 @@ export default class Receipt{
             orderId: order.id,
             date: utils.timestampToDate(order.date_added, 2, true),
             cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
-            client: order.client.id ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
+            client: (order.client && order.client.id) ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
         }, true);
         
         const items = order.products;
@@ -94,14 +95,14 @@ export default class Receipt{
 
         r.addSpace();
 
-        if(order.loyaltyCard.id){
+        if (order.loyaltyCard && order.loyaltyCard.id){
             const card = order.loyaltyCard;
             const bal_str = utils2.price(card.balance / 100);
             r.addNormalMessage(`Client Fidele vous avez ${bal_str}`);
             r.addNormalMessage(`en dollars fidelite`);
         }
 
-        if(order.prepaidCard.id){
+        if (order.prepaidCard && order.prepaidCard.id){
             const card = order.prepaidCard;
             const bal_str = utils2.price(card.balance / 100);
             r.addNormalMessage('Le solde de votre carte prepayee est ' + bal_str);
@@ -126,6 +127,13 @@ export default class Receipt{
         r.addSpace();
 
         Printer.print(r.getLines());
+    }
+
+    static prepareROD(data){
+        data.products = data.items.products;
+        data.counts = data.items.counts;
+        data.taxes = (data.other_data && data.other_data.taxes) ? data.other_data.taxes : {gst: 0, qst: 0};
+        return data;
     }
 
     static _getLabel(p: any){

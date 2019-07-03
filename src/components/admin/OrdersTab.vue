@@ -1,7 +1,7 @@
 <template>
     <DataTable :cols="tableSchema" :items="orders" :loading="loading" 
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
-    @filtersChanged="loadData" @refund="refund" />
+    @filtersChanged="loadData" @refund="refund" @print="print" />
 </template>
 
 <script lang="ts">
@@ -13,6 +13,7 @@ import Dl from '@/prs/dl';
 import DM from '@/prs/dm';
 import Pfs from '@/prs/pfs';
 import Message from '@/ccs/Message';
+import Receipt from '@/prs/receipt';
 
 @Component({
     components: {
@@ -38,6 +39,10 @@ export default class OrdersTab extends Vue{
         {name: 'Receipt', prop: 'receipt', filter: 'yesIfTrue'},
         {name: 'Cashier', prop: 'cashier', filter: 'joinnames'},
         {name: '', prop: '@', buttons: [
+                {name: 'print', text: 'Receipt', icon: 'file alternate'}
+            ]
+        },
+        {name: '', prop: '@', buttons: [
                 {name: 'refund', text: 'Refund', icon: 'undo'}
             ],
             conditional: {
@@ -58,7 +63,7 @@ export default class OrdersTab extends Vue{
             console.log('Error: ', error);
         }).finally(() => {
             // @ts-ignore
-            // console.log(this.orders);
+            console.log(this.orders)
             this.loading = false;
         });
     }
@@ -80,6 +85,10 @@ export default class OrdersTab extends Vue{
                 e.hide();
             }
         })
+    }
+
+    print(order: any){
+        Receipt.print(order, true);
     }
 
     created(){

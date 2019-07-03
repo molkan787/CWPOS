@@ -57,6 +57,10 @@ export default class Comu{
 
 
         if(config.debug){
+            // @ts-ignore
+            window.$store = context;
+            // @ts-ignore
+            window.$receipt = Receipt;
             this.loadData();
             Login.setUser({
                 token: '',
