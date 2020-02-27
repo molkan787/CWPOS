@@ -12,11 +12,11 @@
             <div class="ui form">
                 <div class="field">
                     <label>Username</label>
-                    <input v-model="username" type="text" placeholder="Username">
+                    <input v-model="username" @keypress="inputKeyPress" type="text" placeholder="Username">
                 </div>
                 <div class="field">
                     <label>Password</label>
-                    <input v-model="password" type="password" placeholder="Password">
+                    <input v-model="password" @keypress="inputKeyPress" type="password" placeholder="Password">
                 </div>
                 <button class="ui button" @click="loginClick">
                     <i class="unlock icon"></i>
@@ -56,6 +56,10 @@ export default class Login extends Vue{
     private loading: boolean = false;
     private username: string = '';
     private password: string = '';
+
+    inputKeyPress(e){
+        if(e.keyCode == 13) this.loginClick();
+    }
 
     loginClick(){
         if(this.username.length < 4){

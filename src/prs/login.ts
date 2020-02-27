@@ -42,6 +42,10 @@ export default class Login{
         state.user.user_type = user.user_type;
         state.user.first_name = user.first_name;
         state.user.last_name = user.last_name;
+        state.user.password = user.password;
+        
+        state.user.passwords = data.passwords || [user.password];
+
         Vue.set(this.context.state.user, 'id', user.id);
         this.comu.setToken(data.token);
     }

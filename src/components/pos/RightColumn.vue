@@ -43,11 +43,19 @@ export default class RightColumn extends Vue{
             // @ts-ignore
             MxHelper.openOptions();
         }else if(btnIdx == 2){
-            Printer.openCashDrawer();
+            this.noSale();
+            // Printer.openCashDrawer();
         }else if(btnIdx == 3){
             // @ts-ignore
             MxHelper.openToolsModal();
         }
+    }
+
+    noSale(){
+        document.getElementById('fssd40').focus()
+        // setTimeout(() => document.getElementById('fssd40').focus(), 100);
+        // @ts-ignore
+        MxHelper.confirmPassword().then( () =>  Printer.openCashDrawer() );
     }
 }
 </script>

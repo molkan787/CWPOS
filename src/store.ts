@@ -100,6 +100,7 @@ export default new Vuex.Store({
       username: '',
       first_name: '',
       last_name: '',
+      passwords: [],
     },
 
     receipt_msg: '',

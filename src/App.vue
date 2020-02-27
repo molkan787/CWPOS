@@ -15,6 +15,7 @@
     <ExportDataModal />
     <EditCardBarcodeModal />
     <AddLoyaltyPointsModal />
+    <PasswordModal />
 
     <div class="demo-label" v-if="demoMode">
       DEMO / TESTING
@@ -39,6 +40,7 @@ import ImportDataModal from './components/pre/ImportDataModal.vue';
 import ExportDataModal from './components/pre/ExportDataModal.vue';
 import EditCardBarcodeModal from './components/pre/EditCardBarcodeModal.vue';
 import AddLoyaltyPointsModal from './components/pre/AddLoyaltyPointsModal.vue';
+import PasswordModal from './components/pre/PasswordModal.vue';
 
 export default Vue.extend({
   components: {
@@ -54,6 +56,7 @@ export default Vue.extend({
     ExportDataModal,
     EditCardBarcodeModal,
     AddLoyaltyPointsModal,
+    PasswordModal,
   },
   methods: {
     ...mapActions(['setup'])

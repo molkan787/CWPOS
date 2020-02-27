@@ -3,26 +3,16 @@
         <h2>Download Reports</h2>
         <hr>
         
-        <sui-segments horizontal>
-            <sui-segment>
-                <h3>Daily Sales</h3>
-                <hr>
-                <LabeledInput label="Day" type="date" v-model="day" :disabled="dg_dailySales"/>
-                <sui-button icon="download" @click="dailySales"
-                    :loading="dg_dailySales" :disabled="dg_dailySales">Download</sui-button>
-            </sui-segment>
-
-            <sui-segment>
-                <h3>Daily Summary</h3>
-                <hr>
-                <LabeledInput label="Day" type="date" v-model="day2" :disabled="dg_daileSum"/>
-                <sui-button icon="download" @click="dailySummary"
-                    :loading="dg_daileSum" :disabled="dg_daileSum">Download</sui-button>
-            </sui-segment>
-        </sui-segments>
+        <sui-segment>
+            <h3>Daily Reports</h3>
+            <hr>
+            <LabeledInput label="Day" type="date" v-model="day2" :disabled="dg_daileSum"/>
+            <sui-button icon="download" @click="dailySummary"
+                :loading="dg_daileSum" :disabled="dg_daileSum">Download</sui-button>
+        </sui-segment>
 
         <sui-segment>
-            <h3>Date Range Summary</h3>
+            <h3>Date Range Reports</h3>
             <hr>
             <LabeledInput label="Date from" type="date" v-model="date_from" :disabled="dg_weeklySum"/>
             <LabeledInput label="Date to" type="date" v-model="date_to" :disabled="dg_weeklySum"/>
