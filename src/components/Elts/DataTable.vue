@@ -76,13 +76,13 @@
                     <sui-table-row>
                         <sui-table-header-cell :colspan="cols.length">
                         <sui-menu v-sui-floated:right pagination>
-                            <a is="sui-menu-item" @click="prevClick" :disabled="page == 1">
+                            <sui-menu-item @click="prevClick" :disabled="page == 1">
                                 <sui-icon name="left chevron" />
-                            </a>
-                            <a is="sui-menu-item">{{ page }}</a>
-                            <a is="sui-menu-item" @click="nextClick" :disabled="items.length < itemsPerPage">
+                            </sui-menu-item>
+                            <sui-menu-item>{{ page }}</sui-menu-item>
+                            <sui-menu-item @click="nextClick" :disabled="items.length < itemsPerPage">
                                 <sui-icon name="right chevron" />
-                            </a>
+                            </sui-menu-item>
                         </sui-menu>
                         </sui-table-header-cell>
                     </sui-table-row>
@@ -156,7 +156,8 @@ export default class DataTable extends Vue{
     }
 
     updateOffset(){
-        this.filtersValues.offset = (this.page - 1) * this.itemsPerPage;
+        if(typeof this.filtersValues == 'object')
+            this.filtersValues.offset = (this.page - 1) * this.itemsPerPage;
     }
 
     emitFiltersChanged(){
