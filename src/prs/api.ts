@@ -1,6 +1,6 @@
 import config from '@/config';
-const ApiBase = 'https://apos-demo-backend.herokuapp.com';
-// const ApiBase = 'http://159.203.4.193';
+// const ApiBase = 'https://apos-demo-backend.herokuapp.com';
+const ApiBase = 'http://159.203.4.193';
 let ApiBaseURI = '';
 let ApiBaseURIDemo = '';
 if (config.devMode) {

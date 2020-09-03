@@ -22,6 +22,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { Component, Vue } from 'vue-property-decorator';
 import { mapState } from 'vuex';
 import Utils from '@/utils';

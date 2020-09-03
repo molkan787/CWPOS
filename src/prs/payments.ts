@@ -119,7 +119,7 @@ export default class Payments{
 
     private static _Invoice(payload: any){
         return new Promise((resolve, reject) => {
-            comu.setInvoiceData({clientName: payload.clientName})
+            comu.setInvoiceData(payload)
             resolve(true);
         });
     }

@@ -48,6 +48,7 @@ import Component from 'vue-class-component';
 import Message from '../../ccs/Message';
 import LoginService from '@/prs/login';
 import { mapState } from 'vuex';
+import config from '@/config';
 
 @Component({
     computed: mapState(['demoMode']),
@@ -92,6 +93,14 @@ export default class Login extends Vue{
 
     switchMode(demo: boolean){
         comu.switchMode(demo);
+    }
+
+    mounted(){
+        if(config.devMode){
+            this.username = 'admin';
+            this.password = 'password123';
+            this.login();
+        }
     }
 }
 </script>

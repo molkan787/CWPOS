@@ -1,3 +1,4 @@
+// @ts-nocheck
 import config from '@/config';
 import axios from 'axios';
 import time from './time';
@@ -212,10 +213,11 @@ export default class Comu{
         return new Promise((resolve, reject) => {
             const state = this.context.state;
             const {items, itemsCount} = state.pos;
+            const total = Utils.preparePrice(state.pos.values.total);
             const orderData = {
                 user_id: state.user.id,
                 client_id: state.client.id,
-                total: Utils.preparePrice(state.pos.values.total),
+                total,
                 totals: state.pos.values,
                 items: {
                     products: state.pos.items,
@@ -228,12 +230,12 @@ export default class Comu{
                         extra: state.extraChargeReason,
                         free: state.freeOrderReason,
                     },
-                    taxes: state.taxes,
+                    taxes: state.taxes
                 },
                 pay_method: state.pos.pay_method,
                 receipt: 0,
             };
-            const stats = this.getStats(items, itemsCount);
+            const stats = this.getStats(items, itemsCount, state.pos.pay_method, total);
             const data = {
                 orderData,
                 stats,
@@ -247,12 +249,15 @@ export default class Comu{
                 },
                 taxes: state.taxes,
             }
+            console.log(data)
             axios.post(_url('order'), data).then(({data}) => {
                 if(data.status == 'OK'){
                     state.stats.cw += stats.cw;
                     state.stats.pp += stats.pp;
                     state.stats.rpp += stats.rpp;
                     state.stats.dt += stats.dt;
+                    state.stats.cs += stats.cs;
+                    state.stats.cc += stats.cc;
                     state.nextOrderId = data.nextOrderId;
                     state.lastOrderDate = data.date_added;
                     state.loyaltyPoints = data.loyaltyPoints;
@@ -284,6 +289,10 @@ export default class Comu{
         stats.pp = 0;
         stats.rpp = 0;
         stats.dt = 0;
+        stats.cs = 0;
+        stats.cc = 0;
+        stats.cxc = 0;
+        stats.cxv = 0;
         stats.day = time.today();
     }
 
@@ -295,6 +304,10 @@ export default class Comu{
             stats.pp += newStats.pp * dir;
             stats.rpp += newStats.rpp * dir;
             stats.dt += newStats.dt * dir;
+            stats.cs += newStats.cs * dir; // cs => Cash
+            stats.cc += newStats.cc * dir; // cc => Credit Card
+            stats.cxc += newStats.cxc * dir; // cxc => Canceled orders count
+            stats.cxv += newStats.cxv * dir; // cxv => Canceled orders value
         }
     }
 
@@ -322,6 +335,7 @@ export default class Comu{
 
     static setInvoiceData(payload: any){
         this.context.state.invoiceData.clientName = payload.clientName || '';
+        this.context.state.invoiceData.card = payload.card || null;
     }
 
     // ==================================
@@ -398,13 +412,15 @@ export default class Comu{
 
     // ---------------------------------
 
-    private static getStats(items: any[], itemsCount: any){
+    private static getStats(items: any[], itemsCount: any, paym, total){
         const washesCats = [1, 2, 6, 7];
         const stats = {
             cw: 0,
             pp: 0,
             rpp: 0,
             dt: 0,
+            cs: paym == 'cash' ? total : 0,
+            cc: paym == 'card' ? total : 0
         };
         for(let i = 0; i < items.length; i++){
             const item = items[i];

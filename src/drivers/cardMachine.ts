@@ -1,5 +1,7 @@
+// @ts-nocheck
 import axios from 'axios';
 import queryString  from 'query-string';
+import config from '@/config';
 
 // @ts-ignore
 window.axios = axios;
@@ -22,10 +24,10 @@ class CardMachine{
 
     static request(payload: any){
         return new Promise(async (resolve, reject) => {
-            // if (this.activeTransaction) {
-            //     payload.callback('READY');
-            //     return;
-            // }
+            if(config.devMode){
+                setTimeout(() => resolve(true), 1000);
+                return;
+            }
 
             if (this.lastInvoiceId == payload.invoiceId){
                 this.dpPtr++;

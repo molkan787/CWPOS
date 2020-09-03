@@ -10,7 +10,6 @@ import store from './store';
 import 'vue-datetime/dist/vue-datetime.css'
 
 Vue.config.productionTip = false;
-
 Vue.use(SuiVue);
 Vue.use(PortalVue);
 Vue.use(Datetime);

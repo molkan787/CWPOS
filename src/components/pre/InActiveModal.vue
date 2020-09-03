@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Modal from '../Elts/Modal.vue';

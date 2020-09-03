@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Vue from 'vue';
 import axios from 'axios';
 import _url from '@/prs/api';

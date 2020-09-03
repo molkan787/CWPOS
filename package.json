@@ -13,6 +13,7 @@
     "form-data": "^2.3.3",
     "luxon": "^1.15.0",
     "md5": "^2.2.1",
+    "payment-card-magnetic-stripe-parser": "^0.2.0",
     "portal-vue": "^2.1.4",
     "query-string": "^6.4.2",
     "semantic-ui-vue": "^0.8.1",

@@ -6,6 +6,11 @@
             <sui-icon name="user circle"/> <strong class="">{{user.username}}</strong>
             <sui-label class="logout-btn" icon="power off" @click="logout">Logout</sui-label>
         </span>
+        <div class="stats_pan">
+            <strong>CS : {{ stats.cs | price_m }}</strong> <br>
+            <strong>CC: {{ stats.cc | price_m }}</strong> <br>
+            <strong>CX: {{ stats.cxv | price_m }} - {{ stats.cxc }}</strong>
+        </div>
         <div class="right-side">
             <sui-button compact @click="searchClient()" >
                 <i class="search icon"></i>Search
@@ -50,7 +55,7 @@ import PhoneInput from '../pre/PhoneInput.vue';
     components: {
         PhoneInput,
     },
-    computed: mapState(['user', 'currentTime', 'ticket', 'loyaltyCard']),
+    computed: mapState(['user', 'currentTime', 'ticket', 'loyaltyCard', 'stats']),
     methods: mapActions(['setTicket']),
     watch: {
         loyaltyCard: {
@@ -304,5 +309,13 @@ div.message{
     top: 38%;
     left: 0;
     width: 22rem !important;
+}
+.stats_pan{
+    display: inline-block;
+    float: left;
+    margin-left: 3rem;
+    margin-top: 2rem;
+    font-size: 1rem;
+    text-align: left;
 }
 </style>

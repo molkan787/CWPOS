@@ -4,7 +4,32 @@
         <h2>
             Invoice / Ari
         </h2>
-        <LabeledInput class="company-input" label="Company" v-model="current" :disabled="pos.finished" />
+        <template v-if="card">
+            <table class="card-info-table">
+                <body>
+                    <tr class="title">
+                        <td colspan="2">
+                            Card Detected
+                            <i v-if="!pos.finished" @click="removeCardClick" title="Remove Card" class="close icon"></i>
+                        </td>
+                    </tr>
+                    <tr class="data-row">
+                        <td>Card Number:</td>
+                        <td>{{ card.number }}</td>
+                    </tr>
+                    <tr class="data-row">
+                        <td>Expiration date:</td>
+                        <td>{{ card.expirationDate }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"> </td>
+                    </tr>
+                </body>
+            </table>
+        </template>
+        <template v-else>
+            <LabeledInput class="company-input" label="Company" ph="Company or Swipe card" v-model="current" :disabled="pos.finished" />
+        </template>
         <div>
             <sui-button  class="btn" :icon="pos.finished ? 'circle check' : ''" size="large"
             :class="pos.finished ? 'green' : ''" @click="finish">
@@ -16,13 +41,15 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
+import { parsePaymentCardMagneticStripe } from 'payment-card-magnetic-stripe-parser';
 import Vue from 'vue';
-import { Prop } from 'vue-property-decorator';
+import { Prop, Watch } from 'vue-property-decorator';
 import Component from 'vue-class-component';
 import { mapState, mapActions } from 'vuex';
 import Payments from '@/prs/payments';
 import LabeledInput from '../../Elts/inputs/LabeledInput.vue';
-
+const CARD_DATA_SCHEME = /;\d+=\d+É/;
 @Component({
     components: {
         LabeledInput,
@@ -32,15 +59,41 @@ import LabeledInput from '../../Elts/inputs/LabeledInput.vue';
 })
 export default class InvoicePayment extends Vue{
 
-    private current: any = '';
+    private current: string = '';
+    private card: {
+        expirationDate: string,
+        number: string
+    } = null;
+
+    @Watch('current')
+    currentChanged(){
+        if(this.current.length > 20 && CARD_DATA_SCHEME.test(this.current)){
+            this.parseCardData(this.current);
+            this.$nextTick(() => this.current = '');
+        }
+    }
+
+    parseCardData(rawData){
+        const data = parsePaymentCardMagneticStripe(rawData);
+        if(data.cards.length > 0){
+            this.card = data.cards[0];
+        }
+    }
+
+    removeCardClick(){
+        this.card = null;
+    }
 
     finish(){
         // @ts-ignore
         if(this.pos.finished) return;
-        if(this.current){
-            Payments.requestPayment('invoice_ari', {clientName: this.current});
+        if(this.card || this.current){
+            Payments.requestPayment('invoice_ari', {
+                clientName: this.current,
+                card: this.card
+            });
         }else{
-            this.$emit('message', 'Please type Company name');
+            this.$emit('message', 'Please type Company name or Swipe Ari Card');
         }
     }
 
@@ -49,7 +102,29 @@ export default class InvoicePayment extends Vue{
 
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
-
+.card-info-table{
+    width: fit-content;
+    margin: auto;
+    td{
+        font-size: 20px;
+        padding: 5px;
+    }
+    .data-row{
+        td:first-child{
+            text-align: right;
+        }
+        td:nth-child(2){
+            text-align: left;
+        }
+    }
+    i{
+        cursor: pointer;
+        opacity: 0.6;
+        &:hover{
+            opacity: 1;
+        }
+    }
+}
 hr{
     margin: 2rem 0 1.5rem 0;
 }

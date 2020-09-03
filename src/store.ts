@@ -70,6 +70,7 @@ export default new Vuex.Store({
     //=======================
     invoiceData: {
       clientName: '',
+      card: null
     },
     client: {
       id: 0,
@@ -107,7 +108,7 @@ export default new Vuex.Store({
 
     companies: [],
 
-    stats: {cw: 0, pp: 0,  rpp: 0, dt: 0},
+    stats: {cw: 0, pp: 0,  rpp: 0, dt: 0, cs: 0, cc: 0, cxc: 0, cxv: 0},
 
     areaAView: 'order',
 
@@ -300,6 +301,7 @@ export default new Vuex.Store({
       state.prepaidCard.balance = 0;
 
       state.invoiceData.clientName = '';
+      state.invoiceData.card = null;
 
       state.areaAView = 'order';
       state.defaultExactPaid = true;
