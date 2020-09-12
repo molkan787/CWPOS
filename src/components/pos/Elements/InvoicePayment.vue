@@ -49,7 +49,8 @@ import Component from 'vue-class-component';
 import { mapState, mapActions } from 'vuex';
 import Payments from '@/prs/payments';
 import LabeledInput from '../../Elts/inputs/LabeledInput.vue';
-const CARD_DATA_SCHEME = /;\d+=\d+É/;
+const CARD_ABA_FORMAT = /;\d{10,19}=\d{4,40}É/gm; // ABA FORMAT
+const CARD_IATA_FORMAT = /%B\d{10,19}\^.+\^\d{4,40}\?/gm; // IATA FORMAT
 @Component({
     components: {
         LabeledInput,
@@ -67,8 +68,13 @@ export default class InvoicePayment extends Vue{
 
     @Watch('current')
     currentChanged(){
-        if(this.current.length > 20 && CARD_DATA_SCHEME.test(this.current)){
-            this.parseCardData(this.current);
+        const solidInput = this.current.replace(/\s/g, '');
+        if(solidInput.length > 20){
+            let essesialPart = false;
+            if(CARD_ABA_FORMAT.test(solidInput)) essesialPart = solidInput.match(CARD_ABA_FORMAT)[0];
+            else if(CARD_IATA_FORMAT.test(solidInput)) essesialPart = solidInput.match(CARD_IATA_FORMAT)[0];
+            if(!essesialPart) return;
+            this.parseCardData(essesialPart);
             this.$nextTick(() => this.current = '');
         }
     }

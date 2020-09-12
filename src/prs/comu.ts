@@ -346,7 +346,7 @@ export default class Comu{
         const order_id = state.nextOrderId - 1;
         axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
         
-        Receipt.print({
+        const data = {
             id: order_id,
             date_added: state.lastOrderDate,
             cashier: state.user,
@@ -358,8 +358,16 @@ export default class Comu{
             payment: state.payment,
             loyaltyCard: state.loyaltyCard,
             prepaidCard: state.prepaidCard,
+            invoiceData: state.invoiceData,
             taxes: state.taxes,
-        });
+        };
+
+        Receipt.print(data);
+
+        // Print 2 receipts when payment methods is invoice_ari
+        if(state.pos.pay_method == 'invoice_ari'){
+            setTimeout(() => Receipt.print(data), 800);
+        }
     }
 
     static reprintReceipt(){

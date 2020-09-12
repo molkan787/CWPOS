@@ -91,6 +91,14 @@ export default class Receipt{
             r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode.substr(-5) });
         }else if(paym == 'loyalty'){
             r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
+        }else if(paym == 'invoice_ari'){
+            const card = order && order.invoiceData && order.invoiceData.card;
+            if(card){
+                r.addTotalsItem({
+                    name: 'Carte N°',
+                    text: 'x'.repeat(card.number.length - 6) + card.number.substr(-6),
+                })
+            }
         }
 
         r.addSpace();
@@ -133,6 +141,9 @@ export default class Receipt{
         data.products = data.items.products;
         data.counts = data.items.counts;
         data.taxes = (data.other_data && data.other_data.taxes) ? data.other_data.taxes : {gst: 0, qst: 0};
+        data.invoiceData = {
+            card: data.other_data.ari_card
+        }
         return data;
     }
 

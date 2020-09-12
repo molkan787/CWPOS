@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import DataTable from '../Elts/DataTable.vue';
